@@ -11,7 +11,7 @@ Snake with opponents that actually learned to play. Three of them. A Q-learner, 
 
 **[Live interactive demo](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html).** Learning curves, ELO history, score distributions, head-to-head stats. Every number on that page came from a real run.
 
-**[Play the game](docs/game.html).** It runs the trained models directly in JavaScript. No server.
+**[Play the game](https://faiyazenayet.github.io/deeparcade/docs/game.html).** It runs the trained models directly in JavaScript. No server.
 
 ## Meet the opponents
 
