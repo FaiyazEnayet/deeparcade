@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>deeparcade — Snake vs the Machine</title>
+<style>
+  :root { --bg:#0b0e1a; --panel:#141a30; --accent:#4ade80; --accent2:#38bdf8;
+          --danger:#f87171; --gold:#fbbf24; --text:#e2e8f0; --dim:#64748b; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:radial-gradient(1200px 800px at 50% -10%, #1a2140 0%, var(--bg) 60%);
+         color:var(--text); font-family:'Segoe UI',system-ui,sans-serif;
+         min-height:100vh; display:flex; flex-direction:column; align-items:center;
+         padding:18px 12px 40px; }
+  h1 { font-size:2.2rem; letter-spacing:2px; margin:6px 0 2px;
+       background:linear-gradient(90deg,var(--accent),var(--accent2));
+       -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--dim); margin-bottom:16px; font-size:.95rem; }
+  #wrap { display:flex; gap:18px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+  #stage { position:relative; }
+  canvas { background:#0d1226; border-radius:14px; box-shadow:0 0 40px rgba(74,222,128,.12),
+           0 8px 30px rgba(0,0,0,.5); display:block; }
+  #hud { display:flex; gap:14px; margin:10px 0; flex-wrap:wrap; justify-content:center; }
+  .pill { background:var(--panel); border:1px solid #243056; border-radius:999px;
+          padding:6px 16px; font-size:.9rem; }
+  .pill b { color:var(--accent); }
+  #side { width:300px; display:flex; flex-direction:column; gap:12px; }
+  .card { background:var(--panel); border:1px solid #243056; border-radius:12px; padding:14px; }
+  .card h3 { font-size:.85rem; text-transform:uppercase; letter-spacing:1px;
+             color:var(--dim); margin-bottom:10px; }
+  .btn { display:block; width:100%; margin:6px 0; padding:11px; border:none; border-radius:10px;
+         background:linear-gradient(135deg,#1d4ed8,#0ea5e9); color:#fff; font-size:.95rem;
+         cursor:pointer; transition:transform .08s, box-shadow .08s; font-weight:600; }
+  .btn:hover { transform:translateY(-1px); box-shadow:0 4px 18px rgba(56,189,248,.35); }
+  .btn.green { background:linear-gradient(135deg,#15803d,#4ade80); }
+  .btn.gold { background:linear-gradient(135deg,#b45309,#fbbf24); }
+  .btn.ghost { background:#1e2a4a; }
+  .btn:disabled { opacity:.45; cursor:default; transform:none; box-shadow:none; }
+  .btnrow { display:flex; gap:8px; } .btnrow .btn { margin:3px 0; }
+  select, input[type=text] { width:100%; padding:9px; border-radius:8px; border:1px solid #243056;
+         background:#0d1226; color:var(--text); margin:6px 0; font-size:.9rem; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  td, th { padding:5px 4px; text-align:left; border-bottom:1px solid #1e2a4a; }
+  th { color:var(--dim); font-weight:600; font-size:.75rem; text-transform:uppercase; }
+  .tag { display:inline-block; font-size:.7rem; padding:2px 8px; border-radius:999px; margin-left:6px; }
+  .tag.ai { background:#1e3a5f; color:var(--accent2); } .tag.you { background:#14532d; color:var(--accent); }
+  #overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+             flex-direction:column; gap:10px; background:rgba(8,11,24,.78); border-radius:14px;
+             backdrop-filter:blur(3px); }
+  #overlay.hidden { display:none; }
+  #overlay h2 { font-size:1.8rem; } #overlay p { color:var(--dim); }
+  .hidden { display:none !important; }
+  #replaybar { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:8px; }
+  #replaybar .btn { width:auto; padding:8px 14px; margin:0; }
+  kbd { background:#1e2a4a; border:1px solid #334155; border-radius:4px; padding:1px 7px; font-size:.8rem; }
+  .elo-up { color:var(--accent); } .elo-dn { color:var(--danger); }
+  footer { margin-top:22px; color:var(--dim); font-size:.8rem; text-align:center; max-width:640px; }
+  footer a { color:var(--accent2); }
+</style>
+</head>
+<body>
+<h1>DEEPARCADE</h1>
+<div class="sub">Snake vs the machine — beat three trained AIs, climb the ELO ladder</div>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="cv" width="600" height="600"></canvas>
+    <div id="overlay" class="hidden"><h2 id="ovTitle"></h2><p id="ovSub"></p>
+      <div class="btnrow" style="width:280px"><button class="btn green" id="ovAgain">Play again</button>
+      <button class="btn ghost" id="ovMenu">Menu</button></div>
+      <button class="btn gold hidden" id="ovReplay" style="width:280px">Watch replay</button>
+    </div>
+    <div id="hud">
+      <div class="pill">Score <b id="hScore">0</b></div>
+      <div class="pill">Best <b id="hBest">0</b></div>
+      <div class="pill">ELO <b id="hElo">1200</b></div>
+      <div class="pill" id="hMode">classic</div>
+    </div>
+    <div id="replaybar" class="hidden">
+      <button class="btn ghost" id="rpPlay">⏸</button>
+      <button class="btn ghost" id="rpBack">⏮</button>
+      <button class="btn ghost" id="rpFwd">⏭</button>
+      <span id="rpPos" style="color:var(--dim);font-size:.85rem"></span>
+      <button class="btn ghost" id="rpExit">Exit</button>
+    </div>
+  </div>
+  <div id="side">
+    <div class="card" id="menuCard"><h3>Play</h3>
+      <select id="modeSel">
+        <option value="classic">Classic — open arena</option>
+        <option value="maze">Maze — walled arena</option>
+        <option value="blitz">Blitz — speed ramps up</option>
+      </select>
+      <button class="btn green" id="btnHuman">▶ Play as human</button>
+      <h3 style="margin-top:12px">Watch AI</h3>
+      <select id="aiSel">
+        <option value="rookie">Rookie — tabular Q-learning</option>
+        <option value="pro">Pro — deep Q-network</option>
+        <option value="grandmaster">Grandmaster — MCTS search</option>
+      </select>
+      <button class="btn" id="btnAI">🤖 Watch AI play</button>
+      <h3 style="margin-top:12px">Tournament</h3>
+      <button class="btn gold" id="btnTourn">🏆 Start tournament run</button>
+      <div id="tournStat" style="font-size:.82rem;color:var(--dim);margin-top:6px"></div>
+    </div>
+    <div class="card"><h3>Leaderboard <span style="text-transform:none">(this browser)</span></h3>
+      <div id="lbMode" style="margin-bottom:6px"></div>
+      <table id="lbTable"><tr><th>#</th><th>Score</th><th>Who</th></tr></table>
+    </div>
+    <div class="card"><h3>Replays</h3><div id="rpList" style="font-size:.85rem;color:var(--dim)">No replays yet — finish a game.</div></div>
+    <div class="card"><h3>How to play</h3>
+      <div style="font-size:.85rem;color:var(--dim);line-height:1.7">
+      <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or <kbd>WASD</kbd> to steer.<br>
+      Eat the glowing orbs. Don't hit walls or yourself.<br>
+      Your ELO moves when your score beats the AI's.</div>
+    </div>
+  </div>
+</div>
+<footer>Three AI opponents trained with real reinforcement learning — <a href="docs/dashboard.html">see the training dashboard</a>. Replays are deterministic: seed + actions.</footer>
+<script>
+"use strict";
+/*__POLICIES__*/
+</script>
+<script>
+/* ================= GAME LOGIC (mirrors Python narcade/snake.py 1:1) ================= */
+const DIRS = [[-1,0],[0,1],[1,0],[0,-1]]; // up right down left
+const STRAIGHT=0, LEFT=1, RIGHT=2;
+function relHeading(h, a){ return a===LEFT ? (h+3)%4 : a===RIGHT ? (h+1)%4 : h; }
+
+// Seeded RNG (mulberry32) so replays are deterministic
+function RNG(seed){ let t = seed >>> 0; return function(){
+  t += 0x6D2B79F5; let z = Math.imul(t ^ t>>>15, t|1);
+  z ^= z + Math.imul(z ^ z>>>7, z|61); return ((z ^ z>>>14)>>>0)/4294967296; }; }
+
+// Maze layouts: symmetric wall blocks per mode
+function mazeWalls(w, h){
+  const walls = new Set(); const key=(r,c)=>r+','+c;
+  const blocks = [[3,3],[3,4],[4,3],[3,w-4],[3,w-5],[4,w-4],
+                  [h-4,3],[h-4,4],[h-5,3],[h-4,w-4],[h-4,w-5],[h-5,w-4]];
+  for (const [r,c] of blocks){ walls.add(key(r,c)); }
+  return walls;
+}
+
+class Snake {
+  constructor(w=12,h=12,seed=1,mode='classic'){
+    this.w=w; this.h=h; this.mode=mode; this.seed=seed;
+    this.rng = RNG(seed);
+    this.walls = mode==='maze' ? mazeWalls(w,h) : new Set();
+    this.reset();
+  }
+  reset(){
+    const cy=Math.floor(this.h/2), cx=Math.floor(this.w/2);
+    this.body=[[cy,cx-2],[cy,cx-1],[cy,cx]];
+    this.heading=1; this.score=0; this.steps=0; this.done=false;
+    this._placeFood(); this.tickMs = this.mode==='blitz' ? 130 : this.mode==='maze' ? 140 : 130;
+  }
+  _placeFood(){
+    const occ=new Set(this.body.map(p=>p[0]+','+p[1]));
+    const free=[];
+    for(let r=0;r<this.h;r++)for(let c=0;c<this.w;c++){
+      const k=r+','+c; if(!occ.has(k)&&!this.walls.has(k)) free.push([r,c]);
+    }
+    this.food = free.length? free[Math.floor(this.rng()*free.length)] : null;
+  }
+  _blocked(r,c,ignoreTail=true){
+    if(r<0||r>=this.h||c<0||c>=this.w) return true;
+    if(this.walls.has(r+','+c)) return true;
+    const n=this.body.length;
+    for(let i=0;i<n;i++){ if(ignoreTail&&i===0) continue;
+      if(this.body[i][0]===r&&this.body[i][1]===c) return true; }
+    return false;
+  }
+  encodeState(){ // MUST match Python: ((ds*2+dl)*2+dr)*4 + foodDir
+    const [hr,hc]=this.body[this.body.length-1], h=this.heading;
+    const ah=DIRS[h], lh=DIRS[(h+3)%4], rh=DIRS[(h+1)%4];
+    const ds=this._blocked(hr+ah[0],hc+ah[1])?1:0;
+    const dl=this._blocked(hr+lh[0],hc+lh[1])?1:0;
+    const dr=this._blocked(hr+rh[0],hc+rh[1])?1:0;
+    const dy=this.food[0]-hr, dx=this.food[1]-hc;
+    let fa,ra;
+    if(h===0){fa=-dy;ra=dx;} else if(h===1){fa=dx;ra=dy;}
+    else if(h===2){fa=dy;ra=-dx;} else {fa=-dx;ra=-dy;}
+    const fd = Math.abs(fa)>=Math.abs(ra) ? (fa>0?0:3) : (ra>0?1:2);
+    return ((ds*2+dl)*2+dr)*4+fd;
+  }
+  encodeDQN(){ // MUST match Python train_dqn.encode_dqn
+    const v=new Float32Array(436);
+    const n=this.body.length;
+    for(let i=0;i<n;i++){ const [r,c]=this.body[i];
+      v[(i===n-1?0:144)+r*12+c]=1; }
+    v[288+this.food[0]*12+this.food[1]]=1;
+    v[432+this.heading]=1;
+    return v;
+  }
+  step(action){ // relative action -> {reward, done}
+    if(this.done) throw new Error('step on done game');
+    this.heading=relHeading(this.heading,action);
+    const [hr,hc]=this.body[this.body.length-1];
+    const [dr,dc]=DIRS[this.heading];
+    const nr=hr+dr, nc=hc+dc; this.steps++;
+    const ate = this.food && nr===this.food[0] && nc===this.food[1];
+    if(this._blocked(nr,nc,!ate)){ this.done=true; return {reward:-10,done:true}; }
+    const dBefore=Math.abs(hr-this.food[0])+Math.abs(hc-this.food[1]);
+    this.body.push([nr,nc]);
+    let reward;
+    if(ate){ this.score++; this._placeFood(); reward=10;
+      if(this.mode==='blitz') this.tickMs=Math.max(60,this.tickMs-1.5);
+    } else {
+      this.body.shift();
+      const dAfter=Math.abs(nr-this.food[0])+Math.abs(nc-this.food[1]);
+      reward = dAfter<dBefore?0.5 : dAfter>dBefore?-0.5 : 0;
+    }
+    if(this.steps>=20*this.w*this.h){ this.done=true; }
+    return {reward,done:this.done};
+  }
+}
+
+/* ================= AI POLICIES ================= */
+const AI_ELO = /*__AI_ELO__*/{"rookie":1240,"pro":1500,"grandmaster":1750};
+const AI_NAMES = {rookie:'Rookie', pro:'Pro', grandmaster:'Grandmaster'};
+
+const QPOLICY = /*__QPOLICY__*/[];
+function qAct(game){ return QPOLICY[game.encodeState()] ?? 0; }
+
+// DQN forward pass (weights injected at build time)
+const DQNW = /*__DQNW__*/null;
+function relu(x){ return x>0?x:0; }
+function dqnAct(game){
+  const x=game.encodeDQN(); const L=DQNW.layers;
+  let h=new Float32Array(128);
+  const w0=L[0].w,b0=L[0].b;
+  for(let j=0;j<128;j++){ let s=b0[j]; const row=w0[j];
+    for(let i=0;i<436;i++) s+=row[i]*x[i]; h[j]=relu(s); }
+  let h2=new Float32Array(64);
+  const w1=L[1].w,b1=L[1].b;
+  for(let j=0;j<64;j++){ let s=b1[j]; const row=w1[j];
+    for(let i=0;i<128;i++) s+=row[i]*h[i]; h2[j]=relu(s); }
+  const w2=L[2].w,b2=L[2].b; let best=0,bestV=-1e18;
+  for(let a=0;a<3;a++){ let s=b2[a]; const row=w2[a];
+    for(let i=0;i<64;i++) s+=row[i]*h2[i];
+    if(s>bestV){bestV=s;best=a;} }
+  return best;
+}
+
+// MCTS (ported from Python narcade/mcts.py) — real UCT search
+function mctsAct(game, simulations){
+  const w=game.w,h=game.h,walls=game.walls;
+  const rng=RNG((Math.random()*1e9)|0);
+  const GAMMA=0.95, C=1.0, ROLLOUT=100;
+  function stepState(body,food,heading,action){
+    heading=relHeading(heading,action);
+    const [hr,hc]=body[body.length-1], [dr,dc]=DIRS[heading];
+    const nr=hr+dr,nc=hc+dc;
+    const ate=food&&nr===food[0]&&nc===food[1];
+    const key=(r,c)=>r+','+c;
+    const occ=new Set(body.map(p=>key(p[0],p[1])));
+    if(!ate) occ.delete(key(body[0][0],body[0][1]));
+    if(nr<0||nr>=h||nc<0||nc>=w||occ.has(key(nr,nc))||walls.has(key(nr,nc)))
+      return {body,food,heading,ate:false,dead:true};
+    let nb=body.concat([[nr,nc]]), nf=food;
+    if(ate){
+      const free=[];
+      const occ2=new Set(nb.map(p=>key(p[0],p[1])));
+      for(let r=0;r<h;r++)for(let c=0;c<w;c++){const k=key(r,c);
+        if(!occ2.has(k)&&!walls.has(k))free.push([r,c]);}
+      nf=free.length?free[(rng()*free.length)|0]:null;
+    } else nb=nb.slice(1);
+    return {body:nb,food:nf,heading,ate,dead:false};
+  }
+  function greedyMove(body,food,heading){
+    if(!food) return null;
+    const [hr,hc]=body[body.length-1];
+    const key=(r,c)=>r+','+c;
+    const occ=new Set(body.map(p=>key(p[0],p[1]))); occ.delete(key(body[0][0],body[0][1]));
+    let best=null,bestD=1e9; const safe=[];
+    for(const a of [0,1,2]){
+      const hh=relHeading(heading,a),[dr,dc]=DIRS[hh];
+      const nr=hr+dr,nc=hc+dc,k=key(nr,nc);
+      if(nr<0||nr>=h||nc<0||nc>=w||occ.has(k)||walls.has(k)) continue;
+      safe.push(a);
+      const d=Math.abs(nr-food[0])+Math.abs(nc-food[1]);
+      if(d<bestD){bestD=d;best=a;}
+    }
+    if(best!==null) return best;
+    return safe.length?safe[(rng()*safe.length)|0]:null;
+  }
+  function rollout(body,food,heading,disc0){
+    let disc=disc0??1.0,val=0;
+    for(let t=0;t<ROLLOUT;t++){
+      const a=greedyMove(body,food,heading);
+      if(a===null) break;
+      const s=stepState(body,food,heading,a);
+      body=s.body;food=s.food;heading=s.heading;
+      if(s.dead) break;
+      if(s.ate) val+=disc;
+      disc*=GAMMA;
+      if(!food) break;
+    }
+    return val;
+  }
+  // tree: array of nodes {parent, action, children:Map, untried:[], visits, value}
+  const nodes=[{parent:-1,action:-1,children:new Map(),untried:[0,1,2],visits:0,value:0}];
+  const rootBody=game.body.map(p=>p.slice()), rootFood=game.food?game.food.slice():null,
+        rootHeading=game.heading;
+  for(let sim=0; sim<simulations; sim++){
+    let ni=0, body=rootBody.map(p=>p.slice()),
+        food=rootFood?rootFood.slice():null, heading=rootHeading,
+        dead=false, pathVal=0, disc=1.0;
+    while(nodes[ni].children.size&&nodes[ni].untried.length===0&&!dead){
+      const nd=nodes[ni]; let ba=null,bv=-1e18;
+      for(const [a,ci] of nd.children){
+        const ch=nodes[ci];
+        const v=ch.visits===0?1e17:(ch.value/ch.visits)+C*Math.sqrt(Math.log(nd.visits)/ch.visits);
+        if(v>bv){bv=v;ba=a;}
+      }
+      ni=nodes[ni].children.get(ba);
+      const s=stepState(body,food,heading,ba);
+      body=s.body;food=s.food;heading=s.heading;dead=s.dead;
+      if(s.ate) pathVal+=disc; disc*=GAMMA;
+    }
+    if(!dead&&nodes[ni].untried.length){
+      const u=nodes[ni].untried, a=u.splice((rng()*u.length)|0,1)[0];
+      const ci=nodes.length;
+      nodes.push({parent:ni,action:a,children:new Map(),untried:[0,1,2],visits:0,value:0});
+      nodes[ni].children.set(a,ci); ni=ci;
+      const s=stepState(body,food,heading,a);
+      body=s.body;food=s.food;heading=s.heading;dead=s.dead;
+      if(s.ate) pathVal+=disc; disc*=GAMMA;
+    }
+    const val=dead?pathVal:pathVal+rollout(body,food,heading,disc);
+    let cj=ni;
+    while(cj>=0){ nodes[cj].visits++; nodes[cj].value+=val; cj=nodes[cj].parent; }
+  }
+  let ba=0,bv=-1;
+  for(const [a,ci] of nodes[0].children) if(nodes[ci].visits>bv){bv=nodes[ci].visits;ba=a;}
+  return ba;
+}
+
+/* ================= RENDERER (juice: particles, interpolation, shake) ================= */
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const N = 12, CELL = 600/N;
+let particles=[], floaters=[], shake=0, prevBody=null;
+
+function spawnBurst(r,c,color,n=14){
+  for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, sp=60+Math.random()*160;
+    particles.push({x:(c+.5)*CELL,y:(r+.5)*CELL,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
+      life:1,color,sz:2+Math.random()*4}); }
+}
+function addFloater(r,c,text,color){ floaters.push({x:(c+.5)*CELL,y:r*CELL,text,color,life:1}); }
+
+function drawGame(game, alpha){
+  ctx.save();
+  if(shake>0){ ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); }
+  // bg grid
+  ctx.fillStyle='#0d1226'; ctx.fillRect(-20,-20,640,640);
+  ctx.strokeStyle='rgba(80,120,200,0.07)'; ctx.lineWidth=1;
+  for(let i=0;i<=N;i++){ ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,600);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(600,i*CELL);ctx.stroke(); }
+  // walls
+  if(game.walls.size){ ctx.fillStyle='#2b3a67';
+    for(const k of game.walls){ const [r,c]=k.split(',').map(Number);
+      roundRect(c*CELL+2,r*CELL+2,CELL-4,CELL-4,6); ctx.fill(); } }
+  // food (pulsing glow)
+  if(game.food){ const t=performance.now()/300;
+    const pr=CELL*0.28+Math.sin(t)*3;
+    ctx.shadowColor='#4ade80'; ctx.shadowBlur=18;
+    ctx.fillStyle='#4ade80';
+    ctx.beginPath();ctx.arc((game.food[1]+.5)*CELL,(game.food[0]+.5)*CELL,pr,0,7);ctx.fill();
+    ctx.shadowBlur=0; }
+  // snake (interpolated)
+  const body=game.body, n=body.length;
+  for(let i=0;i<n;i++){
+    let [r,c]=body[i], pr=r,pc=c;
+    if(prevBody&&prevBody[i]){ pr=prevBody[i][0]; pc=prevBody[i][1]; }
+    const rr=pr+(r-pr)*alpha, cc=pc+(c-pc)*alpha;
+    const headness=i===n-1;
+    const grad=ctx.createRadialGradient(cc*CELL,rr*CELL,2,cc*CELL,rr*CELL,CELL*.7);
+    if(headness){ grad.addColorStop(0,'#bbf7d0'); grad.addColorStop(1,'#22c55e'); }
+    else { const f=i/n; grad.addColorStop(0,'#4ade80'); grad.addColorStop(1,'#166534'); }
+    ctx.shadowColor=headness?'#4ade80':'transparent'; ctx.shadowBlur=headness?16:0;
+    ctx.fillStyle=grad;
+    const pad=headness?3:5;
+    roundRect(cc*CELL-pad,rr*CELL-pad,CELL-pad*2,CELL-pad*2,headness?10:8); ctx.fill();
+    ctx.shadowBlur=0;
+    if(headness){ // eyes
+      ctx.fillStyle='#0b0e1a';
+      const ex=cc*CELL, ey=rr*CELL, e=5;
+      const hd=game.heading;
+      const off=[[-e,-e],[e,-e],[e,e],[-e,e]][0];
+      ctx.beginPath();ctx.arc(ex-e/1.5,ey-e/1.5,2.6,0,7);ctx.fill();
+      ctx.beginPath();ctx.arc(ex+e/1.5,ey-e/1.5,2.6,0,7);ctx.fill();
+    }
+  }
+  // particles
+  for(const p of particles){
+    ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.color;
+    ctx.fillRect(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz);
+  }
+  ctx.globalAlpha=1;
+  // floaters
+  ctx.textAlign='center'; ctx.font='bold 20px sans-serif';
+  for(const f of floaters){ ctx.globalAlpha=Math.max(0,f.life);
+    ctx.fillStyle=f.color; ctx.fillText(f.text,f.x,f.y-10); }
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
+function roundRect(x,y,w,h,r){ ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath(); }
+function stepParticles(dt){
+  for(const p of particles){ p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;p.life-=dt*1.6; }
+  particles=particles.filter(p=>p.life>0);
+  for(const f of floaters){ f.y-=30*dt; f.life-=dt*1.2; }
+  floaters=floaters.filter(f=>f.life>0);
+  if(shake>0) shake=Math.max(0,shake-dt*60);
+}
+
+/* ================= CONTROLLER ================= */
+const store = {
+  get elo(){ return +(localStorage.getItem('dq_elo')||1200); },
+  set elo(v){ localStorage.setItem('dq_elo',Math.round(v)); },
+  get name(){ return localStorage.getItem('dq_name')||'YOU'; },
+  set name(v){ localStorage.setItem('dq_name',v); },
+};
+const AI_REF = /*__AI_REF__*/{"rookie":6,"pro":14,"grandmaster":28}; // median eval scores
+let G=null, mode='classic', playKind='human', aiKind='rookie';
+let acc=0,lastT=0,running=false,recording=null,prevScore=0;
+let mctsBudget=150, tourn=null;
+
+function newGame(m, kind, ai){
+  mode=m; playKind=kind; aiKind=ai;
+  const seed=(Math.random()*1e9)|0;
+  G=new Snake(12,12,seed,mode);
+  prevBody=null; particles=[];floaters=[];shake=0;acc=0;prevScore=0;
+  recording={mode,seed,kind,ai,actions:[],score:0};
+  if(kind==='tourn'&&tourn) document.getElementById('hMode').textContent=mode+' · vs '+AI_NAMES[tourn.opp];
+  else document.getElementById('hMode').textContent=mode+(kind==='ai'?' · '+AI_NAMES[ai]:'');
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('replaybar').classList.add('hidden');
+  running=true; lastT=performance.now();
+  updateHUD();
+}
+function updateHUD(){
+  document.getElementById('hScore').textContent=G?G.score:0;
+  document.getElementById('hElo').textContent=store.elo;
+  const best=bestScore(mode); document.getElementById('hBest').textContent=best;
+}
+function bestScore(m){
+  const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}');
+  return (lb[m]&&lb[m][0])?lb[m][0].score:0;
+}
+function aiAction(){
+  if(aiKind==='rookie') return qAct(G);
+  if(aiKind==='pro') return dqnAct(G);
+  // grandmaster: adaptive budget
+  const t0=performance.now();
+  const a=mctsAct(G,mctsBudget);
+  const dt=performance.now()-t0;
+  if(dt>250&&mctsBudget>60)mctsBudget-=20; else if(dt<80&&mctsBudget<300)mctsBudget+=20;
+  return a;
+}
+let inputQueue=[];
+function tick(){
+  if(!G||G.done) return;
+  prevBody=G.body.map(p=>p.slice());
+  let action;
+  if(playKind==='human'||playKind==='tourn'){
+    action=inputQueue.length?inputQueue.shift():STRAIGHT;
+  } else {
+    action=aiAction();
+  }
+  const before=G.score;
+  const {done}=G.step(action);
+  recording.actions.push(action); recording.score=G.score;
+  if(G.score>before){ const [hr,hc]=G.body[G.body.length-1];
+    spawnBurst(hr,hc,'#4ade80',16); addFloater(hr,hc,'+1','#4ade80'); }
+  if(done){
+    const [hr,hc]=G.body[G.body.length-1];
+    spawnBurst(hr,hc,'#f87171',40); shake=14;
+    running=false; onGameOver();
+  }
+  updateHUD();
+}
+function onGameOver(){
+  saveReplay(recording);
+  const ov=document.getElementById('overlay');
+  document.getElementById('ovTitle').textContent = G.score>0?`Score: ${G.score}`:'Game over';
+  let sub='';
+  const opp = playKind==='tourn' ? tourn.opp : (playKind==='ai'? aiKind : null);
+  if(playKind==='human'&&opp){
+    // human just played vs selected AI in tournament or... (menu human has no opp)
+  }
+  if(playKind==='tourn'){
+    // AI plays its game now (same mode, fresh seed), then compare
+    const aiGame=new Snake(12,12,(Math.random()*1e9)|0,mode);
+    const saveKind=aiKind; aiKind=tourn.opp;
+    let guard=0;
+    while(!aiGame.done&&guard++<5000){ aiGame.step(aiAction()); }
+    aiKind=saveKind;
+    const aiScore=aiGame.score, huScore=G.score;
+    const eloBefore=store.elo, aiElo=AI_ELO[tourn.opp];
+    const expected=1/(1+Math.pow(10,(aiElo-eloBefore)/400));
+    const actual=huScore>aiScore?1:huScore===aiScore?0.5:0;
+    store.elo=eloBefore+32*(actual-expected);
+    const d=Math.round(store.elo-eloBefore);
+    sub=`You ${huScore} vs ${AI_NAMES[tourn.opp]} ${aiScore} — ELO <span class="${d>=0?'elo-up':'elo-dn'}">${d>=0?'+':''}${d}</span> → ${store.elo}`;
+    if(actual===1){ tourn.round++;
+      if(tourn.round>=tourn.ladder.length){ sub+=`<br>🏆 Tournament complete! You beat all three AIs.`; tourn=null; }
+      else { tourn.opp=tourn.ladder[tourn.round]; sub+=`<br>Next: <b>${AI_NAMES[tourn.opp]}</b> (ELO ${AI_ELO[tourn.opp]})`; }
+    } else { sub+=`<br>Rematch <b>${AI_NAMES[tourn.opp]}</b> to advance.`; }
+    renderTourn();
+  } else if(playKind==='ai'){
+    sub=`${AI_NAMES[aiKind]} scored ${G.score}.`;
+  } else {
+    addScore(mode,store.name,G.score);
+    sub=`Nice run — saved to the leaderboard.`;
+  }
+  document.getElementById('ovSub').innerHTML=sub;
+  document.getElementById('ovReplay').classList.remove('hidden');
+  ov.classList.remove('hidden');
+  updateHUD(); renderLB();
+}
+// main loop
+function loop(t){
+  requestAnimationFrame(loop);
+  if(!running||!G) return;
+  const dt=Math.min(0.1,(t-lastT)/1000); lastT=t;
+  stepParticles(dt);
+  acc+=dt*1000;
+  let tickMs=G.tickMs;
+  while(acc>=tickMs&&running){ acc-=tickMs; tick(); }
+  drawGame(G,Math.min(1,acc/tickMs));
+  if(!running) drawGame(G,1);
+}
+requestAnimationFrame(loop);
+
+/* input: arrows/WASD -> relative action */
+const KEYDIR={ArrowUp:0,KeyW:0,ArrowRight:1,KeyD:1,ArrowDown:2,KeyS:2,ArrowLeft:3,KeyA:3};
+addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!running&&!document.getElementById('overlay').classList.contains('hidden')){e.preventDefault();document.getElementById('ovAgain').click();return;}
+  const d=KEYDIR[e.code]; if(d===undefined||!G||G.done) return;
+  e.preventDefault();
+  const rel=(d-G.heading+4)%4; // 0=fwd,1=right,2=back,3=left
+  if(rel===2) return; // no reversing
+  const a=rel===0?STRAIGHT:rel===1?RIGHT:LEFT;
+  if(inputQueue.length<3) inputQueue.push(a);
+});
+
+/* ================= REPLAYS ================= */
+function saveReplay(rec){
+  if(!rec||!rec.actions.length) return;
+  const rps=JSON.parse(localStorage.getItem('dq_rp')||'[]');
+  rps.unshift({mode:rec.mode,seed:rec.seed,kind:rec.kind,ai:rec.ai,
+    actions:rec.actions,score:rec.score,at:Date.now()});
+  localStorage.setItem('dq_rp',JSON.stringify(rps.slice(0,10)));
+  renderRP();
+}
+function renderRP(){
+  const rps=JSON.parse(localStorage.getItem('dq_rp')||'[]');
+  const el=document.getElementById('rpList');
+  if(!rps.length){el.innerHTML='No replays yet — finish a game.';return;}
+  el.innerHTML=rps.map((r,i)=>{
+    const who=r.kind==='human'?'YOU':AI_NAMES[r.ai]||r.ai;
+    return `<div style="margin:4px 0"><a href="#" data-rp="${i}" style="color:var(--accent2)">${who} · ${r.mode} · ${r.score} pts</a></div>`;
+  }).join('');
+  el.querySelectorAll('[data-rp]').forEach(a=>a.onclick=e=>{e.preventDefault();playReplay(+a.dataset.rp);});
+}
+let RP=null; // {game, actions, idx, playing, speed}
+function playReplay(i){
+  const rps=JSON.parse(localStorage.getItem('dq_rp')||'[]');
+  const r=rps[i]; if(!r) return;
+  RP={game:new Snake(12,12,r.seed,r.mode),actions:r.actions,idx:0,playing:true,speed:1,acc:0,last:performance.now(),label:`${r.kind==='human'?'YOU':AI_NAMES[r.ai]} · ${r.score} pts`};
+  prevBody=null;particles=[];floaters=[];shake=0;
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('replaybar').classList.remove('hidden');
+  running=false;
+  const bar=()=>{document.getElementById('rpPos').textContent=`${RP.label} — ${RP.idx}/${RP.actions.length}`;
+    document.getElementById('rpPlay').textContent=RP.playing?'⏸':'▶';};
+  bar(); RP.bar=bar;
+  const step=()=>{
+    if(!RP) return;
+    if(RP.playing&&RP.idx<RP.actions.length){
+      const now=performance.now(),dt=Math.min(.1,(now-RP.last)/1000);RP.last=now;
+      RP.acc+=dt*1000*RP.speed;
+      const tickMs=130;
+      while(RP.acc>=tickMs&&RP.idx<RP.actions.length){
+        RP.acc-=tickMs; prevBody=RP.game.body.map(p=>p.slice());
+        const before=RP.game.score;
+        RP.game.step(RP.actions[RP.idx++]);
+        if(RP.game.score>before){const[hr,hc]=RP.game.body[RP.game.body.length-1];spawnBurst(hr,hc,'#4ade80',10);}
+      }
+      stepParticles(dt);
+      drawGame(RP.game,Math.min(1,RP.acc/tickMs)); bar();
+    }
+    if(RP) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+document.getElementById('rpPlay').onclick=()=>{if(RP){RP.playing=!RP.playing;RP.last=performance.now();RP.bar();}};
+document.getElementById('rpBack').onclick=()=>{if(RP){RP.idx=Math.max(0,RP.idx-10);resyncReplay();}};
+document.getElementById('rpFwd').onclick=()=>{if(RP){RP.speed=RP.speed>=4?1:RP.speed*2;RP.bar();}};
+document.getElementById('rpExit').onclick=()=>{RP=null;document.getElementById('replaybar').classList.add('hidden');};
+function resyncReplay(){ // rebuild state up to idx (deterministic)
+  const rps=JSON.parse(localStorage.getItem('dq_rp')||'[]');
+  const cur=RP; if(!cur) return;
+  // find matching replay by label is fragile; instead re-simulate from stored actions
+  const g=new Snake(12,12,cur.game.seed,cur.game.mode);
+  for(let i=0;i<cur.idx&&!g.done;i++) g.step(cur.actions[i]);
+  cur.game=g; prevBody=null; cur.acc=0;
+}
+
+/* ================= LEADERBOARD / TOURNAMENT ================= */
+function addScore(m,name,score){
+  const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}');
+  lb[m]=lb[m]||[]; lb[m].push({name,score,at:Date.now()});
+  lb[m].sort((a,b)=>b.score-a.score); lb[m]=lb[m].slice(0,10);
+  localStorage.setItem('dq_lb',JSON.stringify(lb));
+}
+function renderLB(){
+  const m=document.getElementById('modeSel').value;
+  document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Rookie ${AI_ELO.rookie}</span> <span class="tag ai">Pro ${AI_ELO.pro}</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
+  const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}')[m]||[];
+  document.getElementById('lbTable').innerHTML='<tr><th>#</th><th>Score</th><th>Who</th></tr>'+
+    (lb.map((e,i)=>`<tr><td>${i+1}</td><td>${e.score}</td><td>${e.name}</td></tr>`).join('')||'<tr><td colspan=3 style="color:var(--dim)">No scores yet — go play.</td></tr>');
+}
+function renderTourn(){
+  const el=document.getElementById('tournStat');
+  if(!tourn){el.textContent='Climb the ladder: Pro → Rookie → Grandmaster.';return;}
+  el.innerHTML=`Round ${tourn.round+1}/3 — next: <b>${AI_NAMES[tourn.opp]}</b>`;
+}
+
+/* ================= UI WIRING ================= */
+function syncAIForMode(){
+  const m=document.getElementById('modeSel').value;
+  const ai=document.getElementById('aiSel');
+  // learned AIs only trained on classic; maze is MCTS/human territory
+  [...ai.options].forEach(o=>{ o.disabled = (m==='maze'&&(o.value==='rookie'||o.value==='pro')); });
+  if(ai.selectedOptions[0].disabled) ai.value='grandmaster';
+}
+document.getElementById('modeSel').onchange=()=>{syncAIForMode();renderLB();};
+document.getElementById('btnHuman').onclick=()=>{tourn=null;renderTourn();newGame(document.getElementById('modeSel').value,'human');};
+document.getElementById('btnAI').onclick=()=>{tourn=null;renderTourn();newGame(document.getElementById('modeSel').value,'ai',document.getElementById('aiSel').value);};
+document.getElementById('btnTourn').onclick=()=>{
+  // ladder in ELO order (measured): pro 928 -> rookie 1369 -> grandmaster 1810
+  tourn={ladder:['pro','rookie','grandmaster'],round:0,opp:'pro'};
+  renderTourn(); newGame(document.getElementById('modeSel').value,'tourn');
+};
+document.getElementById('ovAgain').onclick=()=>{
+  if(playKind==='tourn'&&tourn) newGame(mode,'tourn');
+  else newGame(mode,playKind,aiKind);
+};
+document.getElementById('ovMenu').onclick=()=>{document.getElementById('overlay').classList.add('hidden');running=false;};
+document.getElementById('ovReplay').onclick=()=>{playReplay(0);};
+syncAIForMode(); renderLB(); renderRP(); renderTourn(); updateHUD();
+</script>
+</body>
+</html>
