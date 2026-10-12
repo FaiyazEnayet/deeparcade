@@ -21,7 +21,7 @@ Snake with opponents that actually learned to play. Three of them. A Q-learner, 
 
 **Grandmaster** is MCTS. It never trained. Every move, it runs 80 simulated futures and picks the winner. It is by far the strongest player here.
 
-Here is the honest surprise from evaluation. Rookie beats Pro. The 32-state abstraction is just that good, and learning from raw pixels is genuinely harder. The dashboard shows all of it.
+ Rookie beats Pro. The 32-state abstraction is just that good, and learning from raw pixels is genuinely harder. The dashboard shows all of it.
 
 ## Measured results
 
