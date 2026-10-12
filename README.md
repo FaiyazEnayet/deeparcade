@@ -64,7 +64,7 @@ Tournament mode ladders you up: Pro, then Rookie, then Grandmaster, in ELO order
 
 Every game records its seed and actions, so replays re-simulate perfectly. Pause, step, change speed. Leaderboards and your ELO live in your browser.
 
-Juice included: particles, screen shake, floating score popups, smooth interpolated movement.
+Included: particles, screen shake, floating score popups, smooth interpolated movement.
 
 ## Run it yourself
 
