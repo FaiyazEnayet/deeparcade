@@ -1,0 +1,64 @@
+{
+  "random": {
+    "actions": [
+      0.333,
+      0.339,
+      0.328
+    ],
+    "deaths": {
+      "death": 200
+    },
+    "food_per_100_steps": 0.72,
+    "episodes": 200
+  },
+  "greedy": {
+    "actions": [
+      0.789,
+      0.108,
+      0.103
+    ],
+    "deaths": {
+      "death": 200
+    },
+    "food_per_100_steps": 10.57,
+    "episodes": 200
+  },
+  "rookie": {
+    "actions": [
+      0.483,
+      0.164,
+      0.353
+    ],
+    "deaths": {
+      "death": 198,
+      "timeout": 2
+    },
+    "food_per_100_steps": 8.51,
+    "episodes": 200
+  },
+  "pro": {
+    "actions": [
+      0.4,
+      0.231,
+      0.369
+    ],
+    "deaths": {
+      "death": 195,
+      "timeout": 5
+    },
+    "food_per_100_steps": 4.08,
+    "episodes": 200
+  },
+  "grandmaster": {
+    "actions": [
+      0.486,
+      0.253,
+      0.261
+    ],
+    "deaths": {
+      "death": 30
+    },
+    "food_per_100_steps": 7.73,
+    "episodes": 30
+  }
+}

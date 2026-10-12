@@ -1,0 +1,13 @@
+{
+  "episodes": 30000,
+  "seed": 7,
+  "width": 12,
+  "height": 12,
+  "eps_start": 1.0,
+  "eps_end": 0.05,
+  "checkpoint_every": 2000,
+  "elo_games": 50,
+  "seconds": 19.0,
+  "final_mean100_score": 11.54,
+  "final_elo": 1224.8790159676932
+}

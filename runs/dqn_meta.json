@@ -1,0 +1,7 @@
+{
+  "steps": 300000,
+  "episodes": 6984,
+  "seed": 11,
+  "seconds": 522.4,
+  "final_mean100": 4.54
+}
