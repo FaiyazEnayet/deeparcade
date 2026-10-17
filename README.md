@@ -33,6 +33,10 @@ Agents are evaluated on seeded classic-board games. Learning curves, score distr
 | Same evaluation | DQN 6.39; MCTS 44.1 |
 | Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
 
+## Updating this project
+
+Dashboard source language: **Python and browser JavaScript**. Generator: `scripts/make_dashboard.py and scripts/make_game.py`. To keep the interactive page, figures, data animation, and README consistent, follow [the coding-agent update guide](AGENT-DASHBOARD-GUIDE.md). The local interactive output is `docs/dashboard.html`.
+
 ## Run locally
 
 
