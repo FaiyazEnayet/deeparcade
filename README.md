@@ -10,7 +10,7 @@ DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake ag
 
 **Python · reinforcement learning · browser inference**
 
-[![DeepArcade demo](docs/demo.gif)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
+[![DeepArcade demo](docs/demo.gif?v=data-20261017)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
 
 
 ## Explore
