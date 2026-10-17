@@ -17,13 +17,13 @@ ROOT = os.path.join(HERE, "..")
 
 
 def main():
-    with open(os.path.join(ROOT, "web", "game.html")) as f:
+    with open(os.path.join(ROOT, "web", "game.html"), encoding="utf-8") as f:
         html = f.read()
-    with open(os.path.join(ROOT, "runs", "policy.json")) as f:
+    with open(os.path.join(ROOT, "runs", "policy.json"), encoding="utf-8") as f:
         qpolicy = json.load(f)["best_action"]
-    with open(os.path.join(ROOT, "runs", "dqn_weights.json")) as f:
+    with open(os.path.join(ROOT, "runs", "dqn_weights.json"), encoding="utf-8") as f:
         dqnw = json.load(f)
-    with open(os.path.join(ROOT, "runs", "eval.json")) as f:
+    with open(os.path.join(ROOT, "runs", "eval.json"), encoding="utf-8") as f:
         ev = json.load(f)
 
     elo = {k: ev["elo"][k] for k in ("rookie", "pro", "grandmaster")}
@@ -38,7 +38,7 @@ def main():
 
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     out = os.path.join(ROOT, "docs", "game.html")
-    with open(out, "w") as f:
+    with open(out, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"game -> {out} ({os.path.getsize(out)/1e6:.2f} MB)")
 
