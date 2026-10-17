@@ -35,7 +35,7 @@ Agents are evaluated on seeded classic-board games. Learning curves, score distr
 
 ## Updating this project
 
-Dashboard source language: **Python and browser JavaScript**. Generator: `scripts/make_dashboard.py and scripts/make_game.py`. To keep the interactive page, figures, data animation, and README consistent, follow [the coding-agent update guide](AGENT-DASHBOARD-GUIDE.md). The local interactive output is `docs/dashboard.html`.
+Dashboard source language: **Python and browser JavaScript**. Generator: `scripts/make_dashboard.py and scripts/make_game.py`. The local interactive output is `docs/dashboard.html`.
 
 ## Run locally
 
