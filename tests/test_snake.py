@@ -122,3 +122,34 @@ def test_bad_action_raises():
     env.reset()
     with pytest.raises(ValueError):
         env.step(99)
+
+
+def test_filled_board_is_win_not_crash():
+    """Eating the last food on a full board ends the episode as a win."""
+    env = SnakeEnv(width=2, height=3, seed=1)
+    env.reset()
+    # 5-segment snake, one free cell (2,1) holding the food.
+    env.body = deque([(0, 0), (0, 1), (1, 1), (1, 0), (2, 0)])
+    env.heading = 1  # right; head (2,0) -> (2,1)
+    env.food = (2, 1)
+    env.score = 4
+    env.done = False
+    state, reward, done, info = env.step(STRAIGHT)
+    assert done is True
+    assert info["reason"] == "win"
+    assert env.score == 5
+    assert len(env.body) == 6  # board completely filled
+    assert 0 <= state < 32  # terminal observation is well-defined
+
+
+def test_step_after_win_raises():
+    env = SnakeEnv(width=2, height=3, seed=1)
+    env.reset()
+    env.body = deque([(0, 0), (0, 1), (1, 1), (1, 0), (2, 0)])
+    env.heading = 1
+    env.food = (2, 1)
+    env.done = False
+    _, _, done, info = env.step(STRAIGHT)
+    assert done and info["reason"] == "win"
+    with pytest.raises(RuntimeError):
+        env.step(STRAIGHT)
