@@ -61,6 +61,10 @@ class SnakeEnv:
         Bits: danger straight / left / right (cell ahead is wall or body),
         then food direction relative to heading: 0=ahead, 1=right, 2=left, 3=behind.
         state = ((ds*2 + dl)*2 + dr) * 4 + food_dir  -> 0..31
+
+        On a filled board (food is None, terminal win) there is no food
+        direction; the encoding uses food_dir 0 and the danger bits as
+        computed (all set, since every neighbor is body or wall).
         """
         hr, hc = self.body[-1]
         h = self.heading
@@ -71,21 +75,24 @@ class SnakeEnv:
         dl = 1 if self._cell_blocked(hr + left[0], hc + left[1]) else 0
         dr = 1 if self._cell_blocked(hr + right[0], hc + right[1]) else 0
 
-        fr, fc = self.food
-        dy, dx = fr - hr, fc - hc
-        # Rotate (dx, dy) into the heading frame: fa = forward comp, ra = right comp.
-        if h == 0:      # up
-            fa, ra = -dy, dx
-        elif h == 1:    # right
-            fa, ra = dx, dy
-        elif h == 2:    # down
-            fa, ra = dy, -dx
-        else:           # left
-            fa, ra = -dx, -dy
-        if abs(fa) >= abs(ra):
-            food_dir = 0 if fa > 0 else 3
+        if self.food is None:
+            food_dir = 0  # terminal win: no food direction
         else:
-            food_dir = 1 if ra > 0 else 2
+            fr, fc = self.food
+            dy, dx = fr - hr, fc - hc
+            # Rotate (dx, dy) into the heading frame: fa = forward comp, ra = right comp.
+            if h == 0:      # up
+                fa, ra = -dy, dx
+            elif h == 1:    # right
+                fa, ra = dx, dy
+            elif h == 2:    # down
+                fa, ra = dy, -dx
+            else:           # left
+                fa, ra = -dx, -dy
+            if abs(fa) >= abs(ra):
+                food_dir = 0 if fa > 0 else 3
+            else:
+                food_dir = 1 if ra > 0 else 2
         return ((ds * 2 + dl) * 2 + dr) * 4 + food_dir
 
     def step(self, action):
@@ -116,6 +123,10 @@ class SnakeEnv:
             self.score += 1
             self._place_food()
             reward = self.FOOD_REWARD
+            if self.food is None:
+                # Board completely filled: win.
+                self.done = True
+                return self.encode_state(), reward, True, {"reason": "win"}
         else:
             self.body.popleft()
             dist_after = abs(nr - self.food[0]) + abs(nc - self.food[1])
