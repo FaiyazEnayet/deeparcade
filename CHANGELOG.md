@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.3.0
+
+### Added
+- DQN failure diagnosis (`scripts/diagnose_dqn.py`, DA4). Instrumented
+  training with a fixed compute budget (60k steps, 3 seeds each) across
+  four variants: baseline DQN, double-DQN, reward-shaping removed, and
+  supervised imitation of the greedy policy. Logs Bellman targets, TD
+  loss, Q magnitudes, epsilon and death rates to
+  `runs/da4_diagnosis.json`. Findings, documented in the README: DDQN
+  does not help (not overestimation bias); removing shaping collapses
+  learning to ~0.3 (shaping is load-bearing); the supervised clone
+  reaches near-zero training loss but scores only ~3.7/20 on fresh
+  seeds (the MLP memorizes flat pixels instead of learning spatial
+  abstractions, so the representation is the bottleneck); 100% death
+  rate with Q-values saturated at death magnitude. Scaling the MLP
+  will not close the gap.
+
+### Tests
+- 5 new regression tests in `tests/test_diagnose_dqn.py`; full suite
+  32/32 green.
+
 ## v1.2.0
 
 ### Fixed
