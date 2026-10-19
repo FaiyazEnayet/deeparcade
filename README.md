@@ -73,6 +73,17 @@ Recorded evaluation uses seeded classic-board games, with 500 games for most pol
 
 The DQN underperforms the greedy and tabular baselines in the committed run. The MCTS mean is high but comes from a smaller sample. A convincing comparison requires the stated game conditions, seeds and sample counts rather than agent names or apparent sophistication.
 
+### DA4: DQN failure diagnosis
+
+Before scaling the DQN, we diagnosed why it fails. `scripts/diagnose_dqn.py` runs four variants with a fixed compute budget (60k steps, 3 seeds each) and logs Bellman targets, TD loss, Q magnitudes, epsilon and death rates. Findings:
+
+- **Not overestimation bias.** Double-DQN matches vanilla DQN (eval mean ~2.7 vs ~2.9 over 100 games); the max-Q correction changes nothing.
+- **Reward shaping is load-bearing.** Removing the dense +/-0.5 shaping (sparse +10/-10 only) collapses learning to ~0.3. Shaping is not the problem; it is the only thing keeping gradients informative.
+- **The representation is the bottleneck.** A supervised clone of the greedy policy reaches near-zero training loss yet scores only ~3.7/20 on fresh seeds: the MLP memorizes training states instead of learning spatial abstractions from flat binary pixels. The tabular agent works because its 32-state encoding (danger bits + food direction) hands it the right features.
+- **Death-dominated.** All RL variants die in 100% of episodes; Q-values saturate near the death-reward magnitude, so the network learns mostly to fear death, not to seek food.
+
+Conclusion: scaling this MLP will not close the gap. The honest next steps are a convolutional architecture, hand-crafted spatial features, or keeping DQN as the documented struggling-learner tier. Full curves: `runs/da4_diagnosis.json`.
+
 ## Code and data
 
 `src/narcade/` contains the Snake environment and agents. `runs/eval.json` stores the evaluation. `web/game.html` is the browser template; `scripts/make_game.py` injects policy data.
