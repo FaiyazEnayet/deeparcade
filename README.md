@@ -1,1 +1,100 @@
-PHAgYWxpZ249ImNlbnRlciI+PGltZyBzcmM9ImRvY3MvcmVhZG1lLWJhbm5lci5zdmc/dj10eXBlLTIwMjYxMDE3YiIgYWx0PSJEZWVwQXJjYWRlOiBBIHBsYXlhYmxlIGNvbXBhcmlzb24gb2YgU25ha2UgYWdlbnRzIiB3aWR0aD0iMTIwMCI+PC9wPg0KDQpbIVtUZXN0c10oaHR0cHM6Ly9naXRodWIuY29tL0ZhaXlhekVuYXlldC9kZWVwYXJjYWRlL2FjdGlvbnMvd29ya2Zsb3dzL2NpLnltbC9iYWRnZS5zdmcpXShodHRwczovL2dpdGh1Yi5jb20vRmFpeWF6RW5heWV0L2RlZXBhcmNhZGUvYWN0aW9ucy93b3JrZmxvd3MvY2kueW1sKSBbIVtMaWNlbnNlOiBNSVRdKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvbGljZW5zZS1NSVQtMDA3RUM2KV0oTElDRU5TRSkgIVtQeXRob24gMy4xMCtdKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvUHl0aG9uLTMuMTAlMkItMzc3NkFCKSAhW0J1aWx0IHdpdGggUHlUb3JjaCArIGJyb3dzZXIgaW5mZXJlbmNlXShodHRwczovL2ltZy5zaGllbGRzLmlvL2JhZGdlL2J1aWx0JTIwd2l0aC1QeVRvcmNoJTIwJTJCJTIwYnJvd3NlciUyMGluZmVyZW5jZS01NTU1NTUpIFshW0ludGVyYWN0aXZlIGRlbW9dKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvZGVtby1pbnRlcmFjdGl2ZS00QzlEMzkpXShodHRwczovL2ZhaXlhemVuYXlldC5naXRodWIuaW8vZGVlcGFyY2FkZS9kb2NzL2Rhc2hib2FyZC5odG1sKQ0KDQo8cCBhbGlnbj0iY2VudGVyIj48YSBocmVmPSJodHRwczovL2ZhaXlhemVuYXlldC5naXRodWIuaW8vZGVlcGFyY2FkZS9kb2NzL2Rhc2hib2FyZC5odG1sIj48Yj5PcGVuIGludGVyYWN0aXZlIGRlbW88L2I+PC9hPiDCtyA8YSBocmVmPSIjbWV0aG9kIj5NZXRob2Q8L2E+IMK3IDxhIGhyZWY9IiNydW4tbG9jYWxseSI+UnVuIGxvY2FsbHk8L2E+PC9wPg0KDQojIERlZXBBcmNhZGUNCg0KRGVlcEFyY2FkZSBjb21wYXJlcyByYW5kb20sIGhldXJpc3RpYywgdGFidWxhciBRLWxlYXJuaW5nLCBEUU4gYW5kIE1DVFMgU25ha2UgYWdlbnRzLiBUaGUgZGFzaGJvYXJkIHBhaXJzIGV2YWx1YXRpb24gcmVzdWx0cyB3aXRoIHRoZSBhY3R1YWwgYnJvd3NlciBnYW1lLCBzbyB0aGUgYmVoYXZpb3IgY2FuIGJlIGluc3BlY3RlZCBhcyB3ZWxsIGFzIHN1bW1hcml6ZWQuDQoNCg0KWyFbRGVlcEFyY2FkZSBkZW1vXShkb2NzL2RlbW8uZ2lmP3Y9c2hvd2Nhc2UtMjAyNjEwMTdiKV0oaHR0cHM6Ly9mYWl5YXplbmF5ZXQuZ2l0aHViLmlvL2RlZXBhcmNhZGUvZG9jcy9kYXNoYm9hcmQuaHRtbCkNCg0KDQpQbGF5aW5nIGFnYWluc3QgdGhlIHRyYWluZWQgcG9saWNpZXMgbWFrZXMgdGhlaXIgZXZhbHVhdGlvbiBlYXNpZXIgdG8gaW50ZXJwcmV0LiBBIHN0cm9uZyBhdmVyYWdlIHNjb3JlIGNhbiBjb2V4aXN0IHdpdGggYnJpdHRsZSB0dXJucywgbG9uZyBsb29wcyBvciBpbmNvbnNpc3RlbnQgYmVoYXZpb3IgYWNyb3NzIHNlZWRzLCB3aGljaCBhIHNpbmdsZSBzaG93Y2FzZSBydW4gY2Fubm90IGVzdGFibGlzaC4gVGhlIGFnZW50IGNvbXBhcmlzb24gdGhlcmVmb3JlIGtlZXBzIHNjb3JlIGRpc3RyaWJ1dGlvbnMsIHRyYWluaW5nIGN1cnZlcyBhbmQgZXZhbHVhdGlvbiBzYW1wbGUgY291bnRzIGFsb25nc2lkZSB0aGUgcGxheWFibGUgZXhwZXJpZW5jZS4NCg0KIyMgRXhwbG9yZQ0KDQotIENvbXBhcmUgYWdlbnQgc2NvcmUgZGlzdHJpYnV0aW9ucywgbGVhcm5pbmcgYmVoYXZpb3IgYW5kIGhlYWQtdG8taGVhZCBvdXRjb21lcy4NCi0gTG9hZCB0aGUgZ2VudWluZSBnYW1lIGluc2lkZSB0aGUgZGFzaGJvYXJkIG9yIG9wZW4gdGhlIHN0YW5kYWxvbmUgSFRNTCBnYW1lLg0KLSBVc2Uga2V5Ym9hcmQgY29udHJvbHMsIHRoZW4gcmVzdGFydCBkaXJlY3RseSBvdmVyIHRoZSBib2FyZCBhZnRlciBhIHJ1biBlbmRzLg0KDQojIyBNZXRob2QNCg0KQWdlbnRzIGFyZSBldmFsdWF0ZWQgb24gc2VlZGVkIGNsYXNzaWMtYm9hcmQgZ2FtZXMuIExlYXJuaW5nIGN1cnZlcywgc2NvcmUgZGlzdHJpYnV0aW9ucywgcGFpcndpc2Ugb3V0Y29tZXMgYW5kIHN0cmF0ZWd5IHN0YXRpc3RpY3MgcmV0YWluIHRoZWlyIG9yaWdpbmFsIGV2YWx1YXRpb24gY29uZGl0aW9ucy4gVGhlIGJyb3dzZXIgZ2FtZSB1c2VzIGV4cG9ydGVkIHBvbGljaWVzIGFuZCBhIEphdmFTY3JpcHQgZm9yd2FyZCBwYXNzLg0KDQojIyBFdmlkZW5jZSBhdCBhIGdsYW5jZQ0KDQp8IFNjb3BlIHwgUmVjb3JkZWQgcmVzdWx0IG9yIGNvbnRyYWN0IHwNCnwgOi0tLSB8IDotLS0gfA0KfCBFdmFsdWF0aW9uIGdhbWVzIHwgNTAwIHBlciBwb2xpY3ksIGV4Y2VwdCBNQ1RTIHdpdGggNTAgfA0KfCBNZWFuIGZvb2Qgc2NvcmUgfCBSYW5kb20gMC4xNjsgZ3JlZWR5IDE4Ljg5OyB0YWJ1bGFyIFEgMjAuNzggfA0KfCBTYW1lIGV2YWx1YXRpb24gfCBEUU4gNi4zOTsgTUNUUyA0NC4xIHwNCnwgSW50ZXJwcmV0YXRpb24gfCBNQ1RTIGhhcyBhIHNtYWxsZXIgc2FtcGxlOyB0aGUgRFFOIGRvZXMgbm90IG91dHBlcmZvcm0gdGhlIHNpbXBsZSBiYXNlbGluZXMgfA0KDQojIyBVcGRhdGluZyB0aGlzIHByb2plY3QNCg0KRGFzaGJvYXJkIHNvdXJjZSBsYW5ndWFnZTogKipQeXRob24gYW5kIGJyb3dzZXIgSmF2YVNjcmlwdCoqLiBHZW5lcmF0b3I6IGBzY3JpcHRzL21ha2VfZGFzaGJvYXJkLnB5IGFuZCBzY3JpcHRzL21ha2VfZ2FtZS5weWAuIFRoZSBsb2NhbCBpbnRlcmFjdGl2ZSBvdXRwdXQgaXMgYGRvY3MvZGFzaGJvYXJkLmh0bWxgLg0KDQojIyBSdW4gbG9jYWxseQ0KDQoNCmBgYHNoDQpweXRob24gLW0gcGlwIGluc3RhbGwgLWUgIi5bZGV2XSINCnB5dGhvbiAtbSBwaXAgaW5zdGFsbCAtciBwb3J0Zm9saW9fdWkvcmVxdWlyZW1lbnRzLnR4dA0KcHl0aG9uIC1tIHB5dGVzdCB0ZXN0cyAtcQ0KcHl0aG9uIHNjcmlwdHMvbWFrZV9nYW1lLnB5DQpweXRob24gc2NyaXB0cy9tYWtlX2Rhc2hib2FyZC5weQ0KYGBgDQoNCk9wZW4gW3RoZSBzdGFuZGFsb25lIGdhbWVdKGh0dHBzOi8vZmFpeWF6ZW5heWV0LmdpdGh1Yi5pby9kZWVwYXJjYWRlL2RvY3MvZ2FtZS5odG1sKSB0byBwbGF5IHdpdGhvdXQgdGhlIGRhc2hib2FyZC4NCg0KIyMgVGVjaG5pY2FsIGRlc2lnbg0KDQpUaGUgYWdlbnQgcm9zdGVyIGRlbGliZXJhdGVseSBtaXhlcyBzaW1wbGUgYmFzZWxpbmVzLCBsZWFybmVkIHBvbGljaWVzIGFuZCBzZWFyY2guIFRhYnVsYXIgUS1sZWFybmluZyBhbmQgRFFOIGxlYXJuIHBvbGljaWVzOyBNQ1RTIHNlYXJjaGVzIGZyb20gdGhlIGN1cnJlbnQgc3RhdGUuIEV4cG9ydGVkIHBvbGljeSBkYXRhIGxldHMgdGhlIGJyb3dzZXIgZXhlY3V0ZSB0aGUgbGVhcm5lZCBiZWhhdmlvciB3aXRob3V0IGEgbW9kZWwgc2VydmVyLiBUaGUgc2FtZSBnYW1lIHJlbWFpbnMgYXZhaWxhYmxlIHdpdGhpbiB0aGUgZGFzaGJvYXJkIGFuZCBhcyBhIHN0YW5kYWxvbmUgZmlsZS4NCg0KYGBgbWVybWFpZA0KZmxvd2NoYXJ0IExSDQogIE4wWyJTZWVkZWQgU25ha2UgZW52aXJvbm1lbnQiXSAtLT4gTjFbIlEgbGVhcm5pbmciXQ0KICBOMFsiU2VlZGVkIFNuYWtlIGVudmlyb25tZW50Il0gLS0+IE4yWyJEUU4gdHJhaW5pbmciXQ0KICBOMFsiU2VlZGVkIFNuYWtlIGVudmlyb25tZW50Il0gLS0+IE4zWyJNQ1RTIHNlYXJjaCJdDQogIE4xWyJRIGxlYXJuaW5nIl0gLS0+IE40WyJBZ2VudCBldmFsdWF0aW9uIl0NCiAgTjJbIkRRTiB0cmFpbmluZyJdIC0tPiBONFsiQWdlbnQgZXZhbHVhdGlvbiJdDQogIE4zWyJNQ1RTIHNlYXJjaCJdIC0tPiBONFsiQWdlbnQgZXZhbHVhdGlvbiJdDQogIE40WyJBZ2VudCBldmFsdWF0aW9uIl0gLS0+IE41WyJCcm93c2VyIHBvbGljaWVzIGFuZCBkYXNoYm9hcmQiXQ0KYGBgDQoNCiMjIEV2YWx1YXRpb24gcHJvdG9jb2wNCg0KUmVjb3JkZWQgZXZhbHVhdGlvbiB1c2VzIHNlZWRlZCBjbGFzc2ljLWJvYXJkIGdhbWVzLCB3aXRoIDUwMCBnYW1lcyBmb3IgbW9zdCBwb2xpY2llcyBhbmQgNTAgZm9yIE1DVFMuIFNjb3JlcywgZGlzdHJpYnV0aW9ucywgbGVhcm5pbmcgY3VydmVzIGFuZCBwYWlyd2lzZSBvdXRjb21lcyBhbnN3ZXIgZGlmZmVyZW50IHF1ZXN0aW9ucy4gQnJvd3NlciBtYXplL2JsaXR6IG1vZGVzIGFuZCBhZGFwdGl2ZSBNQ1RTIGJ1ZGdldHMgYXJlIG5vdCBlcXVpdmFsZW50IHRvIHRoZSBmaXhlZCByZWNvcmRlZCBldmFsdWF0aW9uLg0KDQohW0FnZW50IGV2YWx1YXRpb24sIHdpdGggdW5lcXVhbCBzYW1wbGUgc2l6ZXNdKGRvY3MvcmVzdWx0cy5wbmcpDQoNClRoZSBEUU4gdW5kZXJwZXJmb3JtcyB0aGUgZ3JlZWR5IGFuZCB0YWJ1bGFyIGJhc2VsaW5lcyBpbiB0aGUgY29tbWl0dGVkIHJ1bi4gVGhlIE1DVFMgbWVhbiBpcyBoaWdoIGJ1dCBjb21lcyBmcm9tIGEgc21hbGxlciBzYW1wbGUuIEEgY29udmluY2luZyBjb21wYXJpc29uIHJlcXVpcmVzIHRoZSBzdGF0ZWQgZ2FtZSBjb25kaXRpb25zLCBzZWVkcyBhbmQgc2FtcGxlIGNvdW50cyByYXRoZXIgdGhhbiBhZ2VudCBuYW1lcyBvciBhcHBhcmVudCBzb3BoaXN0aWNhdGlvbi4KCiMjIyBEQTQ6IERRTiBmYWlsdXJlIGRpYWdub3NpcwoKQmVmb3JlIHNjYWxpbmcgdGhlIERRTiwgd2UgZGlhZ25vc2VkIHdoeSBpdCBmYWlscy4gYHNjcmlwdHMvZGlhZ25vc2VfZHFuLnB5YCBydW5zIGZvdXIgdmFyaWFudHMgd2l0aCBhIGZpeGVkIGNvbXB1dGUgYnVkZ2V0ICg2MGsgc3RlcHMsIDMgc2VlZHMgZWFjaCkgYW5kIGxvZ3MgQmVsbG1hbiB0YXJnZXRzLCBURCBsb3NzLCBRIG1hZ25pdHVkZXMsIGVwc2lsb24gYW5kIGRlYXRoIHJhdGVzLiBGaW5kaW5nczoKCi0gKipOb3Qgb3ZlcmVzdGltYXRpb24gYmlhcy4qKiBEb3VibGUtRFFOIG1hdGNoZXMgdmFuaWxsYSBEUU4gKGV2YWwgbWVhbiB+Mi43IHZzIH4yLjkgb3ZlciAxMDAgZ2FtZXMpOyB0aGUgbWF4LVEgY29ycmVjdGlvbiBjaGFuZ2VzIG5vdGhpbmcuCi0gKipSZXdhcmQgc2hhcGluZyBpcyBsb2FkLWJlYXJpbmcuKiogUmVtb3ZpbmcgdGhlIGRlbnNlICsvLTAuNSBzaGFwaW5nIChzcGFyc2UgKzEwLy0xMCBvbmx5KSBjb2xsYXBzZXMgbGVhcm5pbmcgdG8gfjAuMy4gU2hhcGluZyBpcyBub3QgdGhlIHByb2JsZW07IGl0IGlzIHRoZSBvbmx5IHRoaW5nIGtlZXBpbmcgZ3JhZGllbnRzIGluZm9ybWF0aXZlLgotICoqVGhlIHJlcHJlc2VudGF0aW9uIGlzIHRoZSBib3R0bGVuZWNrLioqIEEgc3VwZXJ2aXNlZCBjbG9uZSBvZiB0aGUgZ3JlZWR5IHBvbGljeSByZWFjaGVzIG5lYXItemVybyB0cmFpbmluZyBsb3NzIHlldCBzY29yZXMgb25seSB+My43LzIwIG9uIGZyZXNoIHNlZWRzOiB0aGUgTUxQIG1lbW9yaXplcyB0cmFpbmluZyBzdGF0ZXMgaW5zdGVhZCBvZiBsZWFybmluZyBzcGF0aWFsIGFic3RyYWN0aW9ucyBmcm9tIGZsYXQgYmluYXJ5IHBpeGVscy4gVGhlIHRhYnVsYXIgYWdlbnQgd29ya3MgYmVjYXVzZSBpdHMgMzItc3RhdGUgZW5jb2RpbmcgKGRhbmdlciBiaXRzICsgZm9vZCBkaXJlY3Rpb24pIGhhbmRzIGl0IHRoZSByaWdodCBmZWF0dXJlcy4KLSAqKkRlYXRoLWRvbWluYXRlZC4qKiBBbGwgUkwgdmFyaWFudHMgZGllIGluIDEwMCUgb2YgZXBpc29kZXM7IFEtdmFsdWVzIHNhdHVyYXRlIG5lYXIgdGhlIGRlYXRoLXJld2FyZCBtYWduaXR1ZGUsIHNvIHRoZSBuZXR3b3JrIGxlYXJucyBtb3N0bHkgdG8gZmVhciBkZWF0aCwgbm90IHRvIHNlZWsgZm9vZC4KCkNvbmNsdXNpb246IHNjYWxpbmcgdGhpcyBNTFAgd2lsbCBub3QgY2xvc2UgdGhlIGdhcC4gUGxhbm5lZCBuZXh0IHN0ZXA6IHJlYnVpbGQgdGhlIERRTiB3aXRoIGEgY29udm9sdXRpb25hbCBhcmNoaXRlY3R1cmUgZGVzaWduZWQgZm9yIGdyaWQgaW5wdXQgKGJhY2tsb2cgaXRlbSBEQTgpLiBVbnRpbCB0aGVuLCBEUU4gc3RheXMgYXMgdGhlIGRvY3VtZW50ZWQgc3RydWdnbGluZy1sZWFybmVyIHRpZXIuIEZ1bGwgY3VydmVzOiBgcnVucy9kYTRfZGlhZ25vc2lzLmpzb25gLg0KDQojIyBDb2RlIGFuZCBkYXRhDQoNCmBzcmMvbmFyY2FkZS9gIGNvbnRhaW5zIHRoZSBTbmFrZSBlbnZpcm9ubWVudCBhbmQgYWdlbnRzLiBgcnVucy9ldmFsLmpzb25gIHN0b3JlcyB0aGUgZXZhbHVhdGlvbi4gYHdlYi9nYW1lLmh0bWxgIGlzIHRoZSBicm93c2VyIHRlbXBsYXRlOyBgc2NyaXB0cy9tYWtlX2dhbWUucHlgIGluamVjdHMgcG9saWN5IGRhdGEuDQoNCg0KIyMgTGltaXRhdGlvbnMNCg0KLSBSZWNvcmRlZCBldmFsdWF0aW9uIHVzZXMgdGhlIGNsYXNzaWMgYm9hcmQ7IG90aGVyIGJyb3dzZXIgbW9kZXMgYXJlIGRpc3RyaWJ1dGlvbiBzaGlmdHMuDQotIEJyb3dzZXIgTUNUUyBhZGFwdHMgaXRzIHNlYXJjaCBidWRnZXQsIHNvIGJyb3dzZXIgc2NvcmVzIGFyZSBub3QgdGhlIGZpeGVkIGV2YWx1YXRpb24gcHJvdG9jb2wuDQotIFRvdXJuYW1lbnQgc3RhdGUgaGFuZGxpbmcgbmVlZHMgYSBjb3JyZWN0aW9uIGJlZm9yZSBpdHMgRUxPIGNoYW5nZXMgYXJlIHRyZWF0ZWQgYXMgcmVsaWFibGUuIFJlcGxheSBVSSBhbmQgZGlyZWN0aW9uIGJ1dHRvbnMgd2VyZSBpbnRlbnRpb25hbGx5IHJlbW92ZWQgZnJvbSB0aGlzIGVkaXRpb24uDQoNCiMjIExpY2Vuc2UNCg0KW01JVF0oTElDRU5TRSkuIFRoaXJkLXBhcnR5IGRhdGFzZXRzLCBsaWJyYXJpZXMgYW5kIGZvbnRzIHJldGFpbiB0aGVpciBvd24gdGVybXMuDQo=
+<p align="center"><img src="docs/readme-banner.svg?v=type-20261017b" alt="DeepArcade: A playable comparison of Snake agents" width="1200"></p>
+
+[![Tests](https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml/badge.svg)](https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-007EC6)](LICENSE) ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB) ![Built with PyTorch + browser inference](https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-555555) [![Interactive demo](https://img.shields.io/badge/demo-interactive-4C9D39)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
+
+<p align="center"><a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><b>Open interactive demo</b></a> · <a href="#method">Method</a> · <a href="#run-locally">Run locally</a></p>
+
+# DeepArcade
+
+DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized.
+
+
+[![DeepArcade demo](docs/demo.gif?v=showcase-20261017b)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
+
+
+Playing against the trained policies makes their evaluation easier to interpret. A strong average score can coexist with brittle turns, long loops or inconsistent behavior across seeds, which a single showcase run cannot establish. The agent comparison therefore keeps score distributions, training curves and evaluation sample counts alongside the playable experience.
+
+## Explore
+
+- Compare agent score distributions, learning behavior and head-to-head outcomes.
+- Load the genuine game inside the dashboard or open the standalone HTML game.
+- Use keyboard controls, then restart directly over the board after a run ends.
+
+## Method
+
+Agents are evaluated on seeded classic-board games. Learning curves, score distributions, pairwise outcomes and strategy statistics retain their original evaluation conditions. The browser game uses exported policies and a JavaScript forward pass.
+
+## Evidence at a glance
+
+| Scope | Recorded result or contract |
+| :--- | :--- |
+| Evaluation games | 500 per policy, except MCTS with 50 |
+| Mean food score | Random 0.16; greedy 18.89; tabular Q 20.78 |
+| Same evaluation | DQN 6.39; MCTS 44.1 |
+| Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
+
+## Updating this project
+
+Dashboard source language: **Python and browser JavaScript**. Generator: `scripts/make_dashboard.py and scripts/make_game.py`. The local interactive output is `docs/dashboard.html`.
+
+## Run locally
+
+
+```sh
+python -m pip install -e ".[dev]"
+python -m pip install -r portfolio_ui/requirements.txt
+python -m pytest tests -q
+python scripts/make_game.py
+python scripts/make_dashboard.py
+```
+
+Open [the standalone game](https://faiyazenayet.github.io/deeparcade/docs/game.html) to play without the dashboard.
+
+## Technical design
+
+The agent roster deliberately mixes simple baselines, learned policies and search. Tabular Q-learning and DQN learn policies; MCTS searches from the current state. Exported policy data lets the browser execute the learned behavior without a model server. The same game remains available within the dashboard and as a standalone file.
+
+```mermaid
+flowchart LR
+  N0["Seeded Snake environment"] --> N1["Q learning"]
+  N0["Seeded Snake environment"] --> N2["DQN training"]
+  N0["Seeded Snake environment"] --> N3["MCTS search"]
+  N1["Q learning"] --> N4["Agent evaluation"]
+  N2["DQN training"] --> N4["Agent evaluation"]
+  N3["MCTS search"] --> N4["Agent evaluation"]
+  N4["Agent evaluation"] --> N5["Browser policies and dashboard"]
+```
+
+## Evaluation protocol
+
+Recorded evaluation uses seeded classic-board games, with 500 games for most policies and 50 for MCTS. Scores, distributions, learning curves and pairwise outcomes answer different questions. Browser maze/blitz modes and adaptive MCTS budgets are not equivalent to the fixed recorded evaluation.
+
+![Agent evaluation, with unequal sample sizes](docs/results.png)
+
+The DQN underperforms the greedy and tabular baselines in the committed run. The MCTS mean is high but comes from a smaller sample. A convincing comparison requires the stated game conditions, seeds and sample counts rather than agent names or apparent sophistication.
+
+### DA4: DQN failure diagnosis
+
+Before scaling the DQN, we diagnosed why it fails. `scripts/diagnose_dqn.py` runs four variants with a fixed compute budget (60k steps, 3 seeds each) and logs Bellman targets, TD loss, Q magnitudes, epsilon and death rates. Findings:
+
+- **Not overestimation bias.** Double-DQN matches vanilla DQN (eval mean ~2.7 vs ~2.9 over 100 games); the max-Q correction changes nothing.
+- **Reward shaping is load-bearing.** Removing the dense +/-0.5 shaping (sparse +10/-10 only) collapses learning to ~0.3. Shaping is not the problem; it is the only thing keeping gradients informative.
+- **The representation is the bottleneck.** A supervised clone of the greedy policy reaches near-zero training loss yet scores only ~3.7/20 on fresh seeds: the MLP memorizes training states instead of learning spatial abstractions from flat binary pixels. The tabular agent works because its 32-state encoding (danger bits + food direction) hands it the right features.
+- **Death-dominated.** All RL variants die in 100% of episodes; Q-values saturate near the death-reward magnitude, so the network learns mostly to fear death, not to seek food.
+
+Conclusion: scaling this MLP will not close the gap. Planned next step: rebuild the DQN with a convolutional architecture designed for grid input (backlog item DA8). Until then, DQN stays as the documented struggling-learner tier. Full curves: `runs/da4_diagnosis.json`.
+
+## Code and data
+
+`src/narcade/` contains the Snake environment and agents. `runs/eval.json` stores the evaluation. `web/game.html` is the browser template; `scripts/make_game.py` injects policy data.
+
+
+## Limitations
+
+- Recorded evaluation uses the classic board; other browser modes are distribution shifts.
+- Browser MCTS adapts its search budget, so browser scores are not the fixed evaluation protocol.
+- Tournament state handling needs a correction before its ELO changes are treated as reliable. Replay UI and direction buttons were intentionally removed from this edition.
+
+## License
+
+[MIT](LICENSE). Third-party datasets, libraries and fonts retain their own terms.
