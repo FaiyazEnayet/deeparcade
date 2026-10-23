@@ -13,6 +13,7 @@
 - Native DQN inference: the 436-feature encoding and the JSON weights forward pass in C++. Action agreement on 13,824 harvested states is 13,824 of 13,824 against the PyTorch reference, with max logit difference under 1e-5. Inference only; training stays in Python.
 - Native evaluation engine reproducing `scripts/evaluate.py` exactly (paired seeds, shared MCTS player, summary statistics, Elo, head-to-head): 200 of 200 episodes exact and every reported value bit-exact. The DQN player is out of scope for the native evaluator, and its report says so in a scope field.
 - Native Q-learning trainer reproducing `scripts/train.py` bit-exact, including the full 30,000-episode default protocol, learning curves, checkpoint Elo history, and the policy file. Its output matches the committed `runs/` artifacts value for value.
+- Native move-level trace instrumentation reproducing `scripts/analyze.py` (action mix, death causes, food efficiency) exactly for all four policies, matching `runs/moves.json` value for value.
 
 
 ## v1.3.0
