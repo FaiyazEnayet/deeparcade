@@ -17,10 +17,10 @@ constexpr int kDirs[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 // when ignore_tail. Body cells are unique in every reachable state, so
 // scanning with the front element skipped is the same predicate as
 // Python's set difference (the same argument snake.cpp relies on).
-// Any divergence from the Python predicate is caught by the
-// differential policy fuzz (tools/native_policies_fuzz.py), which
-// compares against Python's GreedyPolicy calling the real
-// _cell_blocked on >= 10,000 states.
+// Any divergence from the Python predicate is caught by the frozen
+// policy corpus (native/golden/policies_corpus.txt), whose expected
+// actions were produced by Python's GreedyPolicy calling the real
+// _cell_blocked on >= 34,532 states.
 bool cell_blocked(const SnakeEnv& env, int r, int c, bool ignore_tail) {
     if (!(0 <= r && r < env.height() && 0 <= c && c < env.width())) {
         return true;
