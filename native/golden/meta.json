@@ -1,0 +1,12 @@
+{
+  "file_sha256": {
+    "mcts_oracle.json": "0580ec65d181f735b1391cf4378f73751a9402945f10357ae1ae91446c1f4752",
+    "q_updates.json": "de277c60d9bc4dd3281fc94ede7988f5bef273e9050d9be7e0501319ee71501f",
+    "rng_traces.txt": "ab59bbec173c87e7ae4d658644df20c2027384482f6cdab27c091d6254fe719a",
+    "transitions.json": "f126137c762f0021cb9d16f948ed4965309bb0f70a3573b374c9c4459a9eae9b"
+  },
+  "fixture_version": "golden-v1",
+  "generator": "tools/native_reference.py",
+  "python_version": "3.12.3",
+  "source_sha": "4d819a83d7aab3c45c735f049c35b477fc354e8e"
+}
