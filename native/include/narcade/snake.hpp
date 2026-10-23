@@ -1,8 +1,9 @@
 // SnakeEnv: a C++20 port of src/narcade/snake.py (the semantics authority).
 //
 // Behavioral parity with the Python reference is gated on differential
-// testing (tools/native_fuzz.py against native/golden/transitions.json
-// plus fuzz episodes, >= 100,000 transitions, zero mismatches). Every
+// testing (the frozen session corpus native/golden/snake_corpus.txt,
+// >= 110,000 transitions, zero mismatches; regenerated from the live
+// reference by tools/native_reference.py). Every
 // ordering quirk of the Python step() is preserved deliberately; see
 // snake.cpp for the line-by-line correspondence.
 #ifndef NARCADE_SNAKE_HPP

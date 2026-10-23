@@ -4,8 +4,9 @@
 // exactly as in Python, including the places where _step_state's
 // transition rules differ from SnakeEnv.step (walls, (-1,-1) food on a
 // full board). Behavioral parity is gated on native/golden/
-// mcts_oracle.json plus tools/native_mcts_fuzz.py (>= 1,000 seeded
-// searches, exact action agreement, root-child values within 1e-12).
+// mcts_oracle.json plus the frozen session corpus
+// native/golden/mcts_cases.txt (>= 1,000 seeded searches, exact
+// action agreement, root-child values bit-exact).
 #ifndef NARCADE_MCTS_HPP
 #define NARCADE_MCTS_HPP
 

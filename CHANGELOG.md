@@ -14,6 +14,7 @@
 - Native evaluation engine reproducing `scripts/evaluate.py` exactly (paired seeds, shared MCTS player, summary statistics, Elo, head-to-head): 200 of 200 episodes exact and every reported value bit-exact. The DQN player is out of scope for the native evaluator, and its report says so in a scope field.
 - Native Q-learning trainer reproducing `scripts/train.py` bit-exact, including the full 30,000-episode default protocol, learning curves, checkpoint Elo history, and the policy file. Its output matches the committed `runs/` artifacts value for value.
 - Native move-level trace instrumentation reproducing `scripts/analyze.py` (action mix, death causes, food efficiency) exactly for all four policies, matching `runs/moves.json` value for value.
+- Differential testing converted from live Python fuzz drivers to frozen golden corpora checked by the C++ runners (111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches), with a regeneration check that re-derives the corpora from the Python reference and byte-compares them. C++ is now the largest language in the repository (183,071 bytes of C++ vs 169,712 bytes of Python under the repository's Linguist rules).
 
 
 ## v1.3.0

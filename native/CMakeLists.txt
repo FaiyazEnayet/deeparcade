@@ -54,28 +54,40 @@ enable_testing()
 add_test(NAME rng_trace_test
          COMMAND rng_trace_test ${CMAKE_CURRENT_SOURCE_DIR}/golden/rng_traces.txt)
 
+# Frozen differential corpora (CPP-07): the runners replay the golden
+# session files in batch mode and compare every output field in-process;
+# no Python driver runs at test time. policies_fixture / policies_fuzz
+# and mcts_oracle / mcts_fuzz share one corpus file each (the fixture /
+# oracle session is the file's first section).
+add_test(NAME snake_replay
+         COMMAND snake_diff_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/snake_corpus.txt)
+add_test(NAME policies_fixture
+         COMMAND policies_diff_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/policies_corpus.txt)
+add_test(NAME policies_fuzz
+         COMMAND policies_diff_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/policies_corpus.txt)
+add_test(NAME mcts_oracle
+         COMMAND mcts_diff_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/mcts_cases.txt)
+add_test(NAME mcts_fuzz
+         COMMAND mcts_diff_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/mcts_cases.txt)
+
 find_program(NARCADE_PYTHON3 NAMES python3)
 if(NARCADE_PYTHON3)
-  add_test(NAME snake_replay
-           COMMAND ${NARCADE_PYTHON3}
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_fuzz.py
-                   --runner $<TARGET_FILE:snake_diff_runner> --replay-only)
-  add_test(NAME policies_fixture
-           COMMAND ${NARCADE_PYTHON3}
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_policies_fuzz.py
-                   --runner $<TARGET_FILE:policies_diff_runner> --fixture-only)
-  add_test(NAME policies_fuzz
-           COMMAND ${NARCADE_PYTHON3}
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_policies_fuzz.py
-                   --runner $<TARGET_FILE:policies_diff_runner>)
-  add_test(NAME mcts_oracle
-           COMMAND ${NARCADE_PYTHON3}
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_mcts_fuzz.py
-                   --runner $<TARGET_FILE:mcts_diff_runner> --oracle-only)
-  add_test(NAME mcts_fuzz
-           COMMAND ${NARCADE_PYTHON3}
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_mcts_fuzz.py
-                   --runner $<TARGET_FILE:mcts_diff_runner>)
+  # Live-reference guard: regenerating the goldens from the current
+  # Python sources must reproduce every committed golden data file
+  # byte-for-byte (meta.json is excluded; it records the HEAD sha at
+  # generation time).
+  add_test(NAME regen_check
+           COMMAND ${CMAKE_COMMAND}
+                   -DREGEN_PYTHON=${NARCADE_PYTHON3}
+                   -DGENERATOR=${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_reference.py
+                   -DGOLDEN_DIR=${CMAKE_CURRENT_SOURCE_DIR}/golden
+                   -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/regen_scratch
+                   -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/regen_check.cmake)
 endif()
 
 # ---- CPP-04: pybind11 bindings (optional) ----
