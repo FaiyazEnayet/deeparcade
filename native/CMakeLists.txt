@@ -168,3 +168,22 @@ if(NARCADE_PYTHON3)
                    ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_eval_fuzz.py
                    --runner $<TARGET_FILE:narcade_evaluate_app>)
 endif()
+
+# --- CPP-06a: native Q-learning trainer (scripts/train.py port). ---
+add_library(narcade_trainer src/trainer.cpp)
+target_include_directories(narcade_trainer PUBLIC include)
+target_link_libraries(narcade_trainer PUBLIC narcade_qlearn narcade_policies
+                      narcade_snake)
+target_compile_options(narcade_trainer PRIVATE -Wall -Wextra)
+
+add_executable(train_main apps/train_main.cpp)
+target_link_libraries(train_main PRIVATE narcade_trainer)
+target_compile_options(train_main PRIVATE -Wall -Wextra)
+
+if(NARCADE_PYTHON3)
+  add_test(NAME trainer_check
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_trainer_check.py
+                   --trainer $<TARGET_FILE:train_main> --small-only)
+endif()
+
