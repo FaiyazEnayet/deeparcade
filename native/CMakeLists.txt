@@ -91,13 +91,31 @@ if(NARCADE_PYTHON3)
 endif()
 
 # meta_check: integrity of the golden metadata regen_check excludes.
-# Verifies the fixture version, the recorded counts, and each golden
-# file's SHA-256 against native/golden/meta.json. Pure CMake; no
-# Python needed, so it is registered unconditionally.
+# Verifies the fixture version, the recorded counts (exactly the
+# expected key set, every value positive), and each golden file's
+# SHA-256 against native/golden/meta.json. Pure CMake; no Python
+# needed, so it is registered unconditionally.
 add_test(NAME meta_check
          COMMAND ${CMAKE_COMMAND}
                  -DGOLDEN_DIR=${CMAKE_CURRENT_SOURCE_DIR}/golden
                  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/meta_check.cmake)
+
+# corpus_stats_check: independent recount of the golden corpora.
+# meta_check validates the recorded counts structurally; this check
+# re-derives every count from the corpus files themselves (same record
+# definitions the C++ runners parse) and compares against meta.json,
+# so a wrong-but-positive count fails. Pure stdlib Python and fast
+# (seconds, the 11 MB snake corpus included); registered whenever a
+# Python 3 interpreter is available, like dqn_check below.
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_FOUND)
+  add_test(NAME corpus_stats_check
+           COMMAND "${Python3_EXECUTABLE}"
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_corpus_stats_check.py
+                   --golden-dir ${CMAKE_CURRENT_SOURCE_DIR}/golden)
+else()
+  message(STATUS "corpus_stats_check skipped: Python3 not found")
+endif()
 
 # ---- CPP-04: pybind11 bindings (optional) ----
 # Builds the `narcade_native` Python extension from bindings/bindings.cpp.
