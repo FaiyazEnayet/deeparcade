@@ -15,6 +15,7 @@
 - Native Q-learning trainer reproducing `scripts/train.py` bit-exact, including the full 30,000-episode default protocol, learning curves, checkpoint Elo history, and the policy file. Its output matches the committed `runs/` artifacts value for value.
 - Native move-level trace instrumentation reproducing `scripts/analyze.py` (action mix, death causes, food efficiency) exactly for all four policies, matching `runs/moves.json` value for value.
 - Differential testing converted from live Python fuzz drivers to frozen golden corpora checked by the C++ runners (111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches), with a regeneration check that re-derives the corpora from the Python reference and byte-compares them. C++ is now the largest language in the repository (183,071 bytes of C++ vs 169,712 bytes of Python under the repository's Linguist rules).
+- Docs: corrected the greedy and DQN evaluation means in the README evidence table (19.89 and 5.39, matching runs/eval.json); fixed two stale references (the DA4 findings pointer and a retired-driver mention in tools/native_reference.py).
 
 
 ## v1.3.0
@@ -25,7 +26,7 @@
   four variants: baseline DQN, double-DQN, reward-shaping removed, and
   supervised imitation of the greedy policy. Logs Bellman targets, TD
   loss, Q magnitudes, epsilon and death rates to
-  `runs/da4_diagnosis.json`. Findings, documented in the README: DDQN
+  `runs/da4_diagnosis.json`. Findings: DDQN
   does not help (not overestimation bias); removing shaping collapses
   learning to ~0.3 (shaping is load-bearing); the supervised clone
   reaches near-zero training loss but scores only ~3.7/20 on fresh
