@@ -17,6 +17,7 @@
 - Differential testing converted from live Python fuzz drivers to frozen golden corpora checked by the C++ runners (111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches), with a regeneration check that re-derives the corpora from the Python reference and byte-compares them. C++ is now the largest language in the repository (183,071 bytes of C++ vs 169,712 bytes of Python under the repository's Linguist rules).
 - Docs: corrected the greedy and DQN evaluation means in the README evidence table (19.89 and 5.39, matching runs/eval.json); fixed two stale references (the DA4 findings pointer and a retired-driver mention in tools/native_reference.py).
 - Native verification hardening: the DQN checker now fails when the max logit difference exceeds its 1e-5 band (previously reported only); the dqn_check CTest registers against any Python with torch instead of a machine-specific path; new meta_check CTest verifies the golden files' SHA-256 hashes against meta.json.
+- CI: added a separate Native workflow that builds the C++ engine and runs the CTest suite (corpus checks, regeneration, meta hashes, DQN gate) on pushes and pull requests; eval_fuzz is excluded there for runtime and remains a local gate.
 
 
 ## v1.3.0
