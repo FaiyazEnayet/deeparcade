@@ -18,6 +18,7 @@
 - Docs: corrected the greedy and DQN evaluation means in the README evidence table (19.89 and 5.39, matching runs/eval.json); fixed two stale references (the DA4 findings pointer and a retired-driver mention in tools/native_reference.py).
 - Native verification hardening: the DQN checker now fails when the max logit difference exceeds its 1e-5 band (previously reported only); the dqn_check CTest registers against any Python with torch instead of a machine-specific path; new meta_check CTest verifies the golden files' SHA-256 hashes against meta.json.
 - CI: added a separate Native workflow that builds the C++ engine and runs the CTest suite (corpus checks, regeneration, meta hashes, DQN gate) on pushes and pull requests; eval_fuzz is excluded there for runtime and remains a local gate.
+- Docs: the native RNG header now states its supported domain explicitly (int64 seeds, getrandbits widths 0 to 64, randint spans that fit in int64), which is narrower than CPython's random.Random by design.
 
 
 ## v1.3.0

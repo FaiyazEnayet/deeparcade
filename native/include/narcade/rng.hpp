@@ -7,6 +7,15 @@
 // the little-endian 32-bit words of abs(seed), and its random() /
 // getrandbits() / _randbelow() draw algorithms differ from libstdc++'s
 // distributions. Parity is gated on native/golden/rng_traces.txt.
+//
+// Supported domain (narrower than CPython's random.Random, by design):
+// seeds are int64_t; getrandbits supports 0 <= k <= 64 and throws
+// std::invalid_argument outside it (CPython returns arbitrary-precision
+// ints); randbelow/randrange require n >= 1; randint(a, b) requires
+// b >= a and is exact while (b - a) fits in int64_t — a span covering the
+// whole int64 range is outside the supported domain because the width
+// computation overflows before the draw. All in-repo callers use small
+// ranges (board cells, action indices).
 #ifndef NARCADE_RNG_HPP
 #define NARCADE_RNG_HPP
 
@@ -46,7 +55,7 @@ public:
     // CPython randrange(n) for n >= 1 (single-argument form).
     std::uint64_t randrange(std::uint64_t n) { return randbelow(n); }
 
-    // CPython randint(a, b) == a + _randbelow(b - a + 1).
+    // CPython randint(a, b) == a + _randbelow(b - a + 1). Supported domain: see the header note above.
     std::int64_t randint(std::int64_t a, std::int64_t b);
 
     // Index chosen by CPython choice(seq): _randbelow(len(seq)).
