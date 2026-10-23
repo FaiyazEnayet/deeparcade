@@ -17,7 +17,9 @@ Comparisons (all reported, nothing hidden):
   encodings   bit-identical on every state (gate: 0 mismatches)
   logits      max abs difference over all states and actions
               (gate: the max difference must be finite and no more
-              than 1e-5, LOGIT_BAND)
+              than 1e-5, LOGIT_BAND; a nonfinite logit or activation
+              on either side fails the check immediately, before any
+              difference is taken)
   actions     C++ argmax vs torch argmax. Every disagreement is
               printed with the reference Q-margin (top1 - top2) and
               the state's max logit difference. A disagreement with
@@ -87,6 +89,25 @@ def assess(enc_mismatch, action_disagree, max_logit_diff):
             f"max logit difference {max_logit_diff:.3e} exceeds "
             f"the {LOGIT_BAND:.0e} logit band")
     return bool(reasons), reasons
+
+
+def max_abs_diff(native, reference):
+    """Max abs difference between native and reference float arrays.
+
+    Both arrays are checked for finiteness before any difference is
+    taken; a nonfinite value on either side raises ValueError. The
+    guard cannot be folded into the running maximum instead: a NaN
+    difference passed to Python's max() is silently dropped
+    (max(0.0, nan) == 0.0), so a nonfinite logit would be laundered
+    into a finite reported maximum and assess() would never see it.
+    """
+    native = np.asarray(native, dtype=np.float64)
+    reference = np.asarray(reference, dtype=np.float64)
+    if not np.isfinite(native).all():
+        raise ValueError("native array contains a nonfinite value")
+    if not np.isfinite(reference).all():
+        raise ValueError("reference array contains a nonfinite value")
+    return float(np.max(np.abs(native - reference)))
 
 
 def f32_from_hex(tok: str) -> np.float32:
@@ -214,8 +235,12 @@ def main() -> int:
         cpp_action = int(out_line[1])
         cpp_logits = np.array([f32_from_hex(t) for t in out_line[2:5]],
                               dtype=np.float32)
-        diff = float(np.max(np.abs(cpp_logits.astype(np.float64)
-                                   - logits[i].astype(np.float64))))
+        try:
+            diff = max_abs_diff(cpp_logits, logits[i])
+        except ValueError as exc:
+            print(f"FAIL: state {i}: logits: {exc}")
+            proc.kill()
+            return 1
         max_logit_diff = max(max_logit_diff, diff)
         if cpp_action != int(ref_actions[i]):
             action_disagree.append((i, cpp_action, int(ref_actions[i]),
@@ -231,10 +256,20 @@ def main() -> int:
                               dtype=np.float32)
             cpp_h2 = np.array([f32_from_hex(t) for t in h2_line[1:]],
                               dtype=np.float32)
-            max_h1_diff = max(max_h1_diff, float(np.max(np.abs(
-                cpp_h1.astype(np.float64) - h1[i].astype(np.float64)))))
-            max_h2_diff = max(max_h2_diff, float(np.max(np.abs(
-                cpp_h2.astype(np.float64) - h2[i].astype(np.float64)))))
+            try:
+                h1_diff = max_abs_diff(cpp_h1, h1[i])
+            except ValueError as exc:
+                print(f"FAIL: state {i}: h1 activations: {exc}")
+                proc.kill()
+                return 1
+            try:
+                h2_diff = max_abs_diff(cpp_h2, h2[i])
+            except ValueError as exc:
+                print(f"FAIL: state {i}: h2 activations: {exc}")
+                proc.kill()
+                return 1
+            max_h1_diff = max(max_h1_diff, h1_diff)
+            max_h2_diff = max(max_h2_diff, h2_diff)
 
     proc.stdin.close()
     proc.wait(timeout=60)
