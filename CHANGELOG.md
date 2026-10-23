@@ -11,6 +11,7 @@
 - Optional pybind11 backend (`narcade_native`) behind `NARCADE_NATIVE=1`; Python stays the default. The backend check compares RNG, Q-learning, Snake, and MCTS against Python with zero mismatches, and the test suite skips cleanly when the extension is not built.
 - Native benchmark suite (`narcade_bench`) with deterministic, checksummed workloads for environment steps, RNG draws, MCTS searches, and evaluation episodes. Rates are recorded, not published as claims.
 - Native DQN inference: the 436-feature encoding and the JSON weights forward pass in C++. Action agreement on 13,824 harvested states is 13,824 of 13,824 against the PyTorch reference, with max logit difference under 1e-5. Inference only; training stays in Python.
+- Native evaluation engine reproducing `scripts/evaluate.py` exactly (paired seeds, shared MCTS player, summary statistics, Elo, head-to-head): 200 of 200 episodes exact and every reported value bit-exact. The DQN player is out of scope for the native evaluator, and its report says so in a scope field.
 
 
 ## v1.3.0
