@@ -14,11 +14,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install torch (CPU) and numpy for the DQN check and reference tools
+      - name: Install torch (CPU), numpy, pybind11 and pytest for the DQN check, reference tools and adapter tests
         run: |
           python -m pip install --upgrade pip
           pip install numpy
           pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install pybind11 pytest
       - name: Configure
         run: cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=$(which python)
       - name: Build
@@ -27,3 +28,9 @@ jobs:
       # tens of minutes. It remains a local gate.
       - name: Test
         run: ctest --test-dir native/build --output-on-failure -E eval_fuzz
+      # The extension-dependent adapter tests skip unless narcade_native
+      # is importable; the tests locate it via the native/build* glob,
+      # which is where the Build step above puts it. Running them here
+      # is what exercises the pybind11 backend in hosted CI.
+      - name: Adapter parity tests (pybind11 extension)
+        run: python -m pytest tests/test_native_backend.py -v
