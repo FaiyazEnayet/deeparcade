@@ -25,7 +25,8 @@ if(NOT rc EQUAL 0)
 endif()
 
 foreach(f rng_traces.txt transitions.json mcts_oracle.json q_updates.json
-          snake_corpus.txt policies_corpus.txt mcts_cases.txt)
+          snake_corpus.txt policies_corpus.txt mcts_cases.txt
+          mcts_wall_cases.txt)
   execute_process(
     COMMAND "${CMAKE_COMMAND}" -E compare_files
             "${GOLDEN_DIR}/${f}" "${SCRATCH}/${f}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Independent recount of the frozen golden corpora vs meta.json.
 
-tools/native_reference.py records 19 corpus counts in
+tools/native_reference.py records 21 corpus counts in
 native/golden/meta.json at generation time, and the meta_check CTest
 verifies the recorded values are positive whole numbers under exactly
 the expected key set, plus the golden files' SHA-256 hashes. That
@@ -42,6 +42,10 @@ Record definitions per file:
                      each "RAND" reply.
   mcts_cases.txt     searches = "ACTION" replies; root_children =
                      "CHILD" reply lines.
+  mcts_wall_cases.txt  wall_searches = "ACTION" replies;
+                     wall_root_children = "CHILD" reply lines (the
+                     maze-mode session; same reply records as
+                     mcts_cases.txt, counted under the wall keys).
 
 Usage: native_corpus_stats_check.py [--golden-dir native/golden]
 Exit code is non-zero on any mismatch. Stdlib only.
@@ -186,6 +190,17 @@ def count_mcts_cases(path: Path) -> dict[str, int]:
     return counts
 
 
+def count_mcts_wall_cases(path: Path) -> dict[str, int]:
+    counts = {"mcts_wall_searches": 0, "mcts_wall_root_children": 0}
+    with path.open() as fh:
+        for line in fh:
+            if line.startswith("< ACTION "):
+                counts["mcts_wall_searches"] += 1
+            elif line.startswith("< CHILD "):
+                counts["mcts_wall_root_children"] += 1
+    return counts
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--golden-dir", default=str(ROOT / "native" / "golden"),
@@ -200,6 +215,7 @@ def main() -> int:
     derived.update(count_snake_corpus(golden / "snake_corpus.txt"))
     derived.update(count_policies_corpus(golden / "policies_corpus.txt"))
     derived.update(count_mcts_cases(golden / "mcts_cases.txt"))
+    derived.update(count_mcts_wall_cases(golden / "mcts_wall_cases.txt"))
 
     meta = json.loads((golden / "meta.json").read_text())
     recorded = meta["counts"]

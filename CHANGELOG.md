@@ -22,6 +22,7 @@
 - Docs: the README now carries the native C++ engine throughout: a C++ 20 badge, the intro, a native parity row in the evidence table, a native node in the design diagram, native build and test commands, and the repository map.
 - Fix: the native DQN parity checker now rejects nonfinite logits outright instead of letting a NaN be swallowed by the running maximum; the finite check runs on both native and reference outputs before any difference is taken.
 - Tests: golden corpus counts are now recounted from the corpus files themselves by a corpus statistics check and compared against meta.json, which must also carry exactly the expected count keys.
+- Tests: MCTS maze-mode (wall) searches now have frozen parity coverage. A new golden corpus (`native/golden/mcts_wall_cases.txt`) replays 404 searches under the browser game's maze wall layouts (977 root children, bit-exact), including crafted cases where the wall geometry forces the action and a shared-player session for the RNG lifecycle under a wall set. The runner protocol gains a WALLS command, and the golden fixture set moves to golden-v3.
 
 
 ## v1.3.0

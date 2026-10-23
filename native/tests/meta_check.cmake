@@ -16,10 +16,10 @@ endif()
 file(READ "${GOLDEN_DIR}/meta.json" META_JSON)
 
 string(JSON FIXTURE_VERSION GET "${META_JSON}" fixture_version)
-if(NOT FIXTURE_VERSION STREQUAL "golden-v2")
+if(NOT FIXTURE_VERSION STREQUAL "golden-v3")
   message(FATAL_ERROR
     "meta_check: fixture_version is '${FIXTURE_VERSION}', "
-    "expected 'golden-v2'")
+    "expected 'golden-v3'")
 endif()
 
 string(JSON N_COUNTS ERROR_VARIABLE COUNTS_ERR
@@ -53,6 +53,7 @@ endwhile()
 # than pass silently now that every value is recounted elsewhere.
 set(EXPECTED_COUNT_KEYS
     mcts_oracle_cases mcts_root_children mcts_searches
+    mcts_wall_root_children mcts_wall_searches
     policies_episodes policies_exceptions policies_rand_draws
     policies_states q_act_stream q_updates snake_deaths snake_eats
     snake_episodes snake_exceptions snake_tail_vacations snake_timeouts
@@ -85,7 +86,7 @@ endif()
 set(N_FILES 0)
 foreach(f rng_traces.txt transitions.json mcts_oracle.json
           q_updates.json snake_corpus.txt policies_corpus.txt
-          mcts_cases.txt)
+          mcts_cases.txt mcts_wall_cases.txt)
   if(NOT EXISTS "${GOLDEN_DIR}/${f}")
     message(FATAL_ERROR "meta_check: golden file missing: ${f}")
   endif()
@@ -105,5 +106,5 @@ foreach(f rng_traces.txt transitions.json mcts_oracle.json
   math(EXPR N_FILES "${N_FILES} + 1")
 endforeach()
 message(STATUS
-  "meta_check: golden-v2 metadata OK (${N_FILES} file hashes "
+  "meta_check: golden-v3 metadata OK (${N_FILES} file hashes "
   "verified, ${N_COUNTS} counts positive, exact key set)")

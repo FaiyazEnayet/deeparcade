@@ -6,7 +6,9 @@
 // full board). Behavioral parity is gated on native/golden/
 // mcts_oracle.json plus the frozen session corpus
 // native/golden/mcts_cases.txt (>= 1,000 seeded searches, exact
-// action agreement, root-child values bit-exact).
+// action agreement, root-child values bit-exact). Maze-mode (wall)
+// searches are gated on native/golden/mcts_wall_cases.txt, which
+// replays searches under the browser game's maze wall layouts.
 #ifndef NARCADE_MCTS_HPP
 #define NARCADE_MCTS_HPP
 
