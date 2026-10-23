@@ -7,6 +7,7 @@
 - CPython-compatible random number generator in C++ under `native/`, verified against the golden RNG traces (5,700 operations, zero mismatches), including snapshot and restore.
 - C++ Snake simulator mirroring the Python environment transition for transition (110,035 differential transitions across grid sizes, zero mismatches).
 - C++ policies (random, greedy, Q-table) and a tabular Q-learning agent; 10,000 golden updates replay bit-exact, and greedy and Q-table actions match the Python policies on 34,532 live states each.
+- C++ Monte Carlo tree search matching the Python implementation: oracle cases exact, 1,000 fuzz searches with zero action mismatches, and 2,333 root children values bit-exact.
 
 
 ## v1.3.0

@@ -41,6 +41,15 @@ target_link_libraries(policies_diff_runner PRIVATE narcade_qlearn
                       narcade_policies narcade_snake)
 target_compile_options(policies_diff_runner PRIVATE -Wall -Wextra)
 
+add_library(narcade_mcts src/mcts.cpp)
+target_include_directories(narcade_mcts PUBLIC include)
+target_link_libraries(narcade_mcts PUBLIC narcade_rng)
+target_compile_options(narcade_mcts PRIVATE -Wall -Wextra)
+
+add_executable(mcts_diff_runner tests/mcts_diff_runner.cpp)
+target_link_libraries(mcts_diff_runner PRIVATE narcade_mcts narcade_snake)
+target_compile_options(mcts_diff_runner PRIVATE -Wall -Wextra)
+
 enable_testing()
 add_test(NAME rng_trace_test
          COMMAND rng_trace_test ${CMAKE_CURRENT_SOURCE_DIR}/golden/rng_traces.txt)
@@ -59,4 +68,12 @@ if(NARCADE_PYTHON3)
            COMMAND ${NARCADE_PYTHON3}
                    ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_policies_fuzz.py
                    --runner $<TARGET_FILE:policies_diff_runner>)
+  add_test(NAME mcts_oracle
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_mcts_fuzz.py
+                   --runner $<TARGET_FILE:mcts_diff_runner> --oracle-only)
+  add_test(NAME mcts_fuzz
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_mcts_fuzz.py
+                   --runner $<TARGET_FILE:mcts_diff_runner>)
 endif()
