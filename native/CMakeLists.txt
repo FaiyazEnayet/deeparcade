@@ -26,6 +26,21 @@ add_executable(snake_diff_runner tests/snake_diff_runner.cpp)
 target_link_libraries(snake_diff_runner PRIVATE narcade_snake)
 target_compile_options(snake_diff_runner PRIVATE -Wall -Wextra)
 
+add_library(narcade_qlearn src/qlearn.cpp)
+target_include_directories(narcade_qlearn PUBLIC include)
+target_link_libraries(narcade_qlearn PUBLIC narcade_rng)
+target_compile_options(narcade_qlearn PRIVATE -Wall -Wextra)
+
+add_library(narcade_policies src/policies.cpp)
+target_include_directories(narcade_policies PUBLIC include)
+target_link_libraries(narcade_policies PUBLIC narcade_snake)
+target_compile_options(narcade_policies PRIVATE -Wall -Wextra)
+
+add_executable(policies_diff_runner tests/policies_diff_runner.cpp)
+target_link_libraries(policies_diff_runner PRIVATE narcade_qlearn
+                      narcade_policies narcade_snake)
+target_compile_options(policies_diff_runner PRIVATE -Wall -Wextra)
+
 enable_testing()
 add_test(NAME rng_trace_test
          COMMAND rng_trace_test ${CMAKE_CURRENT_SOURCE_DIR}/golden/rng_traces.txt)
@@ -36,4 +51,12 @@ if(NARCADE_PYTHON3)
            COMMAND ${NARCADE_PYTHON3}
                    ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_fuzz.py
                    --runner $<TARGET_FILE:snake_diff_runner> --replay-only)
+  add_test(NAME policies_fixture
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_policies_fuzz.py
+                   --runner $<TARGET_FILE:policies_diff_runner> --fixture-only)
+  add_test(NAME policies_fuzz
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_policies_fuzz.py
+                   --runner $<TARGET_FILE:policies_diff_runner>)
 endif()
