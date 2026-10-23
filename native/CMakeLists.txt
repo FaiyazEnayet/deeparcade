@@ -90,6 +90,15 @@ if(NARCADE_PYTHON3)
                    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/regen_check.cmake)
 endif()
 
+# meta_check: integrity of the golden metadata regen_check excludes.
+# Verifies the fixture version, the recorded counts, and each golden
+# file's SHA-256 against native/golden/meta.json. Pure CMake; no
+# Python needed, so it is registered unconditionally.
+add_test(NAME meta_check
+         COMMAND ${CMAKE_COMMAND}
+                 -DGOLDEN_DIR=${CMAKE_CURRENT_SOURCE_DIR}/golden
+                 -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/meta_check.cmake)
+
 # ---- CPP-04: pybind11 bindings (optional) ----
 # Builds the `narcade_native` Python extension from bindings/bindings.cpp.
 # Entirely optional: if pybind11 is not installed the native libraries and
@@ -152,13 +161,25 @@ target_link_libraries(dqn_diff_runner PRIVATE narcade_dqn)
 target_compile_options(dqn_diff_runner PRIVATE -Wall -Wextra)
 
 # The check driver needs torch for the reference; register it only
-# when the known torch venv is present (it is run manually regardless
-# as the packet gate).
-if(EXISTS "$ENV{HOME}/workspace/flowforge/.venv/bin/python")
-  add_test(NAME dqn_check
-           COMMAND "$ENV{HOME}/workspace/flowforge/.venv/bin/python"
-                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_dqn_check.py
-                   --runner $<TARGET_FILE:dqn_diff_runner> --states 3000)
+# when a Python interpreter with torch is available (it is run
+# manually regardless as the packet gate).
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_FOUND)
+  execute_process(
+    COMMAND "${Python3_EXECUTABLE}" -c "import torch"
+    RESULT_VARIABLE NARCADE_DQN_TORCH_RC
+    OUTPUT_QUIET ERROR_QUIET)
+  if(NARCADE_DQN_TORCH_RC EQUAL 0)
+    add_test(NAME dqn_check
+             COMMAND "${Python3_EXECUTABLE}"
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_dqn_check.py
+                     --runner $<TARGET_FILE:dqn_diff_runner> --states 3000)
+  else()
+    message(STATUS
+      "dqn_check skipped: Python3 interpreter has no torch available")
+  endif()
+else()
+  message(STATUS "dqn_check skipped: Python3 not found")
 endif()
 
 # --- CPP-05: native evaluation engine (appended; self-contained) ---

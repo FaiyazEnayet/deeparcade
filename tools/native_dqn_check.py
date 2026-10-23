@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """CPP-06d differential driver: C++ DQN inference vs the PyTorch reference.
 
-Must run under a Python with torch installed (the flowforge venv:
-~/workspace/flowforge/.venv/bin/python). The reference is the genuine
-scripts/train_dqn.py DQN architecture with the exported
-runs/dqn_weights.json loaded into it; nothing about the reference is
-reimplemented. Reference encodings come from train_dqn.encode_dqn
+Must run under a Python with torch installed (any such interpreter
+works). The reference is the genuine scripts/train_dqn.py DQN
+architecture with the exported runs/dqn_weights.json loaded into it;
+nothing about the reference is reimplemented. Reference encodings come from train_dqn.encode_dqn
 itself, applied to namespace views of the harvested states.
 
 Harvest: >= --states states (default 12,000) recorded before every
@@ -17,12 +16,15 @@ are fixed; the harvest is deterministic.
 Comparisons (all reported, nothing hidden):
   encodings   bit-identical on every state (gate: 0 mismatches)
   logits      max abs difference over all states and actions
+              (gate: the max difference must be finite and no more
+              than 1e-5, LOGIT_BAND)
   actions     C++ argmax vs torch argmax. Every disagreement is
               printed with the reference Q-margin (top1 - top2) and
               the state's max logit difference. A disagreement with
-              margin > 1e-5 (the predeclared float32 investigation
-              band) fails the gate; near-tie disagreements inside the
-              band are reported as warnings.
+              margin > 1e-5 (MARGIN_BAND, the predeclared float32
+              investigation band for disagreements) fails the gate;
+              near-tie disagreements inside the band are reported
+              as warnings.
   activations layer-1 / layer-2 post-ReLU max abs differences on the
               first --act-subset states (default 500).
 
@@ -36,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import struct
 import subprocess
 import sys
@@ -54,6 +57,36 @@ from narcade.snake import SnakeEnv  # noqa: E402
 from scripts.train_dqn import DQN, encode_dqn  # noqa: E402
 
 MARGIN_BAND = 1e-5
+LOGIT_BAND = 1e-5
+
+
+def assess(enc_mismatch, action_disagree, max_logit_diff):
+    """Pure pass/fail decision over the checker's gates.
+
+    Returns (hard_fail, reasons): hard_fail is True when any gate
+    fails, and reasons names each failing gate. The gates are:
+      * zero encoding mismatches;
+      * no action disagreement whose reference Q-margin exceeds
+        MARGIN_BAND (near-tie disagreements inside the band are
+        warnings only);
+      * max_logit_diff finite and no greater than LOGIT_BAND.
+    """
+    reasons = []
+    if enc_mismatch > 0:
+        reasons.append(f"{enc_mismatch} encoding mismatch(es)")
+    wide = [d for d in action_disagree if d[3] > MARGIN_BAND]
+    if wide:
+        reasons.append(
+            f"{len(wide)} action disagreement(s) with reference "
+            f"margin above the {MARGIN_BAND:.0e} margin band")
+    if not math.isfinite(max_logit_diff):
+        reasons.append(
+            f"max logit difference {max_logit_diff} is not finite")
+    elif max_logit_diff > LOGIT_BAND:
+        reasons.append(
+            f"max logit difference {max_logit_diff:.3e} exceeds "
+            f"the {LOGIT_BAND:.0e} logit band")
+    return bool(reasons), reasons
 
 
 def f32_from_hex(tok: str) -> np.float32:
@@ -217,9 +250,11 @@ def main() -> int:
     print(f"activations (first {args.act_subset} states): "
           f"max h1 diff={max_h1_diff:.3e} max h2 diff={max_h2_diff:.3e}")
 
-    hard_fail = enc_mismatch > 0 or any(
-        margin > MARGIN_BAND for _, _, _, margin, _ in action_disagree)
+    hard_fail, fail_reasons = assess(enc_mismatch, action_disagree,
+                                     max_logit_diff)
     if hard_fail:
+        for reason in fail_reasons:
+            print(f"FAIL: {reason}")
         print("result: FAIL")
         return 1
     if action_disagree:
