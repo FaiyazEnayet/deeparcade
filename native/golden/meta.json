@@ -3,6 +3,8 @@
     "mcts_oracle_cases": 10,
     "mcts_root_children": 2441,
     "mcts_searches": 1039,
+    "mcts_wall_root_children": 977,
+    "mcts_wall_searches": 404,
     "policies_episodes": 118,
     "policies_exceptions": 46,
     "policies_rand_draws": 10000,
@@ -23,14 +25,15 @@
   "file_sha256": {
     "mcts_cases.txt": "a049c54d5b0838fa33adcc61f8ee7bb1e88b5c805f7f961dc6014547ab975668",
     "mcts_oracle.json": "0580ec65d181f735b1391cf4378f73751a9402945f10357ae1ae91446c1f4752",
+    "mcts_wall_cases.txt": "a81a817520702f7c462dd509ab86b21215644d4aeee100e65f38d2d8b3383532",
     "policies_corpus.txt": "5fa9017b7c4f630a272ec46f7c488b9ba273c1771882bf92d7668963f5466ff3",
     "q_updates.json": "de277c60d9bc4dd3281fc94ede7988f5bef273e9050d9be7e0501319ee71501f",
     "rng_traces.txt": "ab59bbec173c87e7ae4d658644df20c2027384482f6cdab27c091d6254fe719a",
     "snake_corpus.txt": "3e1f54b98f3f8e5e5c8c6b89ad4e1da7a11411ae2cf62c442cf41fe8ee4de493",
     "transitions.json": "f126137c762f0021cb9d16f948ed4965309bb0f70a3573b374c9c4459a9eae9b"
   },
-  "fixture_version": "golden-v2",
+  "fixture_version": "golden-v3",
   "generator": "tools/native_reference.py",
   "python_version": "3.12.3",
-  "source_sha": "48c2224f8120196d3d07833d45731b07446fa076"
+  "source_sha": "3ab6efb4e88ff61cc8c9c960b69141bcabe7dca0"
 }

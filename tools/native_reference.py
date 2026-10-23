@@ -19,6 +19,10 @@ Fixtures:
                    replay over the QUPDATES/QACT protocol)
   mcts_cases.txt   frozen MCTS runner sessions (>= 1,000 searches with
                    root children, plus the oracle session)
+  mcts_wall_cases.txt frozen MCTS maze-mode (wall) runner sessions:
+                   searches run with the browser game's maze wall
+                   layouts (web/game.html mazeWalls) in the WALLS
+                   protocol overlay
   meta.json        provenance: source SHA, Python version, fixture version
 
 The corpora freeze full runner sessions: lines starting "> " are inputs
@@ -51,7 +55,7 @@ from narcade.qlearn import QLearningAgent             # noqa: E402
 from narcade.snake import DIRS, SnakeEnv              # noqa: E402
 
 OUT = ROOT / "native" / "golden"
-FIXTURE_VERSION = "golden-v2"
+FIXTURE_VERSION = "golden-v3"
 
 
 def dbl_hex(x: float) -> str:
@@ -646,10 +650,10 @@ def env_view(width, height, body, food, heading):
     return env
 
 
-def harvest_states(min_states):
+def harvest_states(min_states, boards=((12, 12), (6, 6), (5, 5), (4, 4)),
+                   seed_base=700000):
     states = []
-    boards = [(12, 12), (6, 6), (5, 5), (4, 4)]
-    seed = 700000
+    seed = seed_base
     while len(states) < min_states:
         for w, h in boards:
             seed += 1013
@@ -743,6 +747,190 @@ def gen_mcts_cases(oracle: dict) -> tuple[str, dict]:
     return corpus.text(), stats
 
 
+# ---------------------------------------------------- MCTS wall corpus
+def maze_walls(width, height):
+    """The browser game's maze-mode wall layout (web/game.html
+    mazeWalls): four symmetric 3-cell corner blocks. Returns a
+    frozenset of (r, c) cells, the representation MCTSPlayer.search
+    takes. The layout is a pure function of the board size, exactly
+    as in the game."""
+    blocks = [[3, 3], [3, 4], [4, 3],
+              [3, width - 4], [3, width - 5], [4, width - 4],
+              [height - 4, 3], [height - 4, 4], [height - 5, 3],
+              [height - 4, width - 4], [height - 4, width - 5],
+              [height - 5, width - 4]]
+    return frozenset((r, c) for r, c in blocks)
+
+
+def python_search_with_walls(player, env, walls):
+    """python_search_with_root, with the wall set passed to search."""
+    captured = {}
+    orig_init = mcts_mod._Node.__init__
+
+    def patched(self, parent, action):
+        orig_init(self, parent, action)
+        if parent is None:
+            captured["root"] = self
+
+    mcts_mod._Node.__init__ = patched
+    try:
+        action = player.search(env, walls=walls)
+    finally:
+        mcts_mod._Node.__init__ = orig_init
+    root = captured["root"]
+    children = [(a, ch.visits, ch.value)
+                for a, ch in root.children.items()]
+    return action, children
+
+
+def gen_mcts_wall_cases() -> tuple[str, dict]:
+    corpus = Corpus("DeepArcade native golden corpus: MCTS maze-mode "
+                    "(wall) searches (golden-v3)")
+    stats = {"searches": 0, "root_children": 0}
+    c_hex = dbl_hex(1.0)
+    current_walls = [None]
+
+    def emit_player(sims, pseed):
+        corpus.inp(f"PLAYER {sims} 100 {c_hex} {pseed}")
+        corpus.out("OK")
+
+    def emit_walls(walls):
+        if current_walls[0] == walls:
+            return
+        current_walls[0] = walls
+        corpus.inp(f"WALLS {len(walls)}")
+        for r, c in sorted(walls):
+            corpus.inp(f"{r} {c}")
+        corpus.out("OK")
+
+    def search_reply(action, children):
+        corpus.out(f"ACTION {action}")
+        corpus.out(f"ROOT {len(children)}")
+        for a, visits, value in children:
+            corpus.out(f"CHILD {a} {visits} {dbl_hex(value)}")
+        stats["searches"] += 1
+        stats["root_children"] += len(children)
+
+    def emit_searchstate(w, h, body, food, heading):
+        corpus.inp(f"SEARCHSTATE {w} {h} {food[0]} {food[1]} {heading} "
+                   f"{len(body)}")
+        for r, c in body:
+            corpus.inp(f"{r} {c}")
+
+    walls12 = maze_walls(12, 12)
+
+    corpus.note("the mcts_oracle.json opening state (seed 5000) "
+                "searched with the 12x12 maze wall set")
+    env = SnakeEnv(12, 12, seed=5000)
+    emit_walls(walls12)
+    emit_player(80, 31337)
+    py = MCTSPlayer(simulations=80, seed=31337)
+    action, children = python_search_with_walls(
+        py, env_view(12, 12, [tuple(c) for c in env.body],
+                     tuple(env.food), env.heading), walls12)
+    emit_searchstate(12, 12, [tuple(c) for c in env.body],
+                     tuple(env.food), env.heading)
+    search_reply(action, children)
+    for sims in (1, 2):
+        emit_player(sims, 1)
+        py = MCTSPlayer(simulations=sims, seed=1)
+        action, children = python_search_with_walls(
+            py, env_view(12, 12, [tuple(c) for c in env.body],
+                         tuple(env.food), env.heading), walls12)
+        emit_searchstate(12, 12, [tuple(c) for c in env.body],
+                         tuple(env.food), env.heading)
+        search_reply(action, children)
+
+    corpus.note("crafted cases: maze geometry decides the outcome; "
+                "the forced actions are asserted at generation time")
+    # Head (4,4) heading north: straight (3,4) and left (4,3) are
+    # wall cells; right steps onto the food at (4,5). Forced RIGHT.
+    emit_player(80, 101)
+    py = MCTSPlayer(simulations=80, seed=101)
+    action, children = python_search_with_walls(
+        py, env_view(12, 12, [(6, 4), (5, 4), (4, 4)], (4, 5), 0),
+        walls12)
+    assert action == 2, f"crafted forced-right case: got {action}"
+    emit_searchstate(12, 12, [(6, 4), (5, 4), (4, 4)], (4, 5), 0)
+    search_reply(action, children)
+    # Head (4,4) heading west: straight (4,3) and right (3,4) are
+    # wall cells; left steps onto the food at (5,4). Forced LEFT.
+    emit_player(80, 101)
+    py = MCTSPlayer(simulations=80, seed=101)
+    action, children = python_search_with_walls(
+        py, env_view(12, 12, [(6, 5), (5, 5), (4, 5), (4, 4)],
+                     (5, 4), 3), walls12)
+    assert action == 1, f"crafted forced-left case: got {action}"
+    emit_searchstate(12, 12, [(6, 5), (5, 5), (4, 5), (4, 4)],
+                     (5, 4), 3)
+    search_reply(action, children)
+    # Boxed head (4,4) heading west: straight and right are walls,
+    # left is the snake's own body. Every root child dies at once.
+    emit_player(80, 7)
+    py = MCTSPlayer(simulations=80, seed=7)
+    action, children = python_search_with_walls(
+        py, env_view(12, 12, [(5, 3), (5, 4), (5, 5), (4, 5), (4, 4)],
+                     (10, 10), 3), walls12)
+    emit_searchstate(12, 12, [(5, 3), (5, 4), (5, 5), (4, 5), (4, 4)],
+                     (10, 10), 3)
+    search_reply(action, children)
+
+    corpus.note("fuzz session: harvested mid-game states that are "
+                "legal on the maze board (no body cell or food on a "
+                "wall), fresh player per search")
+    sims_cycle = (80, 10, 2, 1, 10, 2)
+    pseeds = (31337, 101, 202, 303, 404, 7)
+    idx = [0]
+
+    def fuzz_layout(w, h, want):
+        walls = maze_walls(w, h)
+        legal = []
+        round_no = 0
+        while len(legal) < want:
+            pool = harvest_states(
+                400, boards=((w, h),),
+                seed_base=950000 + 1000 * w + 7919 * round_no)
+            legal.extend(
+                s for s in pool
+                if s[3] is not None and s[3] not in walls
+                and not any(cell in walls for cell in s[2]))
+            round_no += 1
+        emit_walls(walls)
+        for (bw, bh, body, food, heading) in legal[:want]:
+            i = idx[0]
+            idx[0] += 1
+            sims = sims_cycle[i % len(sims_cycle)]
+            pseed = pseeds[i % len(pseeds)]
+            py = MCTSPlayer(simulations=sims, seed=pseed)
+            action, children = python_search_with_walls(
+                py, env_view(bw, bh, body, food, heading), walls)
+            emit_player(sims, pseed)
+            emit_searchstate(bw, bh, body, food, heading)
+            search_reply(action, children)
+
+    fuzz_layout(12, 12, 170)
+    fuzz_layout(8, 8, 90)
+    fuzz_layout(6, 6, 90)
+
+    corpus.note("shared player across consecutive wall searches "
+                "(the RNG lifecycle under a wall set)")
+    emit_walls(walls12)
+    emit_player(40, 2024)
+    py = MCTSPlayer(simulations=40, seed=2024)
+    pool = harvest_states(400, boards=((12, 12),), seed_base=990000)
+    legal = [(bw, bh, body, food, heading)
+             for (bw, bh, body, food, heading) in pool
+             if food is not None and food not in walls12
+             and not any(cell in walls12 for cell in body)]
+    assert len(legal) >= 48
+    for (bw, bh, body, food, heading) in legal[:48]:
+        action, children = python_search_with_walls(
+            py, env_view(bw, bh, body, food, heading), walls12)
+        emit_searchstate(bw, bh, body, food, heading)
+        search_reply(action, children)
+    return corpus.text(), stats
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-dir", type=Path, default=OUT,
@@ -758,6 +946,7 @@ def main() -> None:
     snake_text, snake_stats = gen_snake_corpus()
     policies_text, policies_stats = gen_policies_corpus(q_data)
     mcts_text, mcts_stats = gen_mcts_cases(oracle)
+    wall_text, wall_stats = gen_mcts_wall_cases()
     files = {
         "rng_traces.txt": gen_rng_traces(),
         "transitions.json": json.dumps(transitions, sort_keys=True),
@@ -766,6 +955,7 @@ def main() -> None:
         "snake_corpus.txt": snake_text,
         "policies_corpus.txt": policies_text,
         "mcts_cases.txt": mcts_text,
+        "mcts_wall_cases.txt": wall_text,
     }
     hashes = {}
     for name, text in files.items():
@@ -793,6 +983,8 @@ def main() -> None:
         "policies_rand_draws": policies_stats["rand_compared"],
         "mcts_searches": mcts_stats["searches"],
         "mcts_root_children": mcts_stats["root_children"],
+        "mcts_wall_searches": wall_stats["searches"],
+        "mcts_wall_root_children": wall_stats["root_children"],
     }
     meta = {"fixture_version": FIXTURE_VERSION, "source_sha": sha,
             "python_version": sys.version.split()[0], "file_sha256": hashes,

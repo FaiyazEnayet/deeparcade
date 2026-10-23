@@ -74,6 +74,13 @@ add_test(NAME mcts_oracle
 add_test(NAME mcts_fuzz
          COMMAND mcts_diff_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/golden/mcts_cases.txt)
+# Maze-mode (wall) MCTS corpus (golden-v3): same runner, WALLS
+# protocol overlay; thresholds sit just under the frozen counts
+# (404 searches / 977 root children) so a truncated corpus fails.
+add_test(NAME mcts_wall
+         COMMAND mcts_diff_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/mcts_wall_cases.txt
+                 400 900)
 
 find_program(NARCADE_PYTHON3 NAMES python3)
 if(NARCADE_PYTHON3)
