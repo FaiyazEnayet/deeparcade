@@ -21,6 +21,7 @@
 - Docs: the native RNG header now states its supported domain explicitly (int64 seeds, getrandbits widths 0 to 64, randint spans that fit in int64), which is narrower than CPython's random.Random by design.
 - Docs: the README now carries the native C++ engine throughout: a C++ 20 badge, the intro, a native parity row in the evidence table, a native node in the design diagram, native build and test commands, and the repository map.
 - Fix: the native DQN parity checker now rejects nonfinite logits outright instead of letting a NaN be swallowed by the running maximum; the finite check runs on both native and reference outputs before any difference is taken.
+- Tests: golden corpus counts are now recounted from the corpus files themselves by a corpus statistics check and compared against meta.json, which must also carry exactly the expected count keys.
 
 
 ## v1.3.0
