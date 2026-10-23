@@ -1,0 +1,28 @@
+name: Native
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install torch (CPU) for the DQN check and reference tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Configure
+        run: cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE=$(which python)
+      - name: Build
+        run: cmake --build native/build -j
+      # eval_fuzz is excluded for runtime: its Python reference pass takes
+      # tens of minutes. It remains a local gate.
+      - name: Test
+        run: ctest --test-dir native/build --output-on-failure -E eval_fuzz
