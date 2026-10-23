@@ -78,6 +78,40 @@ if(NARCADE_PYTHON3)
                    --runner $<TARGET_FILE:mcts_diff_runner>)
 endif()
 
+# ---- CPP-04: pybind11 bindings (optional) ----
+# Builds the `narcade_native` Python extension from bindings/bindings.cpp.
+# Entirely optional: if pybind11 is not installed the native libraries and
+# runners still configure and build exactly as before. Locate pybind11 via
+# the interpreter, per the documented `python3 -m pybind11 --cmakedir`.
+find_program(NARCADE_BINDINGS_PYTHON3 NAMES python3)
+if(NARCADE_BINDINGS_PYTHON3)
+  execute_process(
+    COMMAND ${NARCADE_BINDINGS_PYTHON3} -m pybind11 --cmakedir
+    OUTPUT_VARIABLE NARCADE_PYBIND11_CMAKEDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET)
+endif()
+if(NARCADE_PYBIND11_CMAKEDIR)
+  list(APPEND CMAKE_PREFIX_PATH "${NARCADE_PYBIND11_CMAKEDIR}")
+  set(PYBIND11_FINDPYTHON ON)
+  find_package(pybind11 CONFIG QUIET)
+endif()
+if(pybind11_FOUND)
+  # The core libraries above are static; a Python extension is a shared
+  # object, so their objects must be position-independent. Setting the
+  # property here keeps the append self-contained (the runners that also
+  # link these libraries are unaffected semantically).
+  set_target_properties(narcade_rng narcade_snake narcade_qlearn
+                        narcade_policies narcade_mcts
+                        PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  pybind11_add_module(narcade_native bindings/bindings.cpp)
+  target_link_libraries(narcade_native PRIVATE narcade_mcts narcade_policies
+                        narcade_qlearn narcade_snake narcade_rng)
+  target_compile_options(narcade_native PRIVATE -Wall -Wextra)
+else()
+  message(STATUS "pybind11 not found: skipping the narcade_native extension")
+endif()
+
 # --- CPP-06c: native benchmark suite -------------------------------------
 # Fixed deterministic workloads (env steps/s, RNG draws/s, MCTS
 # searches/s at 80 sims, full evaluate-protocol episodes/s). Numbers
@@ -113,4 +147,24 @@ if(EXISTS "$ENV{HOME}/workspace/flowforge/.venv/bin/python")
            COMMAND "$ENV{HOME}/workspace/flowforge/.venv/bin/python"
                    ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_dqn_check.py
                    --runner $<TARGET_FILE:dqn_diff_runner> --states 3000)
+endif()
+
+# --- CPP-05: native evaluation engine (appended; self-contained) ---
+add_library(narcade_evaluate src/evaluate.cpp)
+target_include_directories(narcade_evaluate PUBLIC include)
+target_link_libraries(narcade_evaluate PUBLIC narcade_snake narcade_policies
+                      narcade_mcts)
+target_compile_options(narcade_evaluate PRIVATE -Wall -Wextra)
+
+add_executable(narcade_evaluate_app apps/evaluate_main.cpp)
+set_target_properties(narcade_evaluate_app PROPERTIES
+                      OUTPUT_NAME narcade_evaluate)
+target_link_libraries(narcade_evaluate_app PRIVATE narcade_evaluate)
+target_compile_options(narcade_evaluate_app PRIVATE -Wall -Wextra)
+
+if(NARCADE_PYTHON3)
+  add_test(NAME eval_fuzz
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_eval_fuzz.py
+                   --runner $<TARGET_FILE:narcade_evaluate_app>)
 endif()
