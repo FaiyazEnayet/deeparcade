@@ -1,12 +1,12 @@
 <p align="center"><img src="docs/readme-banner.svg?v=type-20261017b" alt="DeepArcade: A playable comparison of Snake agents" width="1200"></p>
 
-[![Tests](https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml/badge.svg)](https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-007EC6)](LICENSE) ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB) ![Built with PyTorch + browser inference](https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-555555) [![Interactive demo](https://img.shields.io/badge/demo-interactive-4C9D39)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
+[![Tests](https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml/badge.svg)](https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-007EC6)](LICENSE) ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB) ![C++ 20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white) ![Built with PyTorch + browser inference](https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-555555) [![Interactive demo](https://img.shields.io/badge/demo-interactive-4C9D39)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
 
 <p align="center"><a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><b>Open interactive demo</b></a> · <a href="#method">Method</a> · <a href="#run-locally">Run locally</a></p>
 
 # DeepArcade
 
-DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized.
+DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized. The Python implementation is mirrored by a native C++20 engine under `native/`, checked against the Python reference on frozen corpora; Python remains the reference and the default.
 
 
 [![DeepArcade demo](docs/demo.gif?v=showcase-20261017b)](https://faiyazenayet.github.io/deeparcade/docs/dashboard.html)
@@ -31,6 +31,7 @@ Agents are evaluated on seeded classic-board games. Learning curves, score distr
 | Evaluation games | 500 per policy, except MCTS with 50 |
 | Mean food score | Random 0.16; greedy 19.89; tabular Q 20.78 |
 | Same evaluation | DQN 5.39; MCTS 44.1 |
+| Native parity | 111,032 environment transitions, 36,129 policy states and 1,039 MCTS searches checked; Q-learning and the full 30,000-episode training protocol bit-exact; 13,824 DQN states with complete action agreement (max logit difference under 1e-5) |
 | Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
 
 ## Updating this project
@@ -48,6 +49,16 @@ python scripts/make_game.py
 python scripts/make_dashboard.py
 ```
 
+The native C++ engine builds and tests separately:
+
+```sh
+cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release
+cmake --build native/build -j
+ctest --test-dir native/build --output-on-failure
+```
+
+With the pybind11 extension built, `NARCADE_NATIVE=1` switches the Python package to the native backend.
+
 Open [the standalone game](https://faiyazenayet.github.io/deeparcade/docs/game.html) to play without the dashboard.
 
 ## Technical design
@@ -63,13 +74,14 @@ flowchart LR
   N2["DQN training"] --> N4["Agent evaluation"]
   N3["MCTS search"] --> N4["Agent evaluation"]
   N4["Agent evaluation"] --> N5["Browser policies and dashboard"]
+  N0["Seeded Snake environment"] --> N6["Native C++ engine (native/) parity-checked mirror"]
 ```
 
 ## Native C++ engine
 
 The Python implementation is mirrored by a native C++ engine under `native/`: the Snake environment, a CPython-compatible RNG, the tabular policies and Q-learning agent, MCTS, the evaluation protocol, the training protocol, move-level trace instrumentation, and DQN inference over the exported JSON weights. Python remains the reference and the default; the native backend is optional (`NARCADE_NATIVE=1` with the pybind11 extension built).
 
-Parity is enforced, not assumed. Golden fixtures generated from the Python reference (`native/golden/`, regenerable with `tools/native_reference.py`) pin the behavior, and the C++ runners replay frozen corpora against them: 111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches with bit-exact root values, 200 evaluation episodes, the full 30,000-episode training protocol, and 13,824 DQN states with complete action agreement. Two boundaries are explicit: DQN training stays in Python (the native side is inference only), and the native evaluator covers the non-neural players, which its report states in a scope field.
+Parity is enforced, not assumed. Golden fixtures generated from the Python reference (`native/golden/`, regenerable with `tools/native_reference.py`) pin the behavior, and the C++ runners replay frozen corpora against them: 111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches with bit-exact root values, 200 evaluation episodes, the full 30,000-episode training protocol, and 13,824 DQN states with complete action agreement. Two boundaries are explicit: DQN training stays in Python (the native side is inference only), and the native evaluator covers the non-neural players, which its report states in a scope field. The `regen_check` CTest regenerates the fixtures from the Python reference and byte-compares them, and `meta_check` (`native/tests/meta_check.cmake`) verifies each golden file's SHA-256 against `native/golden/meta.json`. A separate Native workflow in GitHub Actions builds the engine and runs the CTest suite on every push and pull request; `eval_fuzz` is excluded there for runtime and remains a local gate.
 
 Build and test:
 
@@ -89,7 +101,7 @@ The DQN underperforms the greedy and tabular baselines in the committed run. The
 
 ## Code and data
 
-`src/narcade/` contains the Snake environment and agents. `runs/eval.json` stores the evaluation. `web/game.html` is the browser template; `scripts/make_game.py` injects policy data.
+`src/narcade/` contains the Snake environment and agents. `native/` contains the C++ engine: environment, RNG, policies, MCTS, evaluator, trainer and DQN inference, with golden corpora under `native/golden/`. `runs/eval.json` stores the evaluation. `web/game.html` is the browser template; `scripts/make_game.py` injects policy data.
 
 
 ## Limitations
