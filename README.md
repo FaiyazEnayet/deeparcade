@@ -29,8 +29,8 @@ Agents are evaluated on seeded classic-board games. Learning curves, score distr
 | Scope | Recorded result or contract |
 | :--- | :--- |
 | Evaluation games | 500 per policy, except MCTS with 50 |
-| Mean food score | Random 0.16; greedy 18.89; tabular Q 20.78 |
-| Same evaluation | DQN 6.39; MCTS 44.1 |
+| Mean food score | Random 0.16; greedy 19.89; tabular Q 20.78 |
+| Same evaluation | DQN 5.39; MCTS 44.1 |
 | Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
 
 ## Updating this project

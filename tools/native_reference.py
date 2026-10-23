@@ -283,8 +283,9 @@ def python_episode(width, height, seed, max_steps, actions):
     """Run the Python env over `actions`; return (init, records, meta).
 
     Records mirror the snake runner's output fields; meta[i] is True
-    when step i moved into the vacating tail cell. (Copied from the
-    retired tools/native_fuzz.py reference implementation.)
+    when step i moved into the vacating tail cell. (Derived from the
+    retired tools/native_fuzz.py driver, removed when the differential
+    checks were frozen as corpora.)
     """
     env = SnakeEnv(width, height, seed=seed, max_steps=max_steps)
     init = (env.encode_state(),
