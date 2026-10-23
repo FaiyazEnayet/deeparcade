@@ -91,3 +91,26 @@ add_test(NAME bench_smoke
          COMMAND narcade_bench all --steps 2000 --draws 10000 --searches 3
                  --episodes 3
                  --qtable ${CMAKE_CURRENT_SOURCE_DIR}/../runs/qtable.json)
+
+# --- CPP-06d: native DQN inference ----------------------------------------
+# Float32 inference over the exported runs/dqn_weights.json (inference
+# only; training stays in PyTorch). Gated on tools/native_dqn_check.py
+# against the PyTorch reference.
+add_library(narcade_dqn src/dqn_infer.cpp)
+target_include_directories(narcade_dqn PUBLIC include)
+target_link_libraries(narcade_dqn PUBLIC narcade_snake)
+target_compile_options(narcade_dqn PRIVATE -Wall -Wextra)
+
+add_executable(dqn_diff_runner tests/dqn_diff_runner.cpp)
+target_link_libraries(dqn_diff_runner PRIVATE narcade_dqn)
+target_compile_options(dqn_diff_runner PRIVATE -Wall -Wextra)
+
+# The check driver needs torch for the reference; register it only
+# when the known torch venv is present (it is run manually regardless
+# as the packet gate).
+if(EXISTS "$ENV{HOME}/workspace/flowforge/.venv/bin/python")
+  add_test(NAME dqn_check
+           COMMAND "$ENV{HOME}/workspace/flowforge/.venv/bin/python"
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_dqn_check.py
+                   --runner $<TARGET_FILE:dqn_diff_runner> --states 3000)
+endif()
