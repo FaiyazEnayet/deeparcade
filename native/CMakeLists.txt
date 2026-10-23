@@ -187,3 +187,20 @@ if(NARCADE_PYTHON3)
                    --trainer $<TARGET_FILE:train_main> --small-only)
 endif()
 
+# --- CPP-06b: native move-level trace instrumentation (analyze.py). ---
+add_library(narcade_trace src/trace.cpp)
+target_include_directories(narcade_trace PUBLIC include)
+target_link_libraries(narcade_trace PUBLIC narcade_snake)
+target_compile_options(narcade_trace PRIVATE -Wall -Wextra)
+
+add_executable(analyze_main apps/analyze_main.cpp)
+target_link_libraries(analyze_main PRIVATE narcade_trace narcade_policies
+                      narcade_mcts)
+target_compile_options(analyze_main PRIVATE -Wall -Wextra)
+
+if(NARCADE_PYTHON3)
+  add_test(NAME analyze_check
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_analyze_check.py
+                   --analyzer $<TARGET_FILE:analyze_main> --fast)
+endif()
