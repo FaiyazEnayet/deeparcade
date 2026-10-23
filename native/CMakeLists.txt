@@ -222,6 +222,30 @@ if(NARCADE_PYTHON3)
                    --runner $<TARGET_FILE:narcade_evaluate_app>)
 endif()
 
+# --- FIX-J: frozen evaluator regression for hosted CI ------------------
+# eval_fuzz above is a live differential check against the Python
+# reference over 200 paired episodes; its Python pass takes tens of
+# minutes, so hosted CI excludes it (ctest -E eval_fuzz, see the Native
+# workflow) and it remains the local gate for native evaluation
+# changes. eval_regression freezes the Python reference results for a
+# 12-episode subset (seeds 5000-5002, all four players) in
+# golden/eval_regression.json and replays them through the native
+# evaluator, so hosted CI still guards evaluation parity on every run.
+# The frozen file is deliberately outside meta.json's corpus
+# accounting (meta_check / corpus_stats_check cover the eight corpus
+# files) and outside regen_check (its regeneration needs the
+# evaluation protocol's Python pass); it is regenerated manually with
+# tools/native_reference.py --eval-regression. Native tool; no Python
+# needed, so it is registered unconditionally.
+add_executable(eval_regression_check tests/eval_regression_check.cpp)
+target_link_libraries(eval_regression_check PRIVATE narcade_evaluate)
+target_compile_options(eval_regression_check PRIVATE -Wall -Wextra)
+
+add_test(NAME eval_regression
+         COMMAND eval_regression_check
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/eval_regression.json
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../runs/qtable.json)
+
 # --- CPP-06a: native Q-learning trainer (scripts/train.py port). ---
 add_library(narcade_trainer src/trainer.cpp)
 target_include_directories(narcade_trainer PUBLIC include)

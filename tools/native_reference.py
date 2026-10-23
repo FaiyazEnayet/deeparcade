@@ -25,6 +25,16 @@ Fixtures:
                    protocol overlay
   meta.json        provenance: source SHA, Python version, fixture version
 
+eval_regression.json is NOT one of the eight corpus fixtures above and
+is deliberately outside meta.json's accounting (meta_check and the
+corpus statistics recount cover the eight files only). It is emitted
+by the separate --eval-regression mode: a frozen subset of the CPP-05
+paired evaluation protocol (seeds 5000-5002, the four non-neural
+players) with Python-reference per-episode scores/steps, summaries,
+Elo and head-to-head, replayed by the eval_regression CTest so hosted
+CI guards evaluation parity while the full eval_fuzz differential
+check (200 episodes, live Python reference) remains a local gate.
+
 The corpora freeze full runner sessions: lines starting "> " are inputs
 to a C++ runner, lines starting "< " are the expected replies (the same
 line formats the runners speak interactively), "#" lines are comments.
@@ -931,13 +941,155 @@ def gen_mcts_wall_cases() -> tuple[str, dict]:
     return corpus.text(), stats
 
 
+# ---------------------------------------------------------- eval regression
+# Frozen subset of the CPP-05 paired evaluation protocol, emitted only
+# by the --eval-regression mode (never by the default corpus run, so
+# regen_check and meta.json accounting are untouched).
+#
+# tools/native_eval_fuzz.py verifies the native evaluator against the
+# Python reference over 200 paired episodes, but its Python reference
+# pass takes tens of minutes, so hosted CI excludes it and it remains
+# a local gate. This mode freezes the same reference computation for
+# seeds 5000-5002 (three episodes per player, twelve total) into
+# native/golden/eval_regression.json; the native eval_regression_check
+# CTest replays the subset through the native evaluator in CI.
+#
+# The reference values come from scripts/evaluate.py's OWN functions
+# (run_episodes, summarize, elo_ratings, head_to_head), called exactly
+# as the fuzz driver calls them: identical policy construction
+# (RandomPolicy(seed=999), GreedyPolicy(), QTablePolicy over
+# runs/qtable.json, ONE shared MCTSPlayer(simulations=80,
+# seed=31337)), steps captured by an observing SnakeEnv subclass
+# swapped into evaluate.py's namespace, and raw (pre-rounding) summary
+# and Elo values recovered with the identity-round trick. Raw doubles
+# are recorded as IEEE754 hex bit patterns so the C++ checker compares
+# them bit-exactly. Deterministic: regenerating from the same sources
+# reproduces the file byte-identically.
+EVAL_REGRESSION_SEED0 = 5000
+EVAL_REGRESSION_EPISODES = 3
+EVAL_REGRESSION_SIMS = 80
+
+
+def gen_eval_regression() -> str:
+    import builtins
+    import importlib.util
+    from unittest import mock
+
+    spec = importlib.util.spec_from_file_location(
+        "evaluate_ref", ROOT / "scripts" / "evaluate.py")
+    evaluate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(evaluate)
+
+    class RecordingEnv(SnakeEnv):
+        """SnakeEnv that records (score, steps) at each terminal step
+        (the fuzz driver's observer, verbatim semantics)."""
+
+        records: list = []
+
+        def step(self, action):
+            out = super().step(action)
+            if out[2]:
+                RecordingEnv.records.append((self.score, self.steps))
+            return out
+
+    with open(ROOT / "runs" / "qtable.json") as f:
+        qtable = json.load(f)
+    policies = {
+        "random": RandomPolicy(seed=999),
+        "greedy": GreedyPolicy(),
+        "rookie": QTablePolicy(qtable),
+        "grandmaster": MCTSPlayer(simulations=EVAL_REGRESSION_SIMS,
+                                  seed=31337),
+    }
+    seeds = list(range(EVAL_REGRESSION_SEED0,
+                       EVAL_REGRESSION_SEED0 + EVAL_REGRESSION_EPISODES))
+    scores: dict = {}
+    steps: dict = {}
+    orig_env = evaluate.SnakeEnv
+    evaluate.SnakeEnv = RecordingEnv
+    try:
+        for name, pol in policies.items():
+            RecordingEnv.records = []
+            scores[name] = evaluate.run_episodes(pol.act, seeds)
+            rec = list(RecordingEnv.records)
+            if [s for s, _ in rec] != scores[name]:
+                raise RuntimeError(
+                    f"eval regression: recorded scores disagree with "
+                    f"run_episodes for {name}")
+            steps[name] = [st for _, st in rec]
+    finally:
+        evaluate.SnakeEnv = orig_env
+
+    summary = {k: evaluate.summarize(v) for k, v in scores.items()}
+    elo = evaluate.elo_ratings(scores)
+    h2h = evaluate.head_to_head(scores)
+    identity = lambda x, *a: x  # noqa: E731
+    with mock.patch.object(builtins, "round", identity):
+        raw_elo = evaluate.elo_ratings(scores)
+        raw_summary = {k: evaluate.summarize(v)
+                       for k, v in scores.items()}
+    n = len(seeds)
+    raw_h2h = {}
+    for a in scores:
+        raw_h2h[a] = {}
+        for b in scores:
+            if a == b:
+                raw_h2h[a][b] = None
+                continue
+            w = sum(1 for i in range(n) if scores[a][i] > scores[b][i])
+            d = sum(1 for i in range(n) if scores[a][i] == scores[b][i])
+            raw_h2h[a][b] = [w, d]
+
+    doc = {
+        "schema": "eval-regression-v1",
+        "protocol": {
+            "seed0": EVAL_REGRESSION_SEED0,
+            "episodes_per_player": EVAL_REGRESSION_EPISODES,
+            "seeds": seeds,
+            "sims": EVAL_REGRESSION_SIMS,
+            "width": 12,
+            "height": 12,
+            "players": list(policies.keys()),
+            "reference": "scripts/evaluate.py via "
+                         "tools/native_reference.py --eval-regression",
+        },
+        "episodes": {
+            name: [{"seed": s, "score": sc, "steps": st}
+                   for s, sc, st in zip(seeds, scores[name],
+                                        steps[name])]
+            for name in policies
+        },
+        "summary": summary,
+        "raw_summary": {
+            k: {"mean_hex": dbl_hex(v["mean"]),
+                "std_hex": dbl_hex(v["std"])}
+            for k, v in raw_summary.items()
+        },
+        "elo": elo,
+        "raw_elo": {k: dbl_hex(v) for k, v in raw_elo.items()},
+        "head_to_head": h2h,
+        "raw_head_to_head": raw_h2h,
+    }
+    return json.dumps(doc, indent=2, sort_keys=True) + "\n"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-dir", type=Path, default=OUT,
                     help="golden output directory (default: native/golden)")
+    ap.add_argument("--eval-regression", action="store_true",
+                    help="emit only eval_regression.json (frozen subset "
+                         "of the paired evaluation protocol) into "
+                         "--out-dir and exit")
     args = ap.parse_args()
     out_dir = args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
+    if args.eval_regression:
+        text = gen_eval_regression()
+        (out_dir / "eval_regression.json").write_bytes(text.encode())
+        print(f"wrote {out_dir / 'eval_regression.json'} "
+              f"({len(text.encode())} bytes)")
+        return
     sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
                          capture_output=True, text=True).stdout.strip()
     q_data = gen_q_updates()

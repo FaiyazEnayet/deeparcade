@@ -1,0 +1,280 @@
+{
+  "elo": {
+    "grandmaster": 1316,
+    "greedy": 1192,
+    "random": 1084,
+    "rookie": 1208
+  },
+  "episodes": {
+    "grandmaster": [
+      {
+        "score": 51,
+        "seed": 5000,
+        "steps": 595
+      },
+      {
+        "score": 57,
+        "seed": 5001,
+        "steps": 615
+      },
+      {
+        "score": 50,
+        "seed": 5002,
+        "steps": 711
+      }
+    ],
+    "greedy": [
+      {
+        "score": 19,
+        "seed": 5000,
+        "steps": 187
+      },
+      {
+        "score": 18,
+        "seed": 5001,
+        "steps": 141
+      },
+      {
+        "score": 10,
+        "seed": 5002,
+        "steps": 86
+      }
+    ],
+    "random": [
+      {
+        "score": 0,
+        "seed": 5000,
+        "steps": 35
+      },
+      {
+        "score": 0,
+        "seed": 5001,
+        "steps": 27
+      },
+      {
+        "score": 0,
+        "seed": 5002,
+        "steps": 11
+      }
+    ],
+    "rookie": [
+      {
+        "score": 33,
+        "seed": 5000,
+        "steps": 385
+      },
+      {
+        "score": 21,
+        "seed": 5001,
+        "steps": 232
+      },
+      {
+        "score": 8,
+        "seed": 5002,
+        "steps": 89
+      }
+    ]
+  },
+  "head_to_head": {
+    "grandmaster": {
+      "grandmaster": null,
+      "greedy": {
+        "draw_rate": 0.0,
+        "win_rate": 1.0
+      },
+      "random": {
+        "draw_rate": 0.0,
+        "win_rate": 1.0
+      },
+      "rookie": {
+        "draw_rate": 0.0,
+        "win_rate": 1.0
+      }
+    },
+    "greedy": {
+      "grandmaster": {
+        "draw_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "greedy": null,
+      "random": {
+        "draw_rate": 0.0,
+        "win_rate": 1.0
+      },
+      "rookie": {
+        "draw_rate": 0.0,
+        "win_rate": 0.333
+      }
+    },
+    "random": {
+      "grandmaster": {
+        "draw_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "greedy": {
+        "draw_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "random": null,
+      "rookie": {
+        "draw_rate": 0.0,
+        "win_rate": 0.0
+      }
+    },
+    "rookie": {
+      "grandmaster": {
+        "draw_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "greedy": {
+        "draw_rate": 0.0,
+        "win_rate": 0.667
+      },
+      "random": {
+        "draw_rate": 0.0,
+        "win_rate": 1.0
+      },
+      "rookie": null
+    }
+  },
+  "protocol": {
+    "episodes_per_player": 3,
+    "height": 12,
+    "players": [
+      "random",
+      "greedy",
+      "rookie",
+      "grandmaster"
+    ],
+    "reference": "scripts/evaluate.py via tools/native_reference.py --eval-regression",
+    "seed0": 5000,
+    "seeds": [
+      5000,
+      5001,
+      5002
+    ],
+    "sims": 80,
+    "width": 12
+  },
+  "raw_elo": {
+    "grandmaster": "4094915c523acd0e",
+    "greedy": "40929ec70029de15",
+    "random": "4090f173f5ca0ef9",
+    "rookie": "4092de68b7d145e4"
+  },
+  "raw_head_to_head": {
+    "grandmaster": {
+      "grandmaster": null,
+      "greedy": [
+        3,
+        0
+      ],
+      "random": [
+        3,
+        0
+      ],
+      "rookie": [
+        3,
+        0
+      ]
+    },
+    "greedy": {
+      "grandmaster": [
+        0,
+        0
+      ],
+      "greedy": null,
+      "random": [
+        3,
+        0
+      ],
+      "rookie": [
+        1,
+        0
+      ]
+    },
+    "random": {
+      "grandmaster": [
+        0,
+        0
+      ],
+      "greedy": [
+        0,
+        0
+      ],
+      "random": null,
+      "rookie": [
+        0,
+        0
+      ]
+    },
+    "rookie": {
+      "grandmaster": [
+        0,
+        0
+      ],
+      "greedy": [
+        2,
+        0
+      ],
+      "random": [
+        3,
+        0
+      ],
+      "rookie": null
+    }
+  },
+  "raw_summary": {
+    "grandmaster": {
+      "mean_hex": "404a555555555555",
+      "std_hex": "4008baca4c44a045"
+    },
+    "greedy": {
+      "mean_hex": "402f555555555555",
+      "std_hex": "40101c58aafb899d"
+    },
+    "random": {
+      "mean_hex": "0000000000000000",
+      "std_hex": "0000000000000000"
+    },
+    "rookie": {
+      "mean_hex": "4034aaaaaaaaaaab",
+      "std_hex": "40246af8aef5e953"
+    }
+  },
+  "schema": "eval-regression-v1",
+  "summary": {
+    "grandmaster": {
+      "max": 57,
+      "mean": 52.67,
+      "median": 51,
+      "min": 50,
+      "n": 3,
+      "std": 3.09
+    },
+    "greedy": {
+      "max": 19,
+      "mean": 15.67,
+      "median": 18,
+      "min": 10,
+      "n": 3,
+      "std": 4.03
+    },
+    "random": {
+      "max": 0,
+      "mean": 0,
+      "median": 0,
+      "min": 0,
+      "n": 3,
+      "std": 0.0
+    },
+    "rookie": {
+      "max": 33,
+      "mean": 20.67,
+      "median": 21,
+      "min": 8,
+      "n": 3,
+      "std": 10.21
+    }
+  }
+}
