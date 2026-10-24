@@ -37,7 +37,7 @@
 <div id="stage">
 <div class="play-area"><canvas aria-label="Snake game board. Use arrow keys or WASD." height="600" id="cv" role="img" width="600"></canvas><div class="hidden" id="overlay"><h2 id="ovTitle"></h2><p id="ovSub"></p>
 <div class="btnrow" style="width:280px"><button class="btn green" id="ovAgain">Play again</button>
-<button class="btn ghost" id="ovMenu">Menu</button></div>
+<button class="btn ghost" id="ovMenu">Menu</button><button class="btn hidden" id="ovExtra">Restart tournament</button></div>
 
 </div></div>
 
@@ -72,7 +72,7 @@
 <button aria-label="Watch AI play" class="btn" id="btnAI">Watch AI play</button>
 <h3 style="margin-top:12px">Tournament</h3>
 <button aria-label="Start tournament run" class="btn gold" id="btnTourn">Start tournament run</button>
-<div id="tournStat" style="font-size:.82rem;color:var(--dim);margin-top:6px"></div>
+<button class="btn ghost" onclick="document.getElementById('btnTourn').click()">Restart tournament</button><div id="tournStat" style="font-size:.82rem;color:var(--dim);margin-top:6px"></div>
 </div>
 <div class="card"><h3>Leaderboard <span style="text-transform:none">(this browser)</span></h3>
 <div id="lbMode" style="margin-bottom:6px"></div>
@@ -398,8 +398,11 @@ const AI_REF = {"rookie": 21.0, "pro": 5.0, "grandmaster": 44.5}; // median eval
 let G=null, mode='classic', playKind='human', aiKind='rookie';
 let acc=0,lastT=0,running=false,recording=null,prevScore=0;
 let mctsBudget=150, tourn=null;
+function actualLabel(){return tourn.pendingAdvance?'Next level':'Rematch';}
+
 
 function newGame(m, kind, ai){
+  comparisonToken++;inputQueue=[];document.getElementById('ovAgain').disabled=false;
   mode=m; playKind=kind; aiKind=ai;
   const seed=(Math.random()*1e9)|0;
   G=new Snake(12,12,seed,mode);
@@ -421,12 +424,12 @@ function bestScore(m){
   const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}');
   return (lb[m]&&lb[m][0])?lb[m][0].score:0;
 }
-function aiAction(){
-  if(aiKind==='rookie') return qAct(G);
-  if(aiKind==='pro') return dqnAct(G);
+function aiAction(game=G){
+  if(aiKind==='rookie') return qAct(game);
+  if(aiKind==='pro') return dqnAct(game);
   // grandmaster: adaptive budget
   const t0=performance.now();
-  const a=mctsAct(G,mctsBudget);
+  const a=mctsAct(game,mctsBudget);
   const dt=performance.now()-t0;
   if(dt>250&&mctsBudget>60)mctsBudget-=20; else if(dt<80&&mctsBudget<300)mctsBudget+=20;
   return a;
@@ -453,21 +456,32 @@ function tick(){
   }
   updateHUD();
 }
-function onGameOver(){
+let comparisonToken=0;
+async function onGameOver(){
   saveReplay(recording);
   const ov=document.getElementById('overlay');
-  document.getElementById('ovTitle').textContent = G.score>0?`Score: ${G.score}`:'Game over';
+  document.getElementById('ovTitle').textContent = 'The End';
   let sub='';
   const opp = playKind==='tourn' ? tourn.opp : (playKind==='ai'? aiKind : null);
   if(playKind==='human'&&opp){
     // human just played vs selected AI in tournament or... (menu human has no opp)
   }
-  if(playKind==='tourn'){
+  if(playKind==='tourn'&&tourn){
     // AI plays its game now (same mode, fresh seed), then compare
     const aiGame=new Snake(12,12,(Math.random()*1e9)|0,mode);
     const saveKind=aiKind; aiKind=tourn.opp;
     let guard=0;
-    while(!aiGame.done&&guard++<5000){ aiGame.step(aiAction()); }
+    const token=++comparisonToken;
+    ov.classList.remove('hidden');
+    document.getElementById('ovSub').textContent=AI_NAMES[tourn.opp]+' is playing';
+    document.getElementById('ovAgain').disabled=true;document.getElementById('ovAgain').textContent='Please wait';
+    while(!aiGame.done&&guard<5000){
+      await new Promise(requestAnimationFrame);
+      if(token!==comparisonToken)return;
+      aiGame.step(aiAction(aiGame));guard++;
+      document.getElementById('ovSub').textContent=AI_NAMES[tourn.opp]+' is playing · score '+aiGame.score;
+    }
+    document.getElementById('ovAgain').disabled=false;
     aiKind=saveKind;
     const aiScore=aiGame.score, huScore=G.score;
     const eloBefore=store.elo, aiElo=AI_ELO[tourn.opp];
@@ -476,8 +490,10 @@ function onGameOver(){
     store.elo=eloBefore+32*(actual-expected);
     const d=Math.round(store.elo-eloBefore);
     sub=`You ${huScore} vs ${AI_NAMES[tourn.opp]} ${aiScore} — ELO <span class="${d>=0?'elo-up':'elo-dn'}">${d>=0?'+':''}${d}</span> → ${store.elo}`;
+    tourn.standings.push(AI_NAMES[tourn.opp]+': You '+huScore+' / AI '+aiScore);
+    tourn.pendingAdvance=actual===1;
     if(actual===1){ tourn.round++;
-      if(tourn.round>=tourn.ladder.length){ sub+=`<br>🏆 Tournament complete! You beat all three AIs.`; tourn=null; }
+      if(tourn.round>=tourn.ladder.length){ sub+=`<br>🏆 Tournament complete! You beat all three AIs.`; tourn.complete=true; document.getElementById('ovTitle').textContent='The End'; }
       else { tourn.opp=tourn.ladder[tourn.round]; sub+=`<br>Next: <b>${AI_NAMES[tourn.opp]}</b> (ELO ${AI_ELO[tourn.opp]})`; }
     } else { sub+=`<br>Rematch <b>${AI_NAMES[tourn.opp]}</b> to advance.`; }
     renderTourn();
@@ -487,6 +503,11 @@ function onGameOver(){
     addScore(mode,store.name,G.score);
     sub=`Nice run — saved to the leaderboard.`;
   }
+  if(tourn&&playKind==='tourn')sub+='<br>'+tourn.standings.join('<br>');
+  const primary=document.getElementById('ovAgain');primary.textContent=playKind==='tourn'&&tourn?(tourn.complete?'New tournament':actualLabel()):'Play again';
+  document.getElementById('ovExtra').classList.toggle('hidden',playKind!=='tourn'||!tourn);
+  document.getElementById('ovExtra').textContent=tourn&&tourn.complete?'Play again':'Restart tournament';
+  document.getElementById('ovMenu').classList.toggle('hidden',!!(tourn&&tourn.complete&&playKind==='tourn'));
   document.getElementById('ovSub').innerHTML=sub;
   
   ov.classList.remove('hidden');
@@ -598,6 +619,7 @@ function renderLB(){
 function renderTourn(){
   const el=document.getElementById('tournStat');
   if(!tourn){el.textContent='Climb the ladder: Pro → Rookie → Grandmaster.';return;}
+  if(tourn.complete){el.textContent='Tournament complete';return;}
   el.innerHTML=`Round ${tourn.round+1}/3 — next: <b>${AI_NAMES[tourn.opp]}</b>`;
 }
 
@@ -615,12 +637,13 @@ document.getElementById('btnAI').onclick=()=>{tourn=null;renderTourn();newGame(d
 document.getElementById('btnTourn').onclick=()=>{
   // ladder in ELO order (measured): pro 928 -> rookie 1369 -> grandmaster 1810
   tourn={ladder:['pro','rookie','grandmaster'],round:0,opp:'pro'};
-  renderTourn(); newGame(document.getElementById('modeSel').value,'tourn');
+  tourn.standings=[];renderTourn(); newGame(document.getElementById('modeSel').value,'tourn');
 };
 document.getElementById('ovAgain').onclick=()=>{
-  if(playKind==='tourn'&&tourn) newGame(mode,'tourn');
-  else newGame(mode,playKind,aiKind);
+ if(playKind==='tourn'&&tourn){if(tourn.complete)document.getElementById('btnTourn').click();else newGame(mode,'tourn');}
+ else newGame(mode,playKind==='tourn'?'human':playKind,aiKind);
 };
+document.getElementById('ovExtra').onclick=()=>{if(tourn&&tourn.complete){tourn=null;renderTourn();newGame(mode,'human');}else document.getElementById('btnTourn').click();};
 document.getElementById('ovMenu').onclick=()=>{document.getElementById('overlay').classList.add('hidden');running=false;};
 
 syncAIForMode(); renderLB(); renderRP(); renderTourn(); updateHUD();
