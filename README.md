@@ -3,12 +3,12 @@
 <h1 align="center">DeepArcade</h1>
 
 <p align="center">
-  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/ci.yml?branch=main&amp;label=Python%20CI&amp;style=flat-square&amp;labelColor=3776AB" alt="Python CI status"></a>
-  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/native.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/native.yml?branch=main&amp;label=Native%20CI&amp;style=flat-square&amp;labelColor=00599C" alt="Native CI status"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-d4c277?style=flat-square" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square" alt="Python 3.10 or newer">
-  <img src="https://img.shields.io/badge/C%2B%2B-20-00599C?style=flat-square" alt="C++20">
-  <img src="https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-EE4C2C?style=flat-square" alt="Built with PyTorch and browser inference">
+  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/ci.yml?branch=main&amp;label=Python%20CI&amp;style=flat-square&amp;labelColor=24292f" alt="Python CI status"></a>
+  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/native.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/native.yml?branch=main&amp;label=Native%20CI&amp;style=flat-square&amp;labelColor=24292f" alt="Native CI status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-d4c277?style=flat-square&amp;labelColor=24292f" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&amp;labelColor=24292f" alt="Python 3.10 or newer">
+  <img src="https://img.shields.io/badge/C%2B%2B-20-00599C?style=flat-square&amp;labelColor=24292f" alt="C++20">
+  <img src="https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-C2410C?style=flat-square&amp;labelColor=24292f" alt="Built with PyTorch and browser inference">
 </p>
 
 <p align="center">
