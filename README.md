@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://faiyazenayet.github.io/deeparcade/docs/game.html"><img src="https://img.shields.io/badge/Play-Snake-d4c277?style=for-the-badge&amp;labelColor=0b1410" alt="Play the Snake game"></a>
+  <a href="https://faiyazenayet.github.io/deeparcade/docs/game.html"><img src="https://img.shields.io/badge/Play-Snake-f4edda?style=for-the-badge&amp;labelColor=0b1410" alt="Play the Snake game"></a>
   <a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><img src="https://img.shields.io/badge/Explore-Dashboard-9ad7ac?style=for-the-badge&amp;labelColor=0b1410" alt="Explore the interactive dashboard"></a>
   <a href="#run-locally"><img src="https://img.shields.io/badge/Run-Locally-13251b?style=for-the-badge&amp;labelColor=0b1410" alt="Run it locally"></a>
 </p>
