@@ -3,8 +3,8 @@
 <h1 align="center">DeepArcade</h1>
 
 <p align="center">
-  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/ci.yml?branch=main&amp;label=Python%20CI&amp;style=flat-square" alt="Python CI status"></a>
-  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/native.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/native.yml?branch=main&amp;label=Native%20CI&amp;style=flat-square" alt="Native CI status"></a>
+  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/ci.yml?branch=main&amp;label=Python%20CI&amp;style=flat-square&amp;labelColor=0b1410" alt="Python CI status"></a>
+  <a href="https://github.com/FaiyazEnayet/deeparcade/actions/workflows/native.yml"><img src="https://img.shields.io/github/actions/workflow/status/FaiyazEnayet/deeparcade/native.yml?branch=main&amp;label=Native%20CI&amp;style=flat-square&amp;labelColor=0b1410" alt="Native CI status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-d4c277?style=flat-square&amp;labelColor=0b1410" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-a7bba9?style=flat-square&amp;labelColor=0b1410" alt="Python 3.10 or newer">
   <img src="https://img.shields.io/badge/C%2B%2B-20-a7bba9?style=flat-square&amp;labelColor=0b1410" alt="C++20">
@@ -13,10 +13,8 @@
 
 <p align="center">
   <a href="https://faiyazenayet.github.io/deeparcade/docs/game.html"><img src="https://img.shields.io/badge/Play-Snake-d4c277?style=for-the-badge&amp;labelColor=0b1410" alt="Play the Snake game"></a>
-  <a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><img src="https://img.shields.io/badge/Explore-Dashboard-a7bba9?style=for-the-badge&amp;labelColor=0b1410" alt="Explore the interactive dashboard"></a>
-  <a href="#method"><img src="https://img.shields.io/badge/Method-e1eddb?style=for-the-badge&amp;labelColor=0b1410" alt="Read the method"></a>
-  <a href="#evidence-at-a-glance"><img src="https://img.shields.io/badge/Results-e1eddb?style=for-the-badge&amp;labelColor=0b1410" alt="See the recorded results"></a>
-  <a href="#run-locally"><img src="https://img.shields.io/badge/Run-Locally-e1eddb?style=for-the-badge&amp;labelColor=0b1410" alt="Run it locally"></a>
+  <a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><img src="https://img.shields.io/badge/Explore-Dashboard-9ad7ac?style=for-the-badge&amp;labelColor=0b1410" alt="Explore the interactive dashboard"></a>
+  <a href="#run-locally"><img src="https://img.shields.io/badge/Run-Locally-13251b?style=for-the-badge&amp;labelColor=0b1410" alt="Run it locally"></a>
 </p>
 
 DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized. The project also includes a native C++20 engine under `native/` that implements the same environment, agents and protocols, with parity against the Python reference enforced on frozen corpora. Python remains the reference implementation and the default.
