@@ -8,7 +8,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-d4c277?style=flat-square&amp;labelColor=24292f" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&amp;labelColor=24292f" alt="Python 3.10 or newer">
   <img src="https://img.shields.io/badge/C%2B%2B-20-00599C?style=flat-square&amp;labelColor=24292f" alt="C++20">
-  <img src="https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-C2410C?style=flat-square&amp;labelColor=24292f" alt="Built with PyTorch and browser inference">
+  <img src="https://img.shields.io/badge/built%20with-PyTorch%20%2B%20browser%20inference-301934?style=flat-square&amp;labelColor=24292f" alt="Built with PyTorch and browser inference">
 </p>
 
 <p align="center">
