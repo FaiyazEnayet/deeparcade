@@ -35,15 +35,17 @@ Agents are evaluated on seeded classic-board games. Learning curves, score distr
 
 ## Evidence at a glance
 
-Pro (tabular Q-learning) outperforms Rookie (DQN): ELO 1369 versus 928. Grandmaster (MCTS) remains strongest. These are display labels for the same evaluated models, not new training results.
+Pro (tabular Q-learning) outperforms Rookie (DQN): ELO 1366 versus 925. Grandmaster (MCTS) remains strongest. These are display labels for the same evaluated models, not new training results.
 
 | Scope | Recorded result or contract |
 | :--- | :--- |
 | Evaluation games | 500 per policy, except MCTS with 50 |
 | Mean food score | Random 0.16; greedy 19.89; tabular Q 20.78 |
-| Same evaluation | DQN 5.39; MCTS 44.1 |
+| Same evaluation | DQN 5.39; MCTS 46.14 |
+| Correction | The MCTS mean and all ELO ratings were recomputed from the versioned evaluation rerun: MCTS mean 44.1 to 46.14, ELO 574/1319/1369/928/1810 to 573/1317/1366/925/1819. The four non-MCTS policies reproduced exactly; only MCTS moved. The pre-v2 artifact recorded no episode keys or code version, so its MCTS scores cannot be reproduced from the current code. |
 | Native parity | 111,032 environment transitions, 36,129 policy states and 1,039 MCTS searches checked, plus 404 MCTS searches on maze-mode wall layouts; Q-learning and the full 30,000-episode training protocol bit-exact; 13,824 DQN states with complete action agreement (max logit difference under 1e-5) |
 | Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
+| Evaluation provenance | ELO and head-to-head come from the paired 50 episodes (the first 50 seeds of the 500-seed range, shared by every agent); independent means come from 500 episodes per policy, except MCTS with 50. runs/eval.json records episode keys, policy IDs, artifact hashes, and the generating commit. The pre-v2 artifact is preserved at runs/eval_legacy.json. |
 
 ## Dashboards
 

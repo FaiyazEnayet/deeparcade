@@ -25,6 +25,18 @@ def main():
         dqnw = json.load(f)
     with open(os.path.join(ROOT, "runs", "eval.json"), encoding="utf-8") as f:
         ev = json.load(f)
+    # P0-01: read the versioned schema only. A pre-v2 artifact (no
+    # episode keys, undocumented pairing) must fail here with a clear
+    # message, never silently inject numbers from it.
+    if ev.get("schema_version") != 2:
+        raise ValueError(
+            f"runs/eval.json has schema_version {ev.get('schema_version')!r}; "
+            f"this generator reads schema_version 2 only. Regenerate "
+            f"runs/eval.json with scripts/evaluate.py"
+        )
+    for key in ("elo", "summary"):
+        if key not in ev:
+            raise ValueError(f"runs/eval.json is missing required key {key!r}")
 
     elo = {k: ev["elo"][k] for k in ("rookie", "pro", "grandmaster")}
     ref = {k: ev["summary"][k]["median"] for k in ("rookie", "pro", "grandmaster")}
