@@ -68,6 +68,19 @@ def main():
     dqn_curve = load("dqn_curve.json")  # DQN
     elo_hist = load("elo.json")         # Q-learner ELO checkpoints
     ev = load("eval.json")
+    # P0-01: read the versioned schema only. A pre-v2 artifact (no
+    # episode keys, undocumented pairing) must fail here with a clear
+    # message, never silently chart numbers from it. Reads below use
+    # the documented legacy keys (elo, scores, n_eval) unchanged.
+    if ev.get("schema_version") != 2:
+        raise ValueError(
+            f"runs/eval.json has schema_version {ev.get('schema_version')!r}; "
+            f"this generator reads schema_version 2 only. Regenerate "
+            f"runs/eval.json with scripts/evaluate.py"
+        )
+    for key in ("elo", "scores", "n_eval"):
+        if key not in ev:
+            raise ValueError(f"runs/eval.json is missing required key {key!r}")
     moves = load("moves.json")
     order = ["random", "greedy", "rookie", "pro", "grandmaster"]
 

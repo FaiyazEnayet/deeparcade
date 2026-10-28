@@ -187,7 +187,7 @@ class Snake {
 }
 
 /* ================= AI POLICIES ================= */
-const AI_ELO = {"rookie": 1369, "pro": 928, "grandmaster": 1810};
+const AI_ELO = {"rookie": 1366, "pro": 925, "grandmaster": 1819};
 const AI_NAMES = {rookie:'Pro', pro:'Rookie', grandmaster:'Grandmaster'};
 
 const QPOLICY = [0, 2, 1, 2, 0, 0, 1, 1, 2, 2, 0, 2, 0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 0, 1, 0];
@@ -394,7 +394,7 @@ const store = {
   get name(){ return localStorage.getItem('dq_name')||'YOU'; },
   set name(v){ localStorage.setItem('dq_name',v); },
 };
-const AI_REF = {"rookie": 21.0, "pro": 5.0, "grandmaster": 44.5}; // median eval scores
+const AI_REF = {"rookie": 21.0, "pro": 5.0, "grandmaster": 47.0}; // median eval scores
 let G=null, mode='classic', playKind='human', aiKind='rookie';
 let acc=0,lastT=0,running=false,recording=null,prevScore=0;
 let mctsBudget=150, tourn=null;

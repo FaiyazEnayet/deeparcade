@@ -30,6 +30,10 @@
 - Docs: README header action buttons now use the dashboard's own palette on dark labels (gold #d4c277, accent green #9ad7ac, panel #13251b, labels #0b1410), the badge row uses each technology's brand colors, and the action row is cut to three distinct buttons: Play Snake, Explore Dashboard, Run Locally.
 
 
+### Fixed
+- Evaluation provenance chain (P0-01): runs/eval.json is now schema v2 with explicit episode keys, policy IDs, artifact SHA-256 hashes, and the generating commit; ELO and head-to-head are computed only on the paired subset and validated against the saved rows. The DQN evaluator loads the committed runs/dqn_weights.json instead of the gitignored runs/dqn.pt, which was absent on fresh checkouts. The game and dashboard generators refuse pre-v2 artifacts with a clear error instead of reading them silently. The pre-v2 artifact is preserved byte-identical at runs/eval_legacy.json.
+- Leaderboard correction from the versioned rerun: ELO 574/1319/1369/928/1810 to 573/1317/1366/925/1819 and the MCTS mean 44.1 to 46.14. The four non-MCTS policies reproduced exactly; only MCTS moved, and its pre-v2 scores cannot be reproduced from the current code because that artifact recorded no episode keys or code version.
+
 ## v1.3.0
 
 ### Added
