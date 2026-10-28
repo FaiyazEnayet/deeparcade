@@ -31,7 +31,7 @@
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head>
 <body>
-<header class="game-masthead"><div class="game-topline"><span>DEEPARCADE / PLAYABLE RESEARCH</span><a href="dashboard.html" target="_top">Explore the agent evaluation ↗</a></div><div class="game-title"><h1>DeepArcade</h1><div class="game-edition">HUMAN × LEARNED POLICY × SEARCH<br/>ONE CLASSIC ARENA</div></div><p class="game-tagline">Two learned agents. One search agent. Watch their decisions, play against their scores, and play the same arena.</p><div class="game-facts"><span>Classic board · 12 × 12</span><span>Rookie · tabular Q</span><span>Pro · DQN</span><span>Grandmaster · MCTS</span></div></header>
+<header class="game-masthead"><div class="game-topline"><span>DEEPARCADE / PLAYABLE RESEARCH</span><a href="dashboard.html" target="_top">Explore the agent evaluation ↗</a></div><div class="game-title"><h1>DeepArcade</h1><div class="game-edition">HUMAN × LEARNED POLICY × SEARCH<br/>ONE CLASSIC ARENA</div></div><p class="game-tagline">Two learned agents. One search agent. Watch their decisions, play against their scores, and play the same arena.</p><div class="game-facts"><span>Classic board · 12 × 12</span><span>Pro · tabular Q</span><span>Rookie · DQN</span><span>Grandmaster · MCTS</span></div></header>
 
 <div id="wrap">
 <div id="stage">
@@ -65,8 +65,8 @@
 <button aria-label="Play as human" class="btn green" id="btnHuman">Play as human</button>
 <h3 style="margin-top:12px">Watch AI</h3>
 <select aria-label="AI opponent" id="aiSel">
-<option value="rookie">Rookie — tabular Q-learning</option>
-<option value="pro">Pro — deep Q-network</option>
+<option value="rookie">Pro — tabular Q-learning</option>
+<option value="pro">Rookie — deep Q-network</option>
 <option value="grandmaster">Grandmaster — MCTS search</option>
 </select>
 <button aria-label="Watch AI play" class="btn" id="btnAI">Watch AI play</button>
@@ -188,7 +188,7 @@ class Snake {
 
 /* ================= AI POLICIES ================= */
 const AI_ELO = /*__AI_ELO__*/{"rookie":1240,"pro":1500,"grandmaster":1750};
-const AI_NAMES = {rookie:'Rookie', pro:'Pro', grandmaster:'Grandmaster'};
+const AI_NAMES = {rookie:'Pro', pro:'Rookie', grandmaster:'Grandmaster'};
 
 const QPOLICY = /*__QPOLICY__*/[];
 function qAct(game){ return QPOLICY[game.encodeState()] ?? 0; }
@@ -611,14 +611,14 @@ function addScore(m,name,score){
 }
 function renderLB(){
   const m=document.getElementById('modeSel').value;
-  document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Rookie ${AI_ELO.rookie}</span> <span class="tag ai">Pro ${AI_ELO.pro}</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
+  document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Pro ${AI_ELO.rookie}</span> <span class="tag ai">Rookie ${AI_ELO.pro}</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
   const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}')[m]||[];
   document.getElementById('lbTable').innerHTML='<tr><th>#</th><th>Score</th><th>Who</th></tr>'+
     (lb.map((e,i)=>`<tr><td>${i+1}</td><td>${e.score}</td><td>${e.name}</td></tr>`).join('')||'<tr><td colspan=3 style="color:var(--dim)">No scores yet — go play.</td></tr>');
 }
 function renderTourn(){
   const el=document.getElementById('tournStat');
-  if(!tourn){el.textContent='Climb the ladder: Pro → Rookie → Grandmaster.';return;}
+  if(!tourn){el.textContent='Climb the ladder: Rookie → Pro → Grandmaster.';return;}
   if(tourn.complete){el.textContent='Tournament complete';return;}
   el.innerHTML=`Round ${tourn.round+1}/3 — next: <b>${AI_NAMES[tourn.opp]}</b>`;
 }

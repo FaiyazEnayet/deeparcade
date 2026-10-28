@@ -20,7 +20,7 @@ RUNS = os.path.join(ROOT, "runs")
 COLORS = {"random": "#64748b", "greedy": "#38bdf8", "rookie": "#4ade80",
           "pro": "#a78bfa", "grandmaster": "#fbbf24"}
 NAMES = {"random": "Random", "greedy": "Greedy heuristic",
-         "rookie": "Rookie (tabular Q)", "pro": "Pro (DQN)",
+         "rookie": "Pro (tabular Q)", "pro": "Rookie (DQN)",
          "grandmaster": "Grandmaster (MCTS)"}
 BG = "#0b0e1a"
 PANEL = "#0d1226"
@@ -77,18 +77,18 @@ def main():
     f = go.Figure()
     x_q = [(i + 1) * 100 for i in range(len(curve["mean_score"]))]
     f.add_trace(go.Scatter(x=x_q, y=curve["mean_score"],
-                           name="Rookie (tabular Q)",
+                           name="Pro (tabular Q)",
                            line=dict(color=COLORS["rookie"], width=2)))
     x_d = [(i + 1) * 100 for i in range(len(dqn_curve["mean_score"]))]
     f.add_trace(go.Scatter(x=x_d, y=dqn_curve["mean_score"],
-                           name="Pro (DQN)",
+                           name="Rookie (DQN)",
                            line=dict(color=COLORS["pro"], width=2)))
     f.update_xaxes(title_text="episodes")
     f.update_yaxes(title_text="mean score")
     _base(f, legend=True)
     cards.append(_card(
         "Learning curves: mean score per 100 episodes",
-        "Rookie learns fast from 32 states. Pro climbs the whole way but "
+        "Pro learns fast from 32 states. Rookie climbs the whole way but "
         "from raw pixels, which is genuinely harder.",
         f))
 
@@ -96,7 +96,7 @@ def main():
     f = go.Figure()
     f.add_trace(go.Scatter(x=[p["episode"] for p in elo_hist],
                            y=[p["elo"] for p in elo_hist],
-                           name="Rookie ELO",
+                           name="Pro ELO",
                            line=dict(color=COLORS["rookie"], width=2),
                            fill="tozeroy",
                            fillcolor="rgba(74,222,128,0.12)"))
@@ -107,7 +107,7 @@ def main():
     f.update_yaxes(title_text="ELO")
     _base(f)
     cards.append(_card(
-        "ELO rating over training (Rookie)",
+        "ELO rating over training (Pro)",
         "Tournament ELO of the Q-learner at checkpoints, against the "
         "baseline pool.",
         f))
@@ -124,8 +124,8 @@ def main():
     _base(f, height=360)
     cards.append(_card(
         "Final ELO ratings (all policies)",
-        "Grandmaster (MCTS) tops the ladder. Rookie edges out the greedy "
-        "heuristic. Pro trails: pixels are hard.",
+        "Grandmaster (MCTS) tops the ladder. Pro edges out the greedy "
+        "heuristic. Rookie trails: pixels are hard.",
         f))
 
     # 4. Score distributions.
@@ -183,7 +183,7 @@ def main():
 
     s = ev["summary"]
     stats = (
-        f"Pro (DQN) {s['pro']['mean']}&plusmn;{s['pro']['std']} vs "
+        f"Rookie (DQN) {s['pro']['mean']}&plusmn;{s['pro']['std']} vs "
         f"Greedy {s['greedy']['mean']}&plusmn;{s['greedy']['std']} vs "
         f"Random {s['random']['mean']}&plusmn;{s['random']['std']} "
         f"over {ev['n_eval']} seeded episodes each. Grandmaster (MCTS, "
@@ -230,7 +230,7 @@ def main():
   <div class="stats"><b>Measured:</b> {stats}</div>
   {body}
   <p class="foot">500 seeded evaluation episodes per policy (MCTS: 50, it
-  thinks slowly). Fixed seeds, no cherry-picking. Rookie beats Pro: the
+  thinks slowly). Fixed seeds, no cherry-picking. Pro beats Rookie: the
   32-state abstraction is excellent, and learning from 436-dim pixels is
   genuinely harder.
   <span class="ver">dashboard layout v2 &mdash; one card per chart</span></p>

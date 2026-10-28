@@ -35,6 +35,8 @@ Agents are evaluated on seeded classic-board games. Learning curves, score distr
 
 ## Evidence at a glance
 
+Pro (tabular Q-learning) outperforms Rookie (DQN): ELO 1369 versus 928. Grandmaster (MCTS) remains strongest. These are display labels for the same evaluated models, not new training results.
+
 | Scope | Recorded result or contract |
 | :--- | :--- |
 | Evaluation games | 500 per policy, except MCTS with 50 |
