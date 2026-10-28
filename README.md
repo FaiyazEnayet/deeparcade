@@ -17,7 +17,7 @@
   <a href="#run-locally"><img src="https://img.shields.io/badge/Run-Locally-13251b?style=for-the-badge&amp;labelColor=0b1410" alt="Run it locally"></a>
 </p>
 
-DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized. The project also includes a native C++20 engine under `native/` that implements the same environment, agents and protocols, with parity against the Python reference enforced on frozen corpora. Python remains the reference implementation and the default.
+DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized.
 
 <p align="center"><a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><img src="docs/demo.gif?v=showcase-20261017b" alt="DeepArcade demo"></a></p>
 
@@ -121,7 +121,7 @@ The DQN underperforms the greedy and tabular baselines in the committed run. The
 
 - Recorded evaluation uses the classic board; other browser modes are distribution shifts.
 - Browser MCTS adapts its search budget, so browser scores are not the fixed evaluation protocol.
-- Tournament state handling needs a correction before its ELO changes are treated as reliable. Replay UI and direction buttons were intentionally removed from this edition.
+- Tournament state handling needs a correction before its ELO changes are treated as reliable. Replay UI and direction buttons are not part of the game.
 
 ## License
 
