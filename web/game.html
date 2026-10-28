@@ -611,7 +611,7 @@ function addScore(m,name,score){
 }
 function renderLB(){
   const m=document.getElementById('modeSel').value;
-  document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Pro ${AI_ELO.rookie}</span> <span class="tag ai">Rookie ${AI_ELO.pro}</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
+    document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Rookie ${AI_ELO.pro}</span> <span class="tag ai">Pro ${AI_ELO.rookie}</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
   const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}')[m]||[];
   document.getElementById('lbTable').innerHTML='<tr><th>#</th><th>Score</th><th>Who</th></tr>'+
     (lb.map((e,i)=>`<tr><td>${i+1}</td><td>${e.score}</td><td>${e.name}</td></tr>`).join('')||'<tr><td colspan=3 style="color:var(--dim)">No scores yet — go play.</td></tr>');
