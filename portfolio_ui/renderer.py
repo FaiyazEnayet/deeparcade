@@ -61,6 +61,10 @@ def enrich(d,soup,root):
   d['metrics']=[[n.select_one('.num').get_text(),n.select_one('.lbl').get_text()] for n in soup.select('.cards .card') if n.select_one('.num')]
  if repo=='deeparcade':
   d['evaluation']=jsonfile(root,'runs/eval.json')
+  ev=d['evaluation']
+  for key,trace in zip(['random','greedy','rookie','pro','grandmaster'],d['figures'][3]['data']):
+   trace['x']=ev['paired']['scores'][key]
+  d['evaluation']['source_file']='runs/eval.json'
   from game_theme import theme
   game_path=root/'docs/game.html'
   if not game_path.exists():game_path=HERE/'game-snapshot.html'
