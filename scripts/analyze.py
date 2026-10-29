@@ -10,27 +10,13 @@ import json
 import os
 from collections import Counter
 
-import torch
-
 from narcade.mcts import MCTSPlayer
 from narcade.policies import GreedyPolicy, QTablePolicy, RandomPolicy
 from narcade.snake import SnakeEnv
-from scripts.train_dqn import DQN, encode_dqn
+from scripts.evaluate import DQNPolicy
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RUNS = os.path.join(HERE, "..", "runs")
-
-
-class DQNPolicy:
-    def __init__(self, pt_path):
-        self.net = DQN()
-        self.net.load_state_dict(torch.load(pt_path, map_location="cpu"))
-        self.net.eval()
-
-    def act(self, env):
-        with torch.no_grad():
-            q = self.net(torch.from_numpy(encode_dqn(env)).unsqueeze(0))
-        return int(q.argmax(1).item())
 
 
 def analyze(policy_fn, n, seed0, mcts_sims=None):
@@ -72,7 +58,12 @@ def main():
         "random": (RandomPolicy(seed=77).act, args.n),
         "greedy": (GreedyPolicy().act, args.n),
         "rookie": (QTablePolicy(qtable).act, args.n),
-        "pro": (DQNPolicy(os.path.join(args.out, "dqn.pt")).act, args.n),
+        # DQN loads from the committed JSON weights export through
+        # scripts.evaluate.DQNPolicy (strict shared loader). The old
+        # private loader read runs/dqn.pt, which is gitignored and
+        # absent on a fresh checkout, so this script could not run.
+        "pro": (DQNPolicy(os.path.join(args.out, "dqn_weights.json")).act,
+                args.n),
     }
     out = {}
     for name, (fn, n) in policies.items():
