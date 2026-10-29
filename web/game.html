@@ -29,6 +29,7 @@
 @media(max-width:800px){body{padding:0 16px 28px}.game-masthead{padding-top:16px;margin-bottom:20px}.game-title{gap:14px}h1{font-size:57px}.game-edition{font-size:9px}.game-tagline{font-size:12px}.game-topline{font-size:10px}.game-facts{gap:12px;font-size:10px;margin-top:14px}#wrap{grid-template-columns:1fr;max-width:600px;gap:20px}#side{display:grid;grid-template-columns:1fr 1fr;gap:16px}#menuCard{grid-column:1/-1}.card{padding:16px}#hud{gap:6px}.pill{font-size:10px;padding:7px}.pill b{font-size:20px}.card h3{font-size:11px}.btn{font-size:12px}#overlay h2{font-size:36px}footer{font-size:11px}}
 @media(max-width:420px){#side{grid-template-columns:1fr}#menuCard{grid-column:auto}.game-edition{display:none}.game-title h1{font-size:57px}.game-facts{display:grid;grid-template-columns:1fr 1fr;gap:6px}.game-topline{font-size:9px}.pill b{font-size:18px}.pill{font-size:10px}#overlay p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+#overlay.tournament-results{padding:20px;overflow:auto;justify-content:center;background:rgba(7,18,12,.97)}#overlay.tournament-results h2{font-size:clamp(30px,6vw,50px);margin:0 0 14px}.round-results{border-collapse:collapse;width:100%;max-width:480px;margin:20px auto;text-align:left;font-size:12px}.round-results caption{text-align:left;color:var(--accent);padding:8px 0;text-transform:uppercase;letter-spacing:.1em}.round-results td,.round-results th{padding:10px 8px;border-bottom:1px solid #36513e}.round-results thead{color:#c9bc83}.completion-note{max-width:440px;line-height:1.6;margin:18px auto}#ovSub{max-width:100%;overflow-wrap:anywhere}#overlay .btn{min-height:44px}button:focus-visible{outline:3px solid #d8c77f;outline-offset:3px}
 </style></head>
 <body>
 <header class="game-masthead"><div class="game-topline"><span>DEEPARCADE / PLAYABLE RESEARCH</span><a href="dashboard.html" target="_top">Explore the agent evaluation ↗</a></div><div class="game-title"><h1>DeepArcade</h1><div class="game-edition">HUMAN × LEARNED POLICY × SEARCH<br/>ONE CLASSIC ARENA</div></div><p class="game-tagline">Two learned agents. One search agent. Watch their decisions, play against their scores, and play the same arena.</p><div class="game-facts"><span>Classic board · 12 × 12</span><span>Pro · tabular Q</span><span>Rookie · DQN</span><span>Grandmaster · MCTS</span></div></header>
@@ -402,6 +403,7 @@ function actualLabel(){return tourn.pendingAdvance?'Next level':'Rematch';}
 
 
 function newGame(m, kind, ai){
+  menuOpen=false;
   comparisonToken++;inputQueue=[];document.getElementById('ovAgain').disabled=false;
   mode=m; playKind=kind; aiKind=ai;
   const seed=(Math.random()*1e9)|0;
@@ -490,7 +492,7 @@ async function onGameOver(){
     store.elo=eloBefore+32*(actual-expected);
     const d=Math.round(store.elo-eloBefore);
     sub=`You ${huScore} vs ${AI_NAMES[tourn.opp]} ${aiScore} — ELO <span class="${d>=0?'elo-up':'elo-dn'}">${d>=0?'+':''}${d}</span> → ${store.elo}`;
-    tourn.standings.push(AI_NAMES[tourn.opp]+': You '+huScore+' / AI '+aiScore);
+    tourn.standings.push({opponent:AI_NAMES[tourn.opp],human:huScore,ai:aiScore,result:actual===1?'Win':actual===0.5?'Draw':'Loss'});
     tourn.pendingAdvance=actual===1;
     if(actual===1){ tourn.round++;
       if(tourn.round>=tourn.ladder.length){ sub+=`<br>🏆 Tournament complete! You beat all three AIs.`; tourn.complete=true; document.getElementById('ovTitle').textContent='The End'; }
@@ -503,11 +505,19 @@ async function onGameOver(){
     addScore(mode,store.name,G.score);
     sub=`Nice run — saved to the leaderboard.`;
   }
-  if(tourn&&playKind==='tourn')sub+='<br>'+tourn.standings.join('<br>');
+  if(tourn&&playKind==='tourn'){
+    sub+='<table class="round-results"><caption>Tournament standings</caption><thead><tr><th>Opponent</th><th>You</th><th>AI</th><th>Result</th></tr></thead><tbody>'+tourn.standings.map(r=>`<tr><th>${r.opponent}</th><td>${r.human}</td><td>${r.ai}</td><td>${r.result}</td></tr>`).join('')+'</tbody></table>';
+    if(tourn.complete){
+      addScore(mode,store.name,G.score);
+      sub+='<p class="completion-note">Ladder cleared. Choose your next game below, or return to the main menu.</p>';
+    }
+  }
+  ov.classList.toggle('tournament-results',!!(tourn&&playKind==='tourn'));
   const primary=document.getElementById('ovAgain');primary.textContent=playKind==='tourn'&&tourn?(tourn.complete?'New tournament':actualLabel()):'Play again';
   document.getElementById('ovExtra').classList.toggle('hidden',playKind!=='tourn'||!tourn);
   document.getElementById('ovExtra').textContent=tourn&&tourn.complete?'Play again':'Restart tournament';
-  document.getElementById('ovMenu').classList.toggle('hidden',!!(tourn&&tourn.complete&&playKind==='tourn'));
+  document.getElementById('ovMenu').classList.remove('hidden');
+  document.getElementById('ovMenu').textContent='Main menu';
   document.getElementById('ovSub').innerHTML=sub;
   
   ov.classList.remove('hidden');
@@ -639,12 +649,23 @@ document.getElementById('btnTourn').onclick=()=>{
   tourn={ladder:['pro','rookie','grandmaster'],round:0,opp:'pro'};
   tourn.standings=[];renderTourn(); newGame(document.getElementById('modeSel').value,'tourn');
 };
+let menuOpen=false;
+function showMainMenu(){
+ comparisonToken++;running=false;tourn=null;playKind='human';menuOpen=true;renderTourn();renderLB();
+ const overlay=document.getElementById('overlay');overlay.classList.remove('hidden');overlay.classList.add('tournament-results');
+ document.getElementById('ovTitle').textContent='DeepArcade';
+ document.getElementById('ovSub').innerHTML='<p>Choose your next run.</p><p>Rookie → Pro → Grandmaster</p><p>Mode: '+document.getElementById('modeSel').selectedOptions[0].textContent+'</p>';
+ const primary=document.getElementById('ovAgain');primary.disabled=false;primary.textContent='Play as human';
+ document.getElementById('ovExtra').classList.remove('hidden');document.getElementById('ovExtra').textContent='Start tournament';
+ document.getElementById('ovMenu').classList.remove('hidden');document.getElementById('ovMenu').textContent='Watch AI';primary.focus();
+}
 document.getElementById('ovAgain').onclick=()=>{
+ if(menuOpen){menuOpen=false;document.getElementById('btnHuman').click();return;}
  if(playKind==='tourn'&&tourn){if(tourn.complete)document.getElementById('btnTourn').click();else newGame(mode,'tourn');}
  else newGame(mode,playKind==='tourn'?'human':playKind,aiKind);
 };
-document.getElementById('ovExtra').onclick=()=>{if(tourn&&tourn.complete){tourn=null;renderTourn();newGame(mode,'human');}else document.getElementById('btnTourn').click();};
-document.getElementById('ovMenu').onclick=()=>{document.getElementById('overlay').classList.add('hidden');running=false;};
+document.getElementById('ovExtra').onclick=()=>{menuOpen=false;if(tourn&&tourn.complete){tourn=null;renderTourn();newGame(mode,'human');}else document.getElementById('btnTourn').click();};
+document.getElementById('ovMenu').onclick=()=>{if(menuOpen){menuOpen=false;document.getElementById('btnAI').click();}else showMainMenu();};
 
 syncAIForMode(); renderLB(); renderRP(); renderTourn(); updateHUD();
 </script>
