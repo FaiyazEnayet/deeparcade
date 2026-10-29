@@ -35,7 +35,7 @@ def main(root=None):
   # Exact recorded rollout of the exported network in the repository SnakeEnv.
   W,H=1040,730;headfont=ImageFont.truetype(displaypath,49);small=ImageFont.truetype(bodypath,16);medium=ImageFont.truetype(bodypath,22);large=ImageFont.truetype(bodypath,42)
   for i,state in enumerate(d['frames']):
-   im=Image.new('RGB',(W,H),bg);draw=ImageDraw.Draw(im);draw.text((40,24),'DeepArcade',font=headfont,fill=ink);draw.text((42,84),'PRO / TRAINED DQN',font=small,fill=series[2]);draw.line((42,119,996,119),fill=line,width=1)
+   im=Image.new('RGB',(W,H),bg);draw=ImageDraw.Draw(im);draw.text((40,24),'DeepArcade',font=headfont,fill=ink);draw.text((42,84),'ROOKIE / TRAINED DQN',font=small,fill=series[2]);draw.line((42,119,996,119),fill=line,width=1)
    ox,oy,size=42,143,43;draw.rounded_rectangle((ox-7,oy-7,ox+516+7,oy+516+7),radius=5,fill=surface,outline=line,width=2)
    for y in range(12):
     for x in range(12):draw.rectangle((ox+x*size+1,oy+y*size+1,ox+(x+1)*size-1,oy+(y+1)*size-1),fill='#15291f' if (x+y)%2==0 else '#12251b')
