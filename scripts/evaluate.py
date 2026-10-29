@@ -57,34 +57,21 @@ class DQNPolicy:
     ``scripts/train_dqn.py`` next to the .pt file and holds the full
     state dict (weights + biases for all three linear layers); loading
     it reproduces the .pt policy exactly.
+
+    Loading goes through the strict checkpoint loader
+    (``scripts.train_dqn.load_checkpoint``, Stage 3 P0-03): the document
+    is validated (supported schema version, exact layer shapes, every
+    value a finite number, weights hash on versioned documents) before
+    any tensor is built, so a corrupt checkpoint fails closed with
+    CheckpointError instead of loading silently. The committed export
+    is a legacy schema-0 document; versioned schema-1 exports load
+    through the same path.
     """
 
     def __init__(self, weights_json_path):
-        import torch
+        from scripts.train_dqn import load_checkpoint
 
-        from scripts.train_dqn import DQN, INPUT_DIM
-
-        with open(weights_json_path, encoding="utf-8") as f:
-            w = json.load(f)
-        if w.get("input_dim") != INPUT_DIM:
-            raise ValueError(
-                f"DQN weights input_dim {w.get('input_dim')} != expected {INPUT_DIM} "
-                f"({weights_json_path}); refusing to load mismatched weights."
-            )
-        layers = w.get("layers", [])
-        if len(layers) != 3:
-            raise ValueError(
-                f"DQN weights must hold exactly 3 layers, found {len(layers)} "
-                f"({weights_json_path})."
-            )
-        keys = ["net.0", "net.2", "net.4"]
-        sd = {}
-        for key, layer in zip(keys, layers):
-            sd[f"{key}.weight"] = torch.tensor(layer["w"], dtype=torch.float32)
-            sd[f"{key}.bias"] = torch.tensor(layer["b"], dtype=torch.float32)
-        self.net = DQN()
-        self.net.load_state_dict(sd)
-        self.net.eval()
+        self.net, self.checkpoint_info = load_checkpoint(weights_json_path)
 
     def act(self, env):
         import numpy as np

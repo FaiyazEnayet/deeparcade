@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "kind": "deeparcade-dqn-checkpoint-manifest",
+  "artifact": "runs/dqn_weights.json",
+  "artifact_sha256": "b171d8a20e99e2ad4c472f03a940c83399570eb04f253d8da4aa299df57c7861",
+  "weights_sha256": "704e56c763985c31463b90939fd46394a5f79bfed70b37e7de336053efd28c61",
+  "checkpoint_schema_version": 0,
+  "encoder": {
+    "name": "encode_dqn",
+    "revision": 1,
+    "input_dim": 436,
+    "layout": "head 12x12, body 12x12, food 12x12 (cell index r*12 + c), heading one-hot 4"
+  },
+  "architecture": [
+    [
+      436,
+      128
+    ],
+    [
+      128,
+      64
+    ],
+    [
+      64,
+      3
+    ]
+  ],
+  "float_regime": "float32",
+  "parity_float_regime": "float64",
+  "training": {
+    "steps": 300000,
+    "episodes": 6984,
+    "seed": 11,
+    "seconds": 522.4,
+    "final_mean100": 4.54
+  },
+  "data_key_range": {
+    "episode_seeds": [
+      11,
+      6994
+    ],
+    "derivation": "train_dqn reseeds each new episode environment with seed + episode index; range derived from runs/dqn_meta.json"
+  },
+  "provenance": {
+    "weights_file_introduced_in_commit": "8680dbf7cde47091a3ce1bafa811c6ef4df5d03b",
+    "training_code_commit": null,
+    "note": "The weights file entered git in the recorded commit (web upload). The original training run did not record a code commit; versioned exports record code_commit in the checkpoint metadata instead."
+  },
+  "parity_fixture": "tests/fixtures/dqn_parity_observations.json"
+}
