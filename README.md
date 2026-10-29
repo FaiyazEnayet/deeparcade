@@ -41,11 +41,12 @@ Pro (tabular Q-learning) outperforms Rookie (DQN): ELO 1366 versus 925. Grandmas
 | :--- | :--- |
 | Evaluation games | 500 per policy, except MCTS with 50 |
 | Mean food score | Random 0.16; greedy 19.89; tabular Q 20.78 |
-| Same evaluation | DQN 5.39; MCTS 46.14 |
+| Independent DQN mean | 5.394 over 500 episodes |
+| Paired MCTS mean / median | 46.14 / 47.0 over 50 episodes |
 | Correction | The MCTS mean and all ELO ratings were recomputed from the versioned evaluation rerun: MCTS mean 44.1 to 46.14, ELO 574/1319/1369/928/1810 to 573/1317/1366/925/1819. The four non-MCTS policies reproduced exactly; only MCTS moved. The pre-v2 artifact recorded no episode keys or code version, so its MCTS scores cannot be reproduced from the current code. |
 | Native parity | 111,032 environment transitions, 36,129 policy states and 1,039 MCTS searches checked, plus 404 MCTS searches on maze-mode wall layouts; Q-learning and the full 30,000-episode training protocol bit-exact; 13,824 DQN states with complete action agreement (max logit difference under 1e-5) |
 | Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
-| Evaluation provenance | ELO and head-to-head come from the paired 50 episodes (the first 50 seeds of the 500-seed range, shared by every agent); independent means come from 500 episodes per policy, except MCTS with 50. runs/eval.json records episode keys, policy IDs, artifact hashes, and the generating commit. The pre-v2 artifact is preserved at runs/eval_legacy.json. |
+| Evaluation provenance | ELO and head-to-head come from the paired 50 episodes (the first 50 seeds of the 500-seed range, shared by every agent); independent means come from 500 episodes per policy, MCTS has no independent pool. `runs/eval.json` records episode keys, policy IDs, artifact hashes, and the generating commit. The pre-v2 artifact is preserved at runs/eval_legacy.json. |
 
 ## Dashboards
 
@@ -110,7 +111,7 @@ ctest --test-dir native/build --output-on-failure
 
 Recorded evaluation uses seeded classic-board games, with 500 games for most policies and 50 for MCTS. Scores, distributions, learning curves and pairwise outcomes answer different questions. Browser maze/blitz modes and adaptive MCTS budgets are not equivalent to the fixed recorded evaluation.
 
-![Agent evaluation, with unequal sample sizes](docs/results.png)
+![Paired evaluation on 50 shared seeds](docs/results.png)
 
 The DQN underperforms the greedy and tabular baselines in the committed run. The MCTS mean is high but comes from a smaller sample. A convincing comparison requires the stated game conditions, seeds and sample counts rather than agent names or apparent sophistication.
 
@@ -123,7 +124,7 @@ The DQN underperforms the greedy and tabular baselines in the committed run. The
 
 - Recorded evaluation uses the classic board; other browser modes are distribution shifts.
 - Browser MCTS adapts its search budget, so browser scores are not the fixed evaluation protocol.
-- Tournament state handling needs a correction before its ELO changes are treated as reliable. Replay UI and direction buttons are not part of the game.
+- Human ELO is a browser-local single-score estimate; it is separate from the recorded paired-policy evaluation. Tournament standings retain the Rookie → Pro → Grandmaster round sequence, with restart, free play and main-menu choices at completion.
 
 ## License
 
