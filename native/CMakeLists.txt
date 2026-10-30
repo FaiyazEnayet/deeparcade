@@ -281,3 +281,42 @@ if(NARCADE_PYTHON3)
                    ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_analyze_check.py
                    --analyzer $<TARGET_FILE:analyze_main> --fast)
 endif()
+
+# --- Native tournament and Elo runner --------------------------------
+# Repeated round-robin rounds of paired episodes between all five
+# players (pro included, through narcade_dqn) with Elo carried
+# across rounds. The shared match/Elo rules reuse narcade_evaluate;
+# the tournament structure is new. See tournament.hpp for the scope
+# declaration and the parity account.
+add_library(narcade_tournament src/tournament.cpp)
+target_include_directories(narcade_tournament PUBLIC include)
+target_link_libraries(narcade_tournament PUBLIC narcade_evaluate narcade_dqn)
+target_compile_options(narcade_tournament PRIVATE -Wall -Wextra)
+
+add_executable(tournament_app apps/tournament_main.cpp)
+set_target_properties(tournament_app PROPERTIES
+                      OUTPUT_NAME narcade_tournament)
+target_link_libraries(tournament_app PRIVATE narcade_tournament)
+target_compile_options(tournament_app PRIVATE -Wall -Wextra)
+
+add_executable(tournament_unit_test tests/tournament_unit_test.cpp)
+target_link_libraries(tournament_unit_test PRIVATE narcade_tournament)
+target_compile_options(tournament_unit_test PRIVATE -Wall -Wextra)
+
+add_test(NAME tournament_unit COMMAND tournament_unit_test)
+
+# Frozen regression + Python spot parity (see the check's header):
+# the frozen standings file stands outside meta.json's corpus
+# accounting, like eval_regression.json. Native tool; no Python
+# needed, so it is registered unconditionally.
+add_executable(tournament_regression_check
+               tests/tournament_regression_check.cpp)
+target_link_libraries(tournament_regression_check PRIVATE narcade_tournament)
+target_compile_options(tournament_regression_check PRIVATE -Wall -Wextra)
+
+add_test(NAME tournament_regression
+         COMMAND tournament_regression_check
+                 ${CMAKE_CURRENT_SOURCE_DIR}/golden/tournament_standings.json
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../runs/qtable.json
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../runs/dqn_weights.json
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../runs/eval.json)
