@@ -32,6 +32,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+from narcade.experiment_seeds import training_env_key
 from narcade.snake import SnakeEnv
 from narcade.policies import GreedyPolicy
 from scripts.train_dqn import DQN, INPUT_DIM, encode_dqn
@@ -60,6 +61,13 @@ def sparse_reward(env, reward, done, info, score_before):
 
 def make_env(seed):
     return SnakeEnv(seed=seed)
+
+
+def make_keyed_env(episode_key):
+    """Environment for one keyed episode (Stage 3 P0-06): constructed
+    with the episode's environment key and NOT reset again, so the
+    constructor opening is the counted episode opening."""
+    return SnakeEnv(seed=episode_key.env_key)
 
 
 def train_rl(variant, steps, seed, log_every_eps=100, log_every_steps=2000):
@@ -115,7 +123,7 @@ def train_rl(variant, steps, seed, log_every_eps=100, log_every_steps=2000):
                 curve_score.append(sum(b_scores[-log_every_eps:]) / log_every_eps)
                 ep_deaths.append(sum(b_deaths[-log_every_eps:]) / log_every_eps)
                 ep_foods.append(sum(b_foods[-log_every_eps:]) / log_every_eps)
-            env = make_env(seed + n_ep)
+            env = make_env(training_env_key(seed, n_ep))
             s = encode_dqn(env)
             score_before = env.score
 
@@ -199,7 +207,7 @@ def train_imitate(steps, seed, collect_n=20000, eval_eps=100):
         actions.append(a)
         _, _, done, _ = env.step(a)
         if done:
-            env = make_env(seed + len(states))
+            env = make_env(training_env_key(seed, len(states)))
         s = encode_dqn(env)
     states = np.stack(states)
     actions = np.array(actions)

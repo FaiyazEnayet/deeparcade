@@ -28,10 +28,31 @@ class SnakeEnv:
         self.width = width
         self.height = height
         self.rng = random.Random(seed)
+        self.episode_seed = seed
         self.max_steps = max_steps if max_steps is not None else 20 * width * height
+        # The constructor performs exactly one opening reset: the first
+        # food placement consumes the first draw of the seeded stream.
+        # That opening is the episode opening for keyed episodes (see
+        # scripts/evaluate.py run_keyed_episodes, which does not reset
+        # again). A caller that calls bare reset() afterwards plays a
+        # second draw, not the constructor opening.
         self.reset()
 
-    def reset(self):
+    def reset(self, seed=None):
+        """Start a new episode on this environment.
+
+        With no seed, the episode continues the current RNG stream: the
+        food placement is the next draw, so two bare resets in a row
+        give different openings and an episode replayed on a reused
+        environment is not the same episode. With an explicit seed, the
+        stream restarts first, so reset(seed=X) reproduces the opening
+        of SnakeEnv(seed=X) exactly. Keyed episodes pass the episode's
+        environment key here (or, equivalently, construct a fresh env
+        with it) so every episode opening is counted and reproducible.
+        """
+        if seed is not None:
+            self.rng = random.Random(seed)
+            self.episode_seed = seed
         cy, cx = self.height // 2, self.width // 2
         self.body = deque([(cy, cx - 2), (cy, cx - 1), (cy, cx)])
         self.heading = 1  # right
