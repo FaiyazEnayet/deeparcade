@@ -35,6 +35,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+from narcade.experiment_seeds import training_env_key
 from narcade.snake import SnakeEnv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -154,7 +155,7 @@ def train_dqn(steps=200000, seed=7, verbose=True):
                 if verbose and n_ep % 1000 == 0:
                     print(f"ep {n_ep:6d} step {step:7d} mean100={scores100[-1]:5.2f} "
                           f"eps={eps:.3f}", flush=True)
-            env = SnakeEnv(seed=seed + n_ep)
+            env = SnakeEnv(seed=training_env_key(seed, n_ep))
             s = encode_dqn(env)
             ep_reward, ep_score = 0.0, 0
 

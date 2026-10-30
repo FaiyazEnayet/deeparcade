@@ -92,6 +92,15 @@ def run_episodes(policy_fn, seeds, width=12, height=12):
     (tools/native_reference.py, tools/native_eval_fuzz.py, older tests)
     that pass aligned seed lists. New code MUST use run_episode_rows
     so pairing is verified by episode ID, not by list position.
+
+    Legacy semantics, preserved exactly: the environment is constructed
+    with the seed (which performs one opening reset) and then reset
+    again, so the episode played uses the second food draw, not the
+    constructor opening; and a policy object passed in here keeps one
+    RNG stream across all episodes, so an episode's outcome can depend
+    on which episodes ran before it. Keyed episodes (run_keyed_episodes)
+    remove both effects; do not compare keyed scores with scores from
+    this function.
     """
     scores = []
     for seed in seeds:
@@ -111,6 +120,39 @@ def run_episode_rows(policy_fn, seeds, width=12, height=12):
     misalign two agents' episodes."""
     return [{"seed": seed, "score": score}
             for seed, score in zip(seeds, run_episodes(policy_fn, seeds, width, height))]
+
+
+def run_keyed_episodes(make_policy, keys, width=12, height=12):
+    """Run one keyed episode per EpisodeKey (Stage 3 P0-06).
+
+    ``make_policy(policy_key)`` must return a fresh policy object for
+    each episode, seeded with that episode's policy key: Random and MCTS
+    policies receive deterministic per-episode independent RNG keys and
+    never inherit unknown state from earlier episodes. The environment
+    is constructed with the episode's environment key and NOT reset
+    again, so the constructor opening is the counted episode opening.
+    Each row carries the immutable episode identity (namespace, index,
+    env key, policy key, episode label) alongside the score, so
+    independent and paired samples stay traceable and the same
+    (episode key, policy id, model id) reproduces the same outcome
+    regardless of evaluation order.
+    """
+    rows = []
+    for key in keys:
+        env = SnakeEnv(width=width, height=height, seed=key.env_key)
+        policy = make_policy(key.policy_key)
+        done = False
+        while not done:
+            _, _, done, _ = env.step(policy.act(env))
+        rows.append({
+            "namespace": key.namespace,
+            "index": key.index,
+            "env_key": key.env_key,
+            "policy_key": key.policy_key,
+            "episode_key": key.label,
+            "score": env.score,
+        })
+    return rows
 
 
 def rows_to_seed_map(rows):

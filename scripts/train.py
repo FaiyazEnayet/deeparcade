@@ -16,6 +16,7 @@ import math
 import os
 import time
 
+from narcade.experiment_seeds import training_env_key
 from narcade.policies import GreedyPolicy, QTablePolicy, RandomPolicy
 from narcade.qlearn import QLearningAgent
 from narcade.snake import SnakeEnv
@@ -54,7 +55,8 @@ def train(episodes=30000, seed=7, eps_start=1.0, eps_end=0.05,
     baselines = {"random": RandomPolicy(seed=1234), "greedy": GreedyPolicy()}
 
     for ep in range(1, episodes + 1):
-        env = SnakeEnv(width=width, height=height, seed=seed + ep)
+        env = SnakeEnv(width=width, height=height,
+                       seed=training_env_key(seed, ep))
         s = env.reset()
         done = False
         ep_r = 0.0

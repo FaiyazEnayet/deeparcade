@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "derivation": "sha256('deeparcade-v1:<namespace>:<index>:<domain>') first 8 bytes, unsigned",
+  "namespaces": {
+    "train": {
+      "purpose": "training only",
+      "write_protected": false
+    },
+    "validation": {
+      "purpose": "tuning only",
+      "write_protected": false
+    },
+    "test": {
+      "purpose": "final evaluation only",
+      "write_protected": true
+    }
+  },
+  "protocol": "Development tuning reads validation only. The test split is write-protected as a protocol: it is sealed from optimization, not from the user. check_split_use in src/narcade/experiment_seeds.py enforces this.",
+  "historical_results": {
+    "label": "historical, training-seed overlap / MCTS mismatch",
+    "note": "Legacy evaluation seeds 5000..5499 lie inside the legacy training seed range 8..30007 (train.py defaults seed 7, 30000 episodes), so all 500 legacy evaluation episodes reuse training episode seeds. Pre-v2 MCTS was evaluated on unpaired seeds (7000+) while the other policies used 5000+. Those results are preserved as historical and are not comparable to keyed episodes."
+  },
+  "sample_keys": [
+    {
+      "namespace": "train",
+      "index": 0,
+      "domain": "env",
+      "key": 1954249824366723543
+    },
+    {
+      "namespace": "train",
+      "index": 0,
+      "domain": "policy",
+      "key": 4535589914640840164
+    },
+    {
+      "namespace": "train",
+      "index": 1,
+      "domain": "env",
+      "key": 13491622915868346817
+    },
+    {
+      "namespace": "train",
+      "index": 1,
+      "domain": "policy",
+      "key": 6115947424472859080
+    },
+    {
+      "namespace": "train",
+      "index": 2,
+      "domain": "env",
+      "key": 18040485427453286610
+    },
+    {
+      "namespace": "train",
+      "index": 2,
+      "domain": "policy",
+      "key": 2409848848781647489
+    },
+    {
+      "namespace": "validation",
+      "index": 0,
+      "domain": "env",
+      "key": 8920476898096851569
+    },
+    {
+      "namespace": "validation",
+      "index": 0,
+      "domain": "policy",
+      "key": 7193228995726497218
+    },
+    {
+      "namespace": "validation",
+      "index": 1,
+      "domain": "env",
+      "key": 18016459083162828426
+    },
+    {
+      "namespace": "validation",
+      "index": 1,
+      "domain": "policy",
+      "key": 17539050164185172243
+    },
+    {
+      "namespace": "validation",
+      "index": 2,
+      "domain": "env",
+      "key": 14321202545195680522
+    },
+    {
+      "namespace": "validation",
+      "index": 2,
+      "domain": "policy",
+      "key": 49918114539495290
+    },
+    {
+      "namespace": "test",
+      "index": 0,
+      "domain": "env",
+      "key": 3527836880188986150
+    },
+    {
+      "namespace": "test",
+      "index": 0,
+      "domain": "policy",
+      "key": 3379772865564305964
+    },
+    {
+      "namespace": "test",
+      "index": 1,
+      "domain": "env",
+      "key": 7354120546887579229
+    },
+    {
+      "namespace": "test",
+      "index": 1,
+      "domain": "policy",
+      "key": 9357179736812768748
+    },
+    {
+      "namespace": "test",
+      "index": 2,
+      "domain": "env",
+      "key": 17299950819908151467
+    },
+    {
+      "namespace": "test",
+      "index": 2,
+      "domain": "policy",
+      "key": 8734058569459215440
+    }
+  ]
+}
