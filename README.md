@@ -93,7 +93,7 @@ flowchart LR
 
 ## Native C++ engine
 
-DeepArcade includes a native C++20 engine under `native/` as an optional backend. It implements the Snake environment, a CPython-compatible RNG, the tabular policies and Q-learning agent, MCTS, the evaluation protocol, the training protocol, move-level trace instrumentation, and DQN inference over the exported JSON weights. Python remains the reference and the default; the native backend is enabled with `NARCADE_NATIVE=1` once the pybind11 extension is built.
+DeepArcade includes a native C++20 engine under `native/` as an optional backend. It implements the Snake environment, a CPython-compatible RNG, the tabular policies and Q-learning agent, MCTS, the evaluation protocol, the training protocol, move-level trace instrumentation, DQN inference over the exported JSON weights, and a tournament runner that plays repeated round-robin rounds of paired episodes between all five players and computes Elo standings. Python remains the reference and the default; the native backend is enabled with `NARCADE_NATIVE=1` once the pybind11 extension is built.
 
 Parity is enforced, not assumed. Golden fixtures generated from the Python reference (`native/golden/`, regenerable with `tools/native_reference.py`) pin the behavior, and the C++ runners replay frozen corpora against them: 111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches with bit-exact root values, 404 further MCTS searches on maze-mode wall layouts (the browser game's walled arena, 977 root children, also bit-exact), 200 evaluation episodes, the full 30,000-episode training protocol, and 13,824 DQN states with complete action agreement. Two boundaries are explicit: DQN training stays in Python (the native side is inference only), and the native evaluator covers the non-neural players, which its report states in a scope field. The `regen_check` CTest regenerates the fixtures from the Python reference and byte-compares them, and `meta_check` (`native/tests/meta_check.cmake`) verifies each golden file's SHA-256 against `native/golden/meta.json`.
 
@@ -105,6 +105,12 @@ Build and test:
 cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release
 cmake --build native/build -j
 ctest --test-dir native/build --output-on-failure
+```
+
+The tournament runner plays round-robin rounds between all five players (the DQN player included, through the native inference module) with Elo carried across rounds, and writes a JSON standings report:
+
+```sh
+native/build/narcade_tournament --out runs/tournament.json
 ```
 
 ## Evaluation protocol
