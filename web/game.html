@@ -426,9 +426,9 @@ function bestScore(m){
   const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}');
   return (lb[m]&&lb[m][0])?lb[m][0].score:0;
 }
-function aiAction(game=G){
-  if(aiKind==='rookie') return qAct(game);
-  if(aiKind==='pro') return dqnAct(game);
+function aiAction(game, kind){
+  if(kind==='rookie') return qAct(game);
+  if(kind==='pro') return dqnAct(game);
   // grandmaster: adaptive budget
   const t0=performance.now();
   const a=mctsAct(game,mctsBudget);
@@ -444,7 +444,7 @@ function tick(){
   if(playKind==='human'||playKind==='tourn'){
     action=inputQueue.length?inputQueue.shift():STRAIGHT;
   } else {
-    action=aiAction();
+    action=aiAction(G, aiKind);
   }
   const before=G.score;
   const {done}=G.step(action);
@@ -469,9 +469,9 @@ async function onGameOver(){
     // human just played vs selected AI in tournament or... (menu human has no opp)
   }
   if(playKind==='tourn'&&tourn){
-    // AI plays its game now (same mode, fresh seed), then compare
-    const aiGame=new Snake(12,12,(Math.random()*1e9)|0,mode);
-    const saveKind=aiKind; aiKind=tourn.opp;
+    // AI plays its game now on the same seeded episode, then compare
+    const opp=tourn.opp;
+    const aiGame=new Snake(12,12,recording.seed,recording.mode);
     let guard=0;
     const token=++comparisonToken;
     ov.classList.remove('hidden');
@@ -480,11 +480,10 @@ async function onGameOver(){
     while(!aiGame.done&&guard<5000){
       await new Promise(requestAnimationFrame);
       if(token!==comparisonToken)return;
-      aiGame.step(aiAction(aiGame));guard++;
+      aiGame.step(aiAction(aiGame, opp));guard++;
       document.getElementById('ovSub').textContent=AI_NAMES[tourn.opp]+' is playing · score '+aiGame.score;
     }
     document.getElementById('ovAgain').disabled=false;
-    aiKind=saveKind;
     const aiScore=aiGame.score, huScore=G.score;
     const eloBefore=store.elo, aiElo=AI_ELO[tourn.opp];
     const expected=1/(1+Math.pow(10,(aiElo-eloBefore)/400));
