@@ -1,0 +1,7876 @@
+{
+ "schema": 1,
+ "about": "Deterministic Python/browser transition fixtures for deeparcade P0-07. Expected records were generated from the Python environment (src/narcade/snake.py), the specification the browser core mirrors, with food placement scripted by the food_script queue (initial placement first, one entry per eat; an exhausted queue on a filled board means food null). Both replay drivers inject the start state and the scripted placer, apply the same actions, and must reproduce every record exactly.",
+ "scenarios": [
+  {
+   "name": "win_playthrough_4x4",
+   "width": 4,
+   "height": 4,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food_script": [
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     3
+    ]
+   ],
+   "actions": [
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    2
+   ],
+   "records": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 2,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 3,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 4,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 5,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 6,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 7,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 8,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 9,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 10,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 11
+    },
+    {
+     "body": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 11,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 12,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      1
+     ],
+     "score": 0,
+     "steps": 13,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 0
+    },
+    {
+     "body": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 14,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 15,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 16,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 2
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 17,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 18
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 18,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 19,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 20,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 21,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 22,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 23,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 24,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      2
+     ],
+     "score": 1,
+     "steps": 25,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 26,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 27,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 28,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 29,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 4
+    },
+    {
+     "body": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 30,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 2
+    },
+    {
+     "body": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 31,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 0
+    },
+    {
+     "body": [
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 32,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 11
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 33,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 34,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 35,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      3,
+      0
+     ],
+     "score": 2,
+     "steps": 36,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 37,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 38,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 39,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 11
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 40,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 41,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 42,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 43,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 44,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 45,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 4
+    },
+    {
+     "body": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      1
+     ],
+     "score": 3,
+     "steps": 46,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 2
+    },
+    {
+     "body": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 47,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 48,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 11
+    },
+    {
+     "body": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 49,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 50,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 51,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 13
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 52,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 13
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 53,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 54,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      0
+     ],
+     "score": 4,
+     "steps": 55,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 56,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 57,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 58,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 59,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 60,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 61,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 6
+    },
+    {
+     "body": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 62,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 7
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 63,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 2
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 64,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 11
+    },
+    {
+     "body": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 65,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 66,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 67,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 68,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 13
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 69,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      1,
+      0
+     ],
+     "score": 6,
+     "steps": 70,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      1,
+      2
+     ],
+     "score": 7,
+     "steps": 71,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      1,
+      2
+     ],
+     "score": 7,
+     "steps": 72,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      2
+     ],
+     "score": 7,
+     "steps": 73,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      2
+     ],
+     "score": 7,
+     "steps": 74,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      2
+     ],
+     "score": 7,
+     "steps": 75,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 27
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      1,
+      2
+     ],
+     "score": 7,
+     "steps": 76,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 9
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      3,
+      3
+     ],
+     "score": 8,
+     "steps": 77,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 6
+    },
+    {
+     "body": [
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      3,
+      3
+     ],
+     "score": 8,
+     "steps": 78,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 23
+    },
+    {
+     "body": [
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      3,
+      3
+     ],
+     "score": 8,
+     "steps": 79,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 6
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      3,
+      3
+     ],
+     "score": 8,
+     "steps": 80,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      3,
+      3
+     ],
+     "score": 8,
+     "steps": 81,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      2,
+      0
+     ],
+     "score": 9,
+     "steps": 82,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      0
+     ],
+     "score": 9,
+     "steps": 83,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      0
+     ],
+     "score": 9,
+     "steps": 84,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      2,
+      0
+     ],
+     "score": 9,
+     "steps": 85,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      1
+     ],
+     "score": 10,
+     "steps": 86,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      1
+     ],
+     "score": 10,
+     "steps": 87,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      1
+     ],
+     "score": 10,
+     "steps": 88,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      3
+     ],
+     "score": 11,
+     "steps": 89,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      3
+     ],
+     "score": 11,
+     "steps": 90,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      3
+     ],
+     "score": 12,
+     "steps": 91,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 25
+    },
+    {
+     "body": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": null,
+     "score": 13,
+     "steps": 92,
+     "reward": 10.0,
+     "done": true,
+     "reason": "win",
+     "state": 24
+    }
+   ]
+  },
+  {
+   "name": "wall_death_5x5",
+   "width": 5,
+   "height": 5,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food_script": [
+    [
+     0,
+     0
+    ]
+   ],
+   "actions": [
+    0,
+    0,
+    0
+   ],
+   "records": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       2,
+       4
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 2,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       2,
+       4
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 3,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 19
+    }
+   ]
+  },
+  {
+   "name": "self_collision_5x5",
+   "width": 5,
+   "height": 5,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      1,
+      1
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      1,
+      3
+     ]
+    ],
+    "heading": 3,
+    "score": 2,
+    "steps": 7
+   },
+   "food_script": [
+    [
+     0,
+     0
+    ]
+   ],
+   "actions": [
+    1
+   ],
+   "records": [
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      0,
+      0
+     ],
+     "score": 2,
+     "steps": 7,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      0
+     ],
+     "score": 2,
+     "steps": 8,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 17
+    }
+   ]
+  },
+  {
+   "name": "timeout_4x4",
+   "width": 4,
+   "height": 4,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 318
+   },
+   "food_script": [
+    [
+     0,
+     0
+    ]
+   ],
+   "actions": [
+    0,
+    1
+   ],
+   "records": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 318,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 319,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       1,
+       3
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 320,
+     "reward": 0.5,
+     "done": true,
+     "reason": "timeout",
+     "state": 6
+    }
+   ]
+  },
+  {
+   "name": "win_terminal_2x3",
+   "width": 2,
+   "height": 3,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      2,
+      0
+     ]
+    ],
+    "heading": 1,
+    "score": 4,
+    "steps": 0
+   },
+   "food_script": [
+    [
+     2,
+     1
+    ]
+   ],
+   "actions": [
+    0
+   ],
+   "records": [
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      1
+     ],
+     "score": 4,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": null,
+     "score": 5,
+     "steps": 1,
+     "reward": 10.0,
+     "done": true,
+     "reason": "win",
+     "state": 28
+    }
+   ]
+  },
+  {
+   "name": "dqn_state_12x12",
+   "width": 12,
+   "height": 12,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      6,
+      4
+     ],
+     [
+      6,
+      5
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      4,
+      9
+     ]
+    ],
+    "heading": 1,
+    "score": 5,
+    "steps": 40
+   },
+   "food_script": [
+    [
+     2,
+     2
+    ]
+   ],
+   "actions": [],
+   "records": [
+    {
+     "body": [
+      [
+       6,
+       4
+      ],
+      [
+       6,
+       5
+      ],
+      [
+       6,
+       6
+      ],
+      [
+       5,
+       6
+      ],
+      [
+       4,
+       6
+      ],
+      [
+       4,
+       7
+      ],
+      [
+       4,
+       8
+      ],
+      [
+       4,
+       9
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      2
+     ],
+     "score": 5,
+     "steps": 40,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 3
+    }
+   ],
+   "dqn_before": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "win_terminal_12x12",
+   "width": 12,
+   "height": 12,
+   "mode": "classic",
+   "start": {
+    "body": [
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      0,
+      3
+     ],
+     [
+      0,
+      4
+     ],
+     [
+      0,
+      5
+     ],
+     [
+      0,
+      6
+     ],
+     [
+      0,
+      7
+     ],
+     [
+      0,
+      8
+     ],
+     [
+      0,
+      9
+     ],
+     [
+      0,
+      10
+     ],
+     [
+      0,
+      11
+     ],
+     [
+      1,
+      11
+     ],
+     [
+      1,
+      10
+     ],
+     [
+      1,
+      9
+     ],
+     [
+      1,
+      8
+     ],
+     [
+      1,
+      7
+     ],
+     [
+      1,
+      6
+     ],
+     [
+      1,
+      5
+     ],
+     [
+      1,
+      4
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      2,
+      4
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      2,
+      6
+     ],
+     [
+      2,
+      7
+     ],
+     [
+      2,
+      8
+     ],
+     [
+      2,
+      9
+     ],
+     [
+      2,
+      10
+     ],
+     [
+      2,
+      11
+     ],
+     [
+      3,
+      11
+     ],
+     [
+      3,
+      10
+     ],
+     [
+      3,
+      9
+     ],
+     [
+      3,
+      8
+     ],
+     [
+      3,
+      7
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      3,
+      2
+     ],
+     [
+      3,
+      1
+     ],
+     [
+      3,
+      0
+     ],
+     [
+      4,
+      0
+     ],
+     [
+      4,
+      1
+     ],
+     [
+      4,
+      2
+     ],
+     [
+      4,
+      3
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      4,
+      7
+     ],
+     [
+      4,
+      8
+     ],
+     [
+      4,
+      9
+     ],
+     [
+      4,
+      10
+     ],
+     [
+      4,
+      11
+     ],
+     [
+      5,
+      11
+     ],
+     [
+      5,
+      10
+     ],
+     [
+      5,
+      9
+     ],
+     [
+      5,
+      8
+     ],
+     [
+      5,
+      7
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      5,
+      5
+     ],
+     [
+      5,
+      4
+     ],
+     [
+      5,
+      3
+     ],
+     [
+      5,
+      2
+     ],
+     [
+      5,
+      1
+     ],
+     [
+      5,
+      0
+     ],
+     [
+      6,
+      0
+     ],
+     [
+      6,
+      1
+     ],
+     [
+      6,
+      2
+     ],
+     [
+      6,
+      3
+     ],
+     [
+      6,
+      4
+     ],
+     [
+      6,
+      5
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      6,
+      9
+     ],
+     [
+      6,
+      10
+     ],
+     [
+      6,
+      11
+     ],
+     [
+      7,
+      11
+     ],
+     [
+      7,
+      10
+     ],
+     [
+      7,
+      9
+     ],
+     [
+      7,
+      8
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      7,
+      4
+     ],
+     [
+      7,
+      3
+     ],
+     [
+      7,
+      2
+     ],
+     [
+      7,
+      1
+     ],
+     [
+      7,
+      0
+     ],
+     [
+      8,
+      0
+     ],
+     [
+      8,
+      1
+     ],
+     [
+      8,
+      2
+     ],
+     [
+      8,
+      3
+     ],
+     [
+      8,
+      4
+     ],
+     [
+      8,
+      5
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      7
+     ],
+     [
+      8,
+      8
+     ],
+     [
+      8,
+      9
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      8,
+      11
+     ],
+     [
+      9,
+      11
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      9,
+      9
+     ],
+     [
+      9,
+      8
+     ],
+     [
+      9,
+      7
+     ],
+     [
+      9,
+      6
+     ],
+     [
+      9,
+      5
+     ],
+     [
+      9,
+      4
+     ],
+     [
+      9,
+      3
+     ],
+     [
+      9,
+      2
+     ],
+     [
+      9,
+      1
+     ],
+     [
+      9,
+      0
+     ],
+     [
+      10,
+      0
+     ],
+     [
+      10,
+      1
+     ],
+     [
+      10,
+      2
+     ],
+     [
+      10,
+      3
+     ],
+     [
+      10,
+      4
+     ],
+     [
+      10,
+      5
+     ],
+     [
+      10,
+      6
+     ],
+     [
+      10,
+      7
+     ],
+     [
+      10,
+      8
+     ],
+     [
+      10,
+      9
+     ],
+     [
+      10,
+      10
+     ],
+     [
+      10,
+      11
+     ],
+     [
+      11,
+      11
+     ],
+     [
+      11,
+      10
+     ],
+     [
+      11,
+      9
+     ],
+     [
+      11,
+      8
+     ],
+     [
+      11,
+      7
+     ],
+     [
+      11,
+      6
+     ],
+     [
+      11,
+      5
+     ],
+     [
+      11,
+      4
+     ],
+     [
+      11,
+      3
+     ],
+     [
+      11,
+      2
+     ],
+     [
+      11,
+      1
+     ]
+    ],
+    "heading": 3,
+    "score": 140,
+    "steps": 900
+   },
+   "food_script": [
+    [
+     11,
+     0
+    ]
+   ],
+   "actions": [
+    0
+   ],
+   "records": [
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       0,
+       4
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       0,
+       8
+      ],
+      [
+       0,
+       9
+      ],
+      [
+       0,
+       10
+      ],
+      [
+       0,
+       11
+      ],
+      [
+       1,
+       11
+      ],
+      [
+       1,
+       10
+      ],
+      [
+       1,
+       9
+      ],
+      [
+       1,
+       8
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       1,
+       6
+      ],
+      [
+       1,
+       5
+      ],
+      [
+       1,
+       4
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       2,
+       4
+      ],
+      [
+       2,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       2,
+       7
+      ],
+      [
+       2,
+       8
+      ],
+      [
+       2,
+       9
+      ],
+      [
+       2,
+       10
+      ],
+      [
+       2,
+       11
+      ],
+      [
+       3,
+       11
+      ],
+      [
+       3,
+       10
+      ],
+      [
+       3,
+       9
+      ],
+      [
+       3,
+       8
+      ],
+      [
+       3,
+       7
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       3,
+       5
+      ],
+      [
+       3,
+       4
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       4,
+       1
+      ],
+      [
+       4,
+       2
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       4,
+       5
+      ],
+      [
+       4,
+       6
+      ],
+      [
+       4,
+       7
+      ],
+      [
+       4,
+       8
+      ],
+      [
+       4,
+       9
+      ],
+      [
+       4,
+       10
+      ],
+      [
+       4,
+       11
+      ],
+      [
+       5,
+       11
+      ],
+      [
+       5,
+       10
+      ],
+      [
+       5,
+       9
+      ],
+      [
+       5,
+       8
+      ],
+      [
+       5,
+       7
+      ],
+      [
+       5,
+       6
+      ],
+      [
+       5,
+       5
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       5,
+       2
+      ],
+      [
+       5,
+       1
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       6,
+       1
+      ],
+      [
+       6,
+       2
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       6,
+       4
+      ],
+      [
+       6,
+       5
+      ],
+      [
+       6,
+       6
+      ],
+      [
+       6,
+       7
+      ],
+      [
+       6,
+       8
+      ],
+      [
+       6,
+       9
+      ],
+      [
+       6,
+       10
+      ],
+      [
+       6,
+       11
+      ],
+      [
+       7,
+       11
+      ],
+      [
+       7,
+       10
+      ],
+      [
+       7,
+       9
+      ],
+      [
+       7,
+       8
+      ],
+      [
+       7,
+       7
+      ],
+      [
+       7,
+       6
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       7,
+       4
+      ],
+      [
+       7,
+       3
+      ],
+      [
+       7,
+       2
+      ],
+      [
+       7,
+       1
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       8,
+       1
+      ],
+      [
+       8,
+       2
+      ],
+      [
+       8,
+       3
+      ],
+      [
+       8,
+       4
+      ],
+      [
+       8,
+       5
+      ],
+      [
+       8,
+       6
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       8,
+       8
+      ],
+      [
+       8,
+       9
+      ],
+      [
+       8,
+       10
+      ],
+      [
+       8,
+       11
+      ],
+      [
+       9,
+       11
+      ],
+      [
+       9,
+       10
+      ],
+      [
+       9,
+       9
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       9,
+       6
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       9,
+       4
+      ],
+      [
+       9,
+       3
+      ],
+      [
+       9,
+       2
+      ],
+      [
+       9,
+       1
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       10,
+       1
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       10,
+       3
+      ],
+      [
+       10,
+       4
+      ],
+      [
+       10,
+       5
+      ],
+      [
+       10,
+       6
+      ],
+      [
+       10,
+       7
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       10,
+       9
+      ],
+      [
+       10,
+       10
+      ],
+      [
+       10,
+       11
+      ],
+      [
+       11,
+       11
+      ],
+      [
+       11,
+       10
+      ],
+      [
+       11,
+       9
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       11,
+       7
+      ],
+      [
+       11,
+       6
+      ],
+      [
+       11,
+       5
+      ],
+      [
+       11,
+       4
+      ],
+      [
+       11,
+       3
+      ],
+      [
+       11,
+       2
+      ],
+      [
+       11,
+       1
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      11,
+      0
+     ],
+     "score": 140,
+     "steps": 900,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       3
+      ],
+      [
+       0,
+       4
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       0,
+       6
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       0,
+       8
+      ],
+      [
+       0,
+       9
+      ],
+      [
+       0,
+       10
+      ],
+      [
+       0,
+       11
+      ],
+      [
+       1,
+       11
+      ],
+      [
+       1,
+       10
+      ],
+      [
+       1,
+       9
+      ],
+      [
+       1,
+       8
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       1,
+       6
+      ],
+      [
+       1,
+       5
+      ],
+      [
+       1,
+       4
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       2,
+       4
+      ],
+      [
+       2,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       2,
+       7
+      ],
+      [
+       2,
+       8
+      ],
+      [
+       2,
+       9
+      ],
+      [
+       2,
+       10
+      ],
+      [
+       2,
+       11
+      ],
+      [
+       3,
+       11
+      ],
+      [
+       3,
+       10
+      ],
+      [
+       3,
+       9
+      ],
+      [
+       3,
+       8
+      ],
+      [
+       3,
+       7
+      ],
+      [
+       3,
+       6
+      ],
+      [
+       3,
+       5
+      ],
+      [
+       3,
+       4
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       4,
+       1
+      ],
+      [
+       4,
+       2
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       4,
+       5
+      ],
+      [
+       4,
+       6
+      ],
+      [
+       4,
+       7
+      ],
+      [
+       4,
+       8
+      ],
+      [
+       4,
+       9
+      ],
+      [
+       4,
+       10
+      ],
+      [
+       4,
+       11
+      ],
+      [
+       5,
+       11
+      ],
+      [
+       5,
+       10
+      ],
+      [
+       5,
+       9
+      ],
+      [
+       5,
+       8
+      ],
+      [
+       5,
+       7
+      ],
+      [
+       5,
+       6
+      ],
+      [
+       5,
+       5
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       5,
+       2
+      ],
+      [
+       5,
+       1
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       6,
+       1
+      ],
+      [
+       6,
+       2
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       6,
+       4
+      ],
+      [
+       6,
+       5
+      ],
+      [
+       6,
+       6
+      ],
+      [
+       6,
+       7
+      ],
+      [
+       6,
+       8
+      ],
+      [
+       6,
+       9
+      ],
+      [
+       6,
+       10
+      ],
+      [
+       6,
+       11
+      ],
+      [
+       7,
+       11
+      ],
+      [
+       7,
+       10
+      ],
+      [
+       7,
+       9
+      ],
+      [
+       7,
+       8
+      ],
+      [
+       7,
+       7
+      ],
+      [
+       7,
+       6
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       7,
+       4
+      ],
+      [
+       7,
+       3
+      ],
+      [
+       7,
+       2
+      ],
+      [
+       7,
+       1
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       8,
+       1
+      ],
+      [
+       8,
+       2
+      ],
+      [
+       8,
+       3
+      ],
+      [
+       8,
+       4
+      ],
+      [
+       8,
+       5
+      ],
+      [
+       8,
+       6
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       8,
+       8
+      ],
+      [
+       8,
+       9
+      ],
+      [
+       8,
+       10
+      ],
+      [
+       8,
+       11
+      ],
+      [
+       9,
+       11
+      ],
+      [
+       9,
+       10
+      ],
+      [
+       9,
+       9
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       9,
+       6
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       9,
+       4
+      ],
+      [
+       9,
+       3
+      ],
+      [
+       9,
+       2
+      ],
+      [
+       9,
+       1
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       10,
+       1
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       10,
+       3
+      ],
+      [
+       10,
+       4
+      ],
+      [
+       10,
+       5
+      ],
+      [
+       10,
+       6
+      ],
+      [
+       10,
+       7
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       10,
+       9
+      ],
+      [
+       10,
+       10
+      ],
+      [
+       10,
+       11
+      ],
+      [
+       11,
+       11
+      ],
+      [
+       11,
+       10
+      ],
+      [
+       11,
+       9
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       11,
+       7
+      ],
+      [
+       11,
+       6
+      ],
+      [
+       11,
+       5
+      ],
+      [
+       11,
+       4
+      ],
+      [
+       11,
+       3
+      ],
+      [
+       11,
+       2
+      ],
+      [
+       11,
+       1
+      ],
+      [
+       11,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": null,
+     "score": 141,
+     "steps": 901,
+     "reward": 10.0,
+     "done": true,
+     "reason": "win",
+     "state": 28
+    }
+   ],
+   "dqn_before": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "dqn_after": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  }
+ ]
+}

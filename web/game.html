@@ -123,7 +123,7 @@ class Snake {
   reset(){
     const cy=Math.floor(this.h/2), cx=Math.floor(this.w/2);
     this.body=[[cy,cx-2],[cy,cx-1],[cy,cx]];
-    this.heading=1; this.score=0; this.steps=0; this.done=false;
+    this.heading=1; this.score=0; this.steps=0; this.done=false; this.won=false;
     this._placeFood(); this.tickMs = this.mode==='blitz' ? 130 : this.mode==='maze' ? 140 : 130;
   }
   _placeFood(){
@@ -148,11 +148,15 @@ class Snake {
     const ds=this._blocked(hr+ah[0],hc+ah[1])?1:0;
     const dl=this._blocked(hr+lh[0],hc+lh[1])?1:0;
     const dr=this._blocked(hr+rh[0],hc+rh[1])?1:0;
-    const dy=this.food[0]-hr, dx=this.food[1]-hc;
-    let fa,ra;
-    if(h===0){fa=-dy;ra=dx;} else if(h===1){fa=dx;ra=dy;}
-    else if(h===2){fa=dy;ra=-dx;} else {fa=-dx;ra=-dy;}
-    const fd = Math.abs(fa)>=Math.abs(ra) ? (fa>0?0:3) : (ra>0?1:2);
+    // Terminal win (food null): no food direction, fd 0, as in Python.
+    let fd=0;
+    if(this.food){
+      const dy=this.food[0]-hr, dx=this.food[1]-hc;
+      let fa,ra;
+      if(h===0){fa=-dy;ra=dx;} else if(h===1){fa=dx;ra=dy;}
+      else if(h===2){fa=dy;ra=-dx;} else {fa=-dx;ra=-dy;}
+      fd = Math.abs(fa)>=Math.abs(ra) ? (fa>0?0:3) : (ra>0?1:2);
+    }
     return ((ds*2+dl)*2+dr)*4+fd;
   }
   encodeDQN(){ // MUST match Python train_dqn.encode_dqn
@@ -160,7 +164,7 @@ class Snake {
     const n=this.body.length;
     for(let i=0;i<n;i++){ const [r,c]=this.body[i];
       v[(i===n-1?0:144)+r*12+c]=1; }
-    v[288+this.food[0]*12+this.food[1]]=1;
+    if(this.food) v[288+this.food[0]*12+this.food[1]]=1; // food plane stays empty on a terminal win
     v[432+this.heading]=1;
     return v;
   }
@@ -176,6 +180,7 @@ class Snake {
     this.body.push([nr,nc]);
     let reward;
     if(ate){ this.score++; this._placeFood(); reward=10;
+      if(!this.food){ this.done=true; this.won=true; } // board filled: terminal win, as in Python
       if(this.mode==='blitz') this.tickMs=Math.max(60,this.tickMs-1.5);
     } else {
       this.body.shift();
