@@ -11,12 +11,23 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")
 
 
 def main():
+    # P1-08: verify the data artifacts against runs/artifact_manifest.json
+    # before injecting any of them. A stale, truncated or hand-edited
+    # artifact must stop the build here, never silently ship in the page.
+    if ROOT not in sys.path:
+        sys.path.insert(0, ROOT)
+    from scripts.artifact_manifest import verify_manifest
+    problems = verify_manifest(ROOT)
+    if problems:
+        raise ValueError(
+            "artifact integrity check failed: " + "; ".join(problems))
     with open(os.path.join(ROOT, "web", "game.html"), encoding="utf-8") as f:
         html = f.read()
     with open(os.path.join(ROOT, "runs", "policy.json"), encoding="utf-8") as f:
