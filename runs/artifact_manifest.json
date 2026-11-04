@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "kind": "deeparcade-artifact-manifest",
+  "artifacts": {
+    "qtable": {
+      "path": "runs/qtable.json",
+      "sha256": "f46fb1a226996381ed478eaec199c8691b17bf63ee42063b1222368dc49346d6",
+      "metadata": {
+        "architecture": "tabular Q-table, 32 states x 3 actions",
+        "seed": 7,
+        "steps": 30000,
+        "steps_unit": "training episodes",
+        "evaluation_protocol": "scripts/evaluate.py (schema v2): 500 independent episodes per agent on seeds 5000-5499; Elo and head-to-head computed on the paired subset, seeds 5000-5049; MCTS at 80 simulations per move"
+      }
+    },
+    "policy": {
+      "path": "runs/policy.json",
+      "sha256": "1bc7979eb7705b2a2a155c059ff9557b28f990f40106a6828c96bc0b51764141",
+      "metadata": {
+        "architecture": "greedy policy: per-state argmax of runs/qtable.json, first-max tie-break",
+        "seed": 7,
+        "steps": 30000,
+        "steps_unit": "training episodes",
+        "evaluation_protocol": "scripts/evaluate.py (schema v2): 500 independent episodes per agent on seeds 5000-5499; Elo and head-to-head computed on the paired subset, seeds 5000-5049; MCTS at 80 simulations per move"
+      }
+    },
+    "dqn_weights": {
+      "path": "runs/dqn_weights.json",
+      "sha256": "b171d8a20e99e2ad4c472f03a940c83399570eb04f253d8da4aa299df57c7861",
+      "metadata": {
+        "architecture": "MLP 436 -> 128 -> 64 -> 3; state encoder encode_dqn rev 1, input 436",
+        "seed": 11,
+        "steps": 300000,
+        "steps_unit": "training steps",
+        "evaluation_protocol": "scripts/evaluate.py (schema v2): 500 independent episodes per agent on seeds 5000-5499; Elo and head-to-head computed on the paired subset, seeds 5000-5049; MCTS at 80 simulations per move"
+      }
+    },
+    "eval": {
+      "path": "runs/eval.json",
+      "sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+      "metadata": {
+        "architecture": "evaluation record from scripts/evaluate.py: paired and independent episode scores, Elo and head-to-head for random, greedy, rookie, pro and grandmaster",
+        "seed": 5000,
+        "steps": 500,
+        "steps_unit": "independent episodes per agent",
+        "evaluation_protocol": "scripts/evaluate.py (schema v2): 500 independent episodes per agent on seeds 5000-5499; Elo and head-to-head computed on the paired subset, seeds 5000-5049; MCTS at 80 simulations per move"
+      }
+    },
+    "diagnosis": {
+      "path": "runs/da4_diagnosis.json",
+      "sha256": "81e83184fe1d77be89ea25679f06181bc109af22f874495c03ccb9eca8be4d36",
+      "metadata": {
+        "architecture": "DQN ablation record from scripts/diagnose_dqn.py: variants dqn, ddqn, noshape, imitate",
+        "seed": [
+          7,
+          8,
+          9
+        ],
+        "steps": 60000,
+        "steps_unit": "training steps per run",
+        "evaluation_protocol": "each variant trained for 60000 steps per seed and evaluated on seeds 5000-5099 (100 episodes)"
+      }
+    }
+  }
+}

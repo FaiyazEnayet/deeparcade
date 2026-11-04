@@ -123,7 +123,7 @@ The DQN underperforms the greedy and tabular baselines in the committed run. The
 
 ## Code and data
 
-`src/narcade/` contains the Snake environment and agents. `native/` contains the C++ engine: environment, RNG, policies, MCTS, evaluator, trainer and DQN inference, with golden corpora under `native/golden/`. `runs/eval.json` stores the evaluation. `web/game.html` is the browser template; `scripts/make_game.py` injects policy data.
+`src/narcade/` contains the Snake environment and agents. `native/` contains the C++ engine: environment, RNG, policies, MCTS, evaluator, trainer and DQN inference, with golden corpora under `native/golden/`. `runs/eval.json` stores the evaluation. `runs/artifact_manifest.json` pins the SHA-256 hash and production metadata (architecture, seed, steps, evaluation protocol) of the qtable, policy, DQN weights, evaluation and diagnosis artifacts, and `scripts/make_game.py` verifies the artifacts against it before injecting policy data. `web/game.html` is the browser template.
 
 
 ## Limitations
