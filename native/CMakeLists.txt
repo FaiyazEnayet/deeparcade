@@ -9,6 +9,15 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+# The differential tests compare floating-point results against the frozen
+# golden corpora bit for bit. FMA contraction changes the rounding of the
+# Q-update arithmetic by 1 ULP depending on the compiler and CPU, which broke
+# policies_fixture / policies_fuzz when CI moved to a newer runner image.
+# Keep contraction off so results are identical on every toolchain.
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  add_compile_options(-ffp-contract=off)
+endif()
+
 add_library(narcade_rng src/rng.cpp)
 target_include_directories(narcade_rng PUBLIC include)
 target_compile_options(narcade_rng PRIVATE -Wall -Wextra)
