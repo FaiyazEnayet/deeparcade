@@ -244,3 +244,32 @@ def test_verify_detects_a_tampered_checkpoint_hash(smoke_root, tmp_path):
     problems = verify_model_cards(tampered)
     assert problems
     assert any("qtable" in p for p in problems)
+
+
+def test_verify_accepts_cards_from_another_build_commit(smoke_root,
+                                                        tmp_path):
+    root, _ = smoke_root
+    copied = str(tmp_path / "other-commit")
+    shutil.copytree(root, copied)
+    cards_path = os.path.join(copied, "runs", "model_cards.json")
+    doc = _load(cards_path)
+    # environment.code_commit records the commit the cards were built
+    # from. It is a build-time fact, checked for presence and
+    # plausibility only: a well-formed hash that differs from the
+    # current HEAD must not fail verification (the committed document
+    # can never name the commit that contains it).
+    doc["environment"]["code_commit"] = "f" * 40
+    with open(cards_path, "w", encoding="utf-8") as f:
+        json.dump(doc, f, indent=2)
+    assert verify_model_cards(copied) == []
+    # A tampered artifact hash in the same document still fails:
+    # only the build commit and the measured timings are exempt
+    # from strict comparison, the artifact hashes are not.
+    for card in doc["cards"]:
+        if card["id"] == "rookie":
+            card["checkpoint"]["sha256"] = "0" * 64
+    with open(cards_path, "w", encoding="utf-8") as f:
+        json.dump(doc, f, indent=2)
+    problems = verify_model_cards(copied)
+    assert problems
+    assert any("qtable" in p for p in problems)

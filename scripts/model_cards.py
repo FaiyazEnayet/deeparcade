@@ -360,7 +360,7 @@ def build_model_cards(root):
 # ---------------------------------------------------------------------
 
 def _diff(path, stored, current, problems):
-    if path == "environment.code_commit" or \
+    if path.endswith("environment.code_commit") or \
             path.endswith("inference_cost.ms_per_decision"):
         return  # build-time facts, checked separately for sanity
     if isinstance(stored, dict) and isinstance(current, dict):
@@ -407,6 +407,23 @@ def verify_model_cards(root):
     if stored.get("kind") != MODEL_CARDS_KIND:
         problems.append(f"model cards kind {stored.get('kind')!r} != "
                         f"{MODEL_CARDS_KIND!r}")
+    # The build commit is a build-time fact: it records the commit
+    # the cards were built from, so it is checked for presence and
+    # plausibility, never for equality with the current HEAD (the
+    # document cannot name the commit that contains it). A null is
+    # accepted: it is what a build outside a git checkout records.
+    env = stored.get("environment")
+    if not isinstance(env, dict) or "code_commit" not in env:
+        problems.append("environment.code_commit is missing from "
+                        "the stored model cards")
+    else:
+        commit = env["code_commit"]
+        if commit is not None and not (
+                isinstance(commit, str) and len(commit) == 40 and
+                all(c in "0123456789abcdefABCDEF" for c in commit)):
+            problems.append(
+                f"environment.code_commit {commit!r} is not a "
+                f"40-character hex commit hash")
     ids = [c.get("id") for c in stored.get("cards", [])]
     if ids != CARD_ORDER:
         problems.append(f"model cards must cover {CARD_ORDER} in "
