@@ -199,10 +199,13 @@ const AI_NAMES = {rookie:'Pro', pro:'Rookie', grandmaster:'Grandmaster'};
 const QPOLICY = /*__QPOLICY__*/[];
 function qAct(game){ return QPOLICY[game.encodeState()] ?? 0; }
 
-// DQN forward pass (weights injected at build time)
+// DQN forward pass (weights injected at build time). dqnLogits returns
+// the three action logits so the browser policy is directly comparable
+// with the PyTorch policy; dqnAct is the argmax over those logits with
+// the first-max tie-break.
 const DQNW = /*__DQNW__*/null;
 function relu(x){ return x>0?x:0; }
-function dqnAct(game){
+function dqnLogits(game){
   const x=game.encodeDQN(); const L=DQNW.layers;
   let h=new Float32Array(128);
   const w0=L[0].w,b0=L[0].b;
@@ -212,10 +215,14 @@ function dqnAct(game){
   const w1=L[1].w,b1=L[1].b;
   for(let j=0;j<64;j++){ let s=b1[j]; const row=w1[j];
     for(let i=0;i<128;i++) s+=row[i]*h[i]; h2[j]=relu(s); }
-  const w2=L[2].w,b2=L[2].b; let best=0,bestV=-1e18;
+  const w2=L[2].w,b2=L[2].b; const out=[0,0,0];
   for(let a=0;a<3;a++){ let s=b2[a]; const row=w2[a];
-    for(let i=0;i<64;i++) s+=row[i]*h2[i];
-    if(s>bestV){bestV=s;best=a;} }
+    for(let i=0;i<64;i++) s+=row[i]*h2[i]; out[a]=s; }
+  return out;
+}
+function dqnAct(game){
+  const L=dqnLogits(game); let best=0;
+  for(let a=1;a<3;a++) if(L[a]>L[best]) best=a;
   return best;
 }
 
