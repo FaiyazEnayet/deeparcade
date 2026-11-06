@@ -1,0 +1,1289 @@
+{
+ "schema": 1,
+ "about": "Canonical seed-independent single-step transition fixtures for deeparcade DA3. Expected records were generated from the Python environment (src/narcade/snake.py), the specification the browser core mirrors, with food placement injected: the initial food is stated, and an eat places exactly food_after (null when the board fills), so no case consumes an RNG draw. Both replay drivers inject the start state and the stated food, apply the same single action, and must reproduce every expected record exactly. Regenerate with: python3 tools/export_da3_fixtures.py",
+ "cases": [
+  {
+   "name": "boundary_north",
+   "category": "boundary",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ],
+    "heading": 0,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    4,
+    4
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      4,
+      4
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       1
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      4,
+      4
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 19
+    }
+   ]
+  },
+  {
+   "name": "boundary_east",
+   "category": "boundary",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      3
+     ],
+     [
+      2,
+      4
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    0,
+    0
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       2,
+       4
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       2,
+       3
+      ],
+      [
+       2,
+       4
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 19
+    }
+   ]
+  },
+  {
+   "name": "boundary_south",
+   "category": "boundary",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      3,
+      2
+     ],
+     [
+      4,
+      2
+     ]
+    ],
+    "heading": 2,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    0,
+    0
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       2
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       2
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 19
+    }
+   ]
+  },
+  {
+   "name": "boundary_west",
+   "category": "boundary",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      0
+     ]
+    ],
+    "heading": 3,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    4,
+    4
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      4,
+      4
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 19
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "heading": 3,
+     "food": [
+      4,
+      4
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 19
+    }
+   ]
+  },
+  {
+   "name": "boundary_corner_turn",
+   "category": "boundary",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      1,
+      4
+     ],
+     [
+      0,
+      4
+     ]
+    ],
+    "heading": 0,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    4,
+    0
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 2,
+   "expected": [
+    {
+     "body": [
+      [
+       1,
+       4
+      ],
+      [
+       0,
+       4
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      4,
+      0
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 23
+    },
+    {
+     "body": [
+      [
+       1,
+       4
+      ],
+      [
+       0,
+       4
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      4,
+      0
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 27
+    }
+   ]
+  },
+  {
+   "name": "tail_vacating_straight",
+   "category": "tail-vacating",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "heading": 2,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    0,
+    4
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      4
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 10
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      0,
+      4
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 2
+    }
+   ]
+  },
+  {
+   "name": "tail_vacating_turn",
+   "category": "tail-vacating",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    4,
+    4
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 2,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      4,
+      4
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 16
+    },
+    {
+     "body": [
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      4,
+      4
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 2
+    }
+   ]
+  },
+  {
+   "name": "tail_vacating_eat_is_death",
+   "category": "tail-vacating",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      1
+     ]
+    ],
+    "heading": 2,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    2,
+    1
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      2,
+      1
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 8
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ]
+     ],
+     "heading": 2,
+     "food": [
+      2,
+      1
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -10.0,
+     "done": true,
+     "reason": "death",
+     "state": 8
+    }
+   ]
+  },
+  {
+   "name": "food_eat_straight",
+   "category": "food",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    2,
+    3
+   ],
+   "food_after": [
+    0,
+    0
+   ],
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      3
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 0
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 1,
+     "steps": 1,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 3
+    }
+   ]
+  },
+  {
+   "name": "food_eat_turn",
+   "category": "food",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    1,
+    2
+   ],
+   "food_after": [
+    4,
+    4
+   ],
+   "max_steps": 500,
+   "action": 1,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      1,
+      2
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 2
+    },
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "heading": 0,
+     "food": [
+      4,
+      4
+     ],
+     "score": 1,
+     "steps": 1,
+     "reward": 10.0,
+     "done": false,
+     "reason": null,
+     "state": 3
+    }
+   ]
+  },
+  {
+   "name": "food_closer",
+   "category": "food",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    2,
+    4
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      4
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 0
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      4
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": 0.5,
+     "done": false,
+     "reason": null,
+     "state": 0
+    }
+   ]
+  },
+  {
+   "name": "food_farther",
+   "category": "food",
+   "width": 5,
+   "height": 5,
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 0
+   },
+   "food": [
+    0,
+    0
+   ],
+   "food_after": null,
+   "max_steps": 500,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 0,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 1,
+     "reward": -0.5,
+     "done": false,
+     "reason": null,
+     "state": 3
+    }
+   ]
+  },
+  {
+   "name": "timeout_4x4",
+   "category": "timeout",
+   "width": 4,
+   "height": 4,
+   "start": {
+    "body": [
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "heading": 1,
+    "score": 0,
+    "steps": 319
+   },
+   "food": [
+    0,
+    0
+   ],
+   "food_after": null,
+   "max_steps": 320,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 319,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 3
+    },
+    {
+     "body": [
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      0,
+      0
+     ],
+     "score": 0,
+     "steps": 320,
+     "reward": -0.5,
+     "done": true,
+     "reason": "timeout",
+     "state": 19
+    }
+   ]
+  },
+  {
+   "name": "terminal_win_3x3",
+   "category": "terminal",
+   "width": 3,
+   "height": 3,
+   "start": {
+    "body": [
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      2,
+      0
+     ],
+     [
+      2,
+      1
+     ]
+    ],
+    "heading": 1,
+    "score": 7,
+    "steps": 7
+   },
+   "food": [
+    2,
+    2
+   ],
+   "food_after": null,
+   "max_steps": 180,
+   "action": 0,
+   "expected": [
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "heading": 1,
+     "food": [
+      2,
+      2
+     ],
+     "score": 7,
+     "steps": 7,
+     "reward": null,
+     "done": false,
+     "reason": null,
+     "state": 12
+    },
+    {
+     "body": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       2,
+       2
+      ]
+     ],
+     "heading": 1,
+     "food": null,
+     "score": 8,
+     "steps": 8,
+     "reward": 10.0,
+     "done": true,
+     "reason": "win",
+     "state": 28
+    }
+   ]
+  }
+ ]
+}

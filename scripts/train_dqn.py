@@ -56,7 +56,7 @@ ENCODER_LAYOUT = ("head 12x12, body 12x12, food 12x12 (cell index r*12 + c), "
                   "heading one-hot 4")
 WEIGHT_FLOAT_REGIME = "float32"
 # Parity between the PyTorch policy and the browser export is declared in
-# float64: the browser accumulates in float64 (web/game.html dqnAct) over
+# float64: the browser accumulates in float64 (web/game.html dqnLogits) over
 # the stored float32 values. A float32 PyTorch evaluation differs from the
 # browser export by up to 3.546e-06 on the frozen parity fixture purely
 # from float32 accumulation; greedy actions still agree everywhere.
@@ -369,7 +369,7 @@ def load_checkpoint(source):
 def browser_export_logits(doc, observations):
     """Logits of the browser export policy over the given observations.
 
-    A faithful mirror of the forward pass in web/game.html (dqnAct):
+    A faithful mirror of the forward pass in web/game.html (dqnLogits):
     each unit starts from its bias and accumulates w[i] * x[i] in index
     order in float64, ReLU between layers, and hidden activations are
     rounded to float32, matching the game's Float32Array storage. The
