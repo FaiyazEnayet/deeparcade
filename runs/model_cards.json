@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "kind": "deeparcade-model-cards",
+  "generated_by": "scripts/model_cards.py",
+  "environment": {
+    "name": "SnakeEnv",
+    "implementation": "src/narcade/snake.py",
+    "width": 12,
+    "height": 12,
+    "code_commit": "8ef5f0bc893d3ee738229afb9ee9989c5e7f184c"
+  },
+  "evaluation": {
+    "artifact": "runs/eval.json",
+    "sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+    "schema_version": 2,
+    "protocol": "scripts/evaluate.py (schema v2): 500 independent episodes per agent on seeds 5000-5499; Elo and head-to-head computed on the paired subset, seeds 5000-5049; MCTS at 80 simulations per move"
+  },
+  "cards": [
+    {
+      "id": "random",
+      "name": "Random",
+      "kind": "baseline",
+      "algorithm": "uniform random action selection",
+      "encoding": null,
+      "training": null,
+      "checkpoint": null,
+      "export": null,
+      "evaluation": {
+        "artifact": "runs/eval.json",
+        "artifact_sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+        "schema_version": 2,
+        "policy_id": "random-seed-999",
+        "evaluated_artifact": null,
+        "evaluated_artifact_sha256": null,
+        "pool": "independent",
+        "n": 500,
+        "mean": 0.16,
+        "median": 0.0,
+        "std": 0.41,
+        "elo": 573
+      },
+      "inference_cost": {
+        "ms_per_decision": 0.0005,
+        "decisions_timed": 300,
+        "method": "mean wall time of narcade.policies.RandomPolicy.act over 12 seeded mid-game SnakeEnv snapshots, 25 rounds"
+      }
+    },
+    {
+      "id": "greedy",
+      "name": "Greedy",
+      "kind": "heuristic",
+      "algorithm": "heuristic: move toward the food, avoid instant death",
+      "encoding": null,
+      "training": null,
+      "checkpoint": null,
+      "export": null,
+      "evaluation": {
+        "artifact": "runs/eval.json",
+        "artifact_sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+        "schema_version": 2,
+        "policy_id": "greedy-heuristic",
+        "evaluated_artifact": null,
+        "evaluated_artifact_sha256": null,
+        "pool": "independent",
+        "n": 500,
+        "mean": 19.89,
+        "median": 19.0,
+        "std": 6.64,
+        "elo": 1317
+      },
+      "inference_cost": {
+        "ms_per_decision": 0.0027,
+        "decisions_timed": 300,
+        "method": "mean wall time of narcade.policies.GreedyPolicy.act over 12 seeded mid-game SnakeEnv snapshots, 25 rounds"
+      }
+    },
+    {
+      "id": "rookie",
+      "name": "Rookie",
+      "kind": "learned",
+      "algorithm": "tabular Q-learning",
+      "encoding": {
+        "name": "encode_state",
+        "location": "src/narcade/snake.py",
+        "states": 32,
+        "actions": 3,
+        "layout": "danger straight/left/right bits, then food direction relative to heading (0 ahead, 1 right, 2 left, 3 behind)"
+      },
+      "training": {
+        "trainer": "scripts/train.py",
+        "steps": 30000,
+        "steps_unit": "training episodes",
+        "episodes": 30000,
+        "seed": 7,
+        "eps_start": 1.0,
+        "eps_end": 0.05,
+        "seconds": 19.0,
+        "final_mean100_score": 11.54,
+        "final_mean_reward": 145.485,
+        "final_elo": 1224.8790159676932
+      },
+      "checkpoint": {
+        "artifact": "runs/qtable.json",
+        "sha256": "f46fb1a226996381ed478eaec199c8691b17bf63ee42063b1222368dc49346d6",
+        "format": "JSON array, 32 states x 3 actions of Q-values"
+      },
+      "export": {
+        "artifact": "runs/policy.json",
+        "sha256": "1bc7979eb7705b2a2a155c059ff9557b28f990f40106a6828c96bc0b51764141",
+        "format": "greedy argmax of the Q-table, first-max tie-break; injected into the browser game by scripts/make_game.py"
+      },
+      "evaluation": {
+        "artifact": "runs/eval.json",
+        "artifact_sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+        "schema_version": 2,
+        "policy_id": "qtable",
+        "evaluated_artifact": "runs/qtable.json",
+        "evaluated_artifact_sha256": "f46fb1a226996381ed478eaec199c8691b17bf63ee42063b1222368dc49346d6",
+        "pool": "independent",
+        "n": 500,
+        "mean": 20.78,
+        "median": 21.0,
+        "std": 7.52,
+        "elo": 1366
+      },
+      "inference_cost": {
+        "ms_per_decision": 0.0023,
+        "decisions_timed": 300,
+        "method": "mean wall time of narcade.policies.QTablePolicy.act (encode_state + argmax over the Q-table) over 12 seeded mid-game SnakeEnv snapshots, 25 rounds"
+      }
+    },
+    {
+      "id": "pro",
+      "name": "Pro",
+      "kind": "learned",
+      "algorithm": "deep Q-network (DQN) with experience replay and a target network",
+      "encoding": {
+        "name": "encode_dqn",
+        "revision": 1,
+        "input_dim": 436,
+        "layout": "head 12x12, body 12x12, food 12x12 (cell index r*12 + c), heading one-hot 4"
+      },
+      "training": {
+        "trainer": "scripts/train_dqn.py",
+        "steps": 300000,
+        "steps_unit": "training steps",
+        "episodes": 6984,
+        "seed": 11,
+        "seconds": 522.4,
+        "final_mean100_score": 4.54,
+        "final_mean_reward": 51.645,
+        "data_key_range": {
+          "episode_seeds": [
+            11,
+            6994
+          ],
+          "derivation": "train_dqn reseeds each new episode environment with seed + episode index; range derived from runs/dqn_meta.json"
+        }
+      },
+      "checkpoint": {
+        "artifact": "runs/dqn_weights.json",
+        "sha256": "b171d8a20e99e2ad4c472f03a940c83399570eb04f253d8da4aa299df57c7861",
+        "weights_sha256": "704e56c763985c31463b90939fd46394a5f79bfed70b37e7de336053efd28c61",
+        "checkpoint_schema_version": 0,
+        "manifest": "runs/dqn_manifest.json",
+        "float_regime": "float32",
+        "parity_float_regime": "float64",
+        "format": "JSON weights export (input_dim + layers); the checkpoint file is itself the browser export"
+      },
+      "export": {
+        "artifact": "runs/dqn_weights.json",
+        "sha256": "b171d8a20e99e2ad4c472f03a940c83399570eb04f253d8da4aa299df57c7861",
+        "format": "the checkpoint file, injected into the browser game by scripts/make_game.py"
+      },
+      "evaluation": {
+        "artifact": "runs/eval.json",
+        "artifact_sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+        "schema_version": 2,
+        "policy_id": "dqn-json-weights",
+        "evaluated_artifact": "runs/dqn_weights.json",
+        "evaluated_artifact_sha256": "b171d8a20e99e2ad4c472f03a940c83399570eb04f253d8da4aa299df57c7861",
+        "pool": "independent",
+        "n": 500,
+        "mean": 5.39,
+        "median": 5.0,
+        "std": 2.65,
+        "elo": 925
+      },
+      "inference_cost": {
+        "ms_per_decision": 0.0495,
+        "decisions_timed": 300,
+        "method": "mean wall time of scripts.evaluate.DQNPolicy.act (encode_dqn + float32 forward + argmax) over 12 seeded mid-game SnakeEnv snapshots, 25 rounds"
+      },
+      "parity_fixture": {
+        "path": "tests/fixtures/dqn_parity_observations.json",
+        "sha256": "e1d2118c2b0b2540320bf5c36f199f81c9ae2f9ef1668f4c6c60cded2fad197a",
+        "weights_artifact_sha256": "b171d8a20e99e2ad4c472f03a940c83399570eb04f253d8da4aa299df57c7861",
+        "observations": 36
+      }
+    },
+    {
+      "id": "grandmaster",
+      "name": "Grandmaster",
+      "kind": "search",
+      "algorithm": "Monte Carlo tree search (UCT) with greedy rollouts",
+      "encoding": null,
+      "training": null,
+      "checkpoint": null,
+      "export": null,
+      "evaluation": {
+        "artifact": "runs/eval.json",
+        "artifact_sha256": "4373ee84712479f512d35764ecb5c6d06aa07f1b5289b2b7dd4bdd535e90274a",
+        "schema_version": 2,
+        "policy_id": "mcts-sims-80-seed-31337",
+        "evaluated_artifact": null,
+        "evaluated_artifact_sha256": null,
+        "pool": "paired",
+        "n": 50,
+        "mean": 46.14,
+        "median": 47.0,
+        "std": 7.62,
+        "elo": 1819
+      },
+      "inference_cost": {
+        "ms_per_decision": 124.8309,
+        "decisions_timed": 4,
+        "method": "mean wall time of narcade.mcts.MCTSPlayer.act at 80 simulations per move over 4 seeded mid-game SnakeEnv snapshots, 1 round"
+      },
+      "search": {
+        "simulations_per_move": 80,
+        "episodes_evaluated": 50
+      }
+    }
+  ]
+}
