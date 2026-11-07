@@ -68,4 +68,53 @@ def render_dashboard(root):
     <section id="protocol"><h2>Matched training protocol</h2><div class="protocol">'''+''.join(f'<div><span>{k}</span><strong>{v}</strong></div>' for k,v in [('Environment steps','300,000'),('Seeds','7 / 8 / 9'),('Optimizer','Adam · 1e-3'),('Discount gamma','0.95'),('Batch / replay','64 / 50,000'),('Update / target sync','8 / 2,000 steps'),('Epsilon','1.0 → 0.05'),('Decay / warmup','120,000 / 2,000 steps'),('Hardware','CPU')])+f'''</div><p>Reward shaping and the episode-key training partition are held constant with the MLP. The frozen MLP remains the reference baseline, alongside three retrained MLP controls.</p><p class="caption">Sources · runs/da8_comparison.json, runs/*_meta.json, scripts/train_cnn_dqn.py. Reported suite status at release · 116 passed, 5 skipped.</p></section>
     <section id="arena" class="game"><h2>Meet Pro in the arena.</h2><div class="two"><article class="panel"><h3>Pro · residual CNN, seed 9</h3><p>The playable export is runs/cnn_dqn_residual_seed9_weights.json. It is the strongest held-out seed and the only residual seed whose paired intervals edge both simple baselines.</p><p>The selector also includes the frozen MLP as Previous Pro. Rookie plays tabular Q-learning. Grandmaster uses MCTS.</p><a href="game.html">Open the standalone game ↗</a></article><article class="panel"><h3>From export to action</h3><p>Head, body and food occupy spatial channels. Heading conditions the pooled features. The browser uses the exported convolutions, residual block and dense head.</p><button id="load-game">Load playable arena</button><p class="caption">The arena loads when requested. Keyboard controls remain inside the game.</p></article></div><div id="game-host"></div></section>
     <section id="legacy"><h2>Legacy evaluation records</h2><p>The archived 500-episode evaluation uses a separate namespace from the keyed comparison above. The old Pro in this table is the frozen flat MLP.</p><div class="panel">{legacy}</div><p class="caption">Source · runs/eval_legacy.json · 500 episodes for the non-MCTS policies, 50 for MCTS.</p><div class="notice">Current paired-pool record · Grandmaster mean 46.14, median 47.0 over 50 episodes. Source · runs/eval.json. This is separate from the archived Grandmaster mean 44.1 above.</div></section></main><footer>DeepArcade · Faiyaz Enayet · Read the committed artifacts to reproduce the comparison. Browser play illustrates behavior; the reported comparisons come from the recorded evaluation protocols.</footer><script>document.getElementById('load-game').onclick=function(){{const frame=document.createElement('iframe');frame.src='game.html';frame.title='DeepArcade playable Snake arena';document.getElementById('game-host').append(frame);this.disabled=true;this.textContent='Arena loaded';}};</script></html>'''
+    # Lead with play and the agent evaluation. The encoder study follows
+    # as its own research section with its protocol and cost tradeoff.
+    seed_start = page.index('<aside class="range">')
+    seed_end = page.index('</aside>', seed_start) + len('</aside>')
+    seed_card = page[seed_start:seed_end]
+    grandmaster_card = '''<aside class="range">
+      <span class="overline">Grandmaster / MCTS · current paired pool</span>
+      <div class="seed-results">
+        <div><span>Mean score</span><strong>46.14</strong></div>
+        <div><span>Median</span><strong>47.0</strong></div>
+        <div><span>Episodes</span><strong>50</strong></div>
+      </div>
+      <p>Current evaluation record · runs/eval.json. Grandmaster is the strongest agent in the evaluated lineup.</p>
+    </aside>'''
+    page = page[:seed_start] + grandmaster_card + page[seed_end:]
+    page = page.replace(
+        'Play the trained agents, then inspect the evidence behind their decisions. Pro uses a residual CNN that improves on the flat MLP under matched training conditions. Its three seeds reach the tabular and heuristic baselines with substantial variation.',
+        'Trained policies and Monte Carlo tree search in a playable Snake arena. Watch an agent or challenge the tournament ladder, then explore the recorded evaluations. Grandmaster leads the evaluated lineup; Pro uses a residual CNN.'
+    )
+    tradeoff_start = page.index('<div class="tradeoff">')
+    tradeoff_end = page.index('<nav class="anchor-nav"', tradeoff_start)
+    tradeoff = page[tradeoff_start:tradeoff_end]
+    page = page[:tradeoff_start] + page[tradeoff_end:]
+    nav_start = page.index('<nav class="anchor-nav"')
+    nav_end = page.index('</nav>', nav_start) + len('</nav>')
+    page = page[:nav_start] + '''<nav class="anchor-nav" aria-label="Sections">
+      <a href="#arena">Play</a><a href="#legacy">Agent results</a>
+      <a href="#comparison">CNN research</a><a href="#paired">Paired comparisons</a>
+      <a href="#training">Training</a><a href="#protocol">Protocol</a>
+    </nav>''' + page[nav_end:]
+    page = page.replace('href="#comparison">Explore the results', 'href="#legacy">Explore the results')
+    arena = re.search(r'<section id="arena".*?</section>', page, re.S).group()
+    results = re.search(r'<section id="legacy".*?</section>', page, re.S).group()
+    page = page.replace(arena, '').replace(results, '')
+    arena = '''<section id="arena" class="game">
+      <h2>Play DeepArcade</h2>
+      <p>Play a round, watch an agent, or climb the tournament ladder.
+      Rookie uses tabular Q-learning, Pro uses a residual CNN, and Grandmaster uses MCTS.
+      The frozen MLP is also available as Previous Pro.</p>
+      <iframe src="game.html" loading="lazy" title="DeepArcade playable Snake arena"></iframe>
+      <p class="caption">The recorded evaluations use the classic board.
+      Browser MCTS adapts its search budget for responsiveness. Use the standalone game for a full-window arena.</p>
+    </section>'''
+    results = results.replace('Legacy evaluation records', 'Agent results and evaluation records')
+    notice = re.search(r'<div class="notice">.*?</div>', results, re.S).group()
+    results = results.replace(notice, '').replace('<div class="panel">', notice + '<div class="panel">', 1)
+    page = page.replace('<main>', '<main>' + arena + results, 1)
+    page = page.replace('<section id="comparison">', '<section id="comparison">' + '<p class="overline">Research / convolutional DQN under matched conditions</p>' + seed_card + tradeoff, 1)
+    page = re.sub(r"<script>document.getElementById\('load-game'\).*?</script>", '', page, flags=re.S)
     return page
