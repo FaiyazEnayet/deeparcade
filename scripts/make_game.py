@@ -34,6 +34,11 @@ def main():
         qpolicy = json.load(f)["best_action"]
     with open(os.path.join(ROOT, "runs", "dqn_weights.json"), encoding="utf-8") as f:
         dqnw = json.load(f)
+    with open(os.path.join(ROOT, "runs", "cnn_dqn_residual_seed9_weights.json"), encoding="utf-8") as f:
+        cnnw = json.load(f)
+    sys.path.insert(0, os.path.join(ROOT, "src"))
+    from narcade.models import validate_cnn_checkpoint_document
+    validate_cnn_checkpoint_document(cnnw)
     with open(os.path.join(ROOT, "runs", "eval.json"), encoding="utf-8") as f:
         ev = json.load(f)
     # P0-01: read the versioned schema only. A pre-v2 artifact (no
@@ -54,6 +59,7 @@ def main():
 
     html = html.replace("/*__QPOLICY__*/[]", json.dumps(qpolicy))
     html = html.replace("/*__DQNW__*/null", json.dumps(dqnw))
+    html = html.replace("/*__CNNW__*/null", json.dumps(cnnw, separators=(",", ":")))
     html = html.replace('/*__AI_ELO__*/{"rookie":1240,"pro":1500,"grandmaster":1750}',
                         json.dumps(elo))
     html = html.replace('/*__AI_REF__*/{"rookie":6,"pro":14,"grandmaster":28}',
