@@ -1,0 +1,9 @@
+{
+  "steps": 300000,
+  "episodes": 7024,
+  "seed": 7,
+  "seconds": 242.6,
+  "final_mean100": 4.24,
+  "hardware": "cpu",
+  "decisions_per_second": 1236.6
+}

@@ -84,6 +84,36 @@ class DQNPolicy:
         return int(q.argmax(1).item())
 
 
+class CNNDQNPolicy:
+    """Convolutional DQN loaded from a versioned JSON weights export.
+
+    The DA8 challenger to the frozen MLP Pro. Loading goes through the
+    strict CNN checkpoint loader (``narcade.models.load_cnn_checkpoint``):
+    the document is validated (supported schema version, exact layer
+    shapes for its recorded config, every value a finite number,
+    weights hash match) before any tensor is built, so a corrupt
+    checkpoint fails closed with CNNCheckpointError. Accepts a weights
+    file path or an already-parsed document dict.
+    """
+
+    def __init__(self, weights_json_path_or_doc):
+        from narcade.models import encode_cnn_dqn, load_cnn_checkpoint
+
+        self.net, self.checkpoint_info = load_cnn_checkpoint(
+            weights_json_path_or_doc)
+        self._encode = encode_cnn_dqn
+
+    def act(self, env):
+        import numpy as np
+        import torch
+
+        spatial, heading = self._encode(env)
+        with torch.no_grad():
+            q = self.net(torch.from_numpy(spatial).unsqueeze(0),
+                         torch.from_numpy(heading).unsqueeze(0))
+        return int(q.argmax(1).item())
+
+
 def run_episodes(policy_fn, seeds, width=12, height=12):
     """Run one episode per seed. Seeds are explicit so every agent can
     share the identical list for paired comparisons.
