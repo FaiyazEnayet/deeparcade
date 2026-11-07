@@ -21,36 +21,64 @@ DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake ag
 
 <p align="center"><a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><img src="docs/demo.gif?v=showcase-20261017b" alt="DeepArcade demo"></a></p>
 
-Playing against the trained policies makes their evaluation easier to interpret. A strong average score can coexist with brittle turns, long loops or inconsistent behavior across seeds, which a single showcase run cannot establish. The agent comparison therefore keeps score distributions, training curves and evaluation sample counts alongside the playable experience.
+Pro uses a residual convolutional DQN trained on the Snake board as spatial channels, with heading supplied after pooling. The browser deploys the seed 9 export. Rookie uses tabular Q-learning, Grandmaster uses MCTS, and the frozen flat MLP remains selectable as Previous Pro.
+
+The CNN comparison holds the MLP training protocol constant. Every run uses 300,000 environment steps, seeds 7, 8 and 9, identical reward shaping, Adam at 1e-3, gamma 0.95, batch 64, replay 50,000, updates every 8 steps, target sync every 2,000 steps, epsilon 1.0 to 0.05 over 120,000 steps, warmup 2,000, the same episode-key training partition, and CPU execution.
 
 ## Explore
 
-- Compare agent score distributions, learning behavior and head-to-head outcomes.
-- Load the genuine game inside the dashboard or open the standalone HTML game.
-- Use keyboard controls, then restart directly over the board after a run ends.
+- Compare every seed's held-out score and paired confidence intervals against the frozen MLP, Rookie and Greedy.
+- Inspect the recorded learning curves and the inference-speed tradeoff.
+- Play or watch Pro's residual CNN, the frozen MLP, tabular Q-learning or MCTS in the browser.
 
-## Method
+## Held-out comparison
 
-Agents are evaluated on seeded classic-board games. Learning curves, score distributions, pairwise outcomes and strategy statistics are recorded under the original evaluation conditions. The browser game uses exported policies and a JavaScript forward pass.
+`runs/da8_comparison.json` records 500 keyed test episodes per policy, paired by episode key. The test namespace is disjoint from the training partition by construction. These scores belong to a separate evaluation namespace from the legacy table below.
 
-## Evidence at a glance
+| Policy | Seed 7 | Seed 8 | Seed 9 |
+| :--- | ---: | ---: | ---: |
+| Retrained MLP control | 5.61 | 5.16 | 5.60 |
+| Plain CNN | 12.16 | 13.19 | 12.97 |
+| Residual CNN | 16.82 | 20.42 | 21.86 |
 
-Pro (tabular Q-learning) outperforms Rookie (DQN): ELO 1366 versus 925. Grandmaster (MCTS) remains strongest. These are display labels for the same evaluated models, not new training results.
+The frozen MLP scores 5.28, Rookie scores 20.78, and Greedy scores 20.61 in this keyed namespace. The plain encoder has 13,795 parameters and the residual encoder has 32,291.
 
-| Scope | Recorded result or contract |
-| :--- | :--- |
-| Evaluation games | 500 per policy, except MCTS with 50 |
-| Mean food score | Random 0.16; greedy 19.89; tabular Q 20.78 |
-| Independent DQN mean | 5.394 over 500 episodes |
-| Paired MCTS mean / median | 46.14 / 47.0 over 50 episodes |
-| Correction | The MCTS mean and all ELO ratings were recomputed from the versioned evaluation rerun: MCTS mean 44.1 to 46.14, ELO 574/1319/1369/928/1810 to 573/1317/1366/925/1819. The four non-MCTS policies reproduced exactly; only MCTS moved. The pre-v2 artifact recorded no episode keys or code version, so its MCTS scores cannot be reproduced from the current code. |
-| Native parity | 111,032 environment transitions, 36,129 policy states and 1,039 MCTS searches checked, plus 404 MCTS searches on maze-mode wall layouts; Q-learning and the full 30,000-episode training protocol bit-exact; 13,824 DQN states with complete action agreement (max logit difference under 1e-5) |
-| Interpretation | MCTS has a smaller sample; the DQN does not outperform the simple baselines |
-| Evaluation provenance | ELO and head-to-head come from the paired 50 episodes (the first 50 seeds of the 500-seed range, shared by every agent); independent means come from 500 episodes per policy, MCTS has no independent pool. `runs/eval.json` records episode keys, policy IDs, artifact hashes, and the generating commit. The pre-v2 artifact is preserved at runs/eval_legacy.json. |
+| Paired difference against frozen MLP | Seed 7 | Seed 8 | Seed 9 |
+| :--- | ---: | ---: | ---: |
+| Plain CNN | +6.88 | +7.92 | +7.69 |
+| Residual CNN | +11.54 | +15.14 | +16.58 |
 
-## Dashboards
+Every 95% confidence interval above is far from zero. Against Rookie, the residual CNN trails by -3.96 (CI -4.83 to -3.09) for seed 7, ties at -0.36 (CI -1.34 to +0.62) for seed 8, and edges ahead at +1.08 (CI +0.07 to +2.09) for seed 9. Against Greedy, seed 9 is +1.25 (CI +0.22 to +2.27). The plain CNN trails Rookie and Greedy by about -7.4 to -8.6 paired.
 
-The dashboard and the standalone game are generated from Python and browser JavaScript sources. The generators are `scripts/make_dashboard.py` and `scripts/make_game.py`; the generated pages are `docs/dashboard.html` and `docs/game.html`.
+Spatial structure is a large, real improvement over the flat MLP under matched conditions. The residual CNN reaches the tabular and heuristic baselines but does not clearly beat them. Residual seed variance is wide, from 16.82 to 21.86, so the browser's seed 9 policy is presented alongside all three trained seeds.
+
+## Training and inference
+
+| Final training mean-100 score | Seed 7 | Seed 8 | Seed 9 |
+| :--- | ---: | ---: | ---: |
+| MLP control | 4.24 | 4.90 | 4.36 |
+| Plain CNN | 9.85 | 10.29 | 9.89 |
+| Residual CNN | 11.59 | 11.61 | 13.64 |
+
+Measured inference is approximately 21,600 decisions per second for the MLP, 2,000 for the plain CNN and 1,000 for the residual CNN. The residual model costs roughly 20 times as much decision time as the MLP. These are inference measurements from `runs/da8_comparison.json`; training curves and final scores are committed under `runs/` for each seed.
+
+## Legacy evaluation
+
+The archived legacy results below come from `runs/eval_legacy.json`. The non-MCTS policies have 500 episodes, while MCTS has 50. This namespace is separate from the keyed test comparison.
+
+| Agent | Mean food score |
+| :--- | ---: |
+| Random | 0.16 |
+| Greedy | 19.89 |
+| Rookie, tabular Q-learning | 20.78 |
+| Previous Pro, frozen MLP | 5.39 |
+| Grandmaster, MCTS | 44.1 |
+
+The current paired-pool record in `runs/eval.json` reports Grandmaster mean 46.14 and median 47.0 over 50 episodes. Keep this record separate from the archived 44.1 mean. ELO ratings and head-to-head results in that file belong to the evaluated policies and do not supply an ELO rating for the CNN. Tournament rounds against the CNN therefore compare scores without updating the player's ELO.
+
+## Dashboard and game
+
+The dashboard presents the matched comparison, uncertainty, recorded training trajectories and the independently labeled legacy records. The game embeds the residual CNN seed 9 weights and runs its forward pass locally. The frozen MLP remains available through the model selector. The README animation shows an actual residual CNN rollout rather than a dashboard tour.
 
 ## Run locally
 
@@ -112,16 +140,6 @@ The tournament runner plays round-robin rounds between all five players (the DQN
 ```sh
 native/build/narcade_tournament --out runs/tournament.json
 ```
-
-## Evaluation protocol
-
-Recorded evaluation uses seeded classic-board games, with 500 games for most policies and 50 for MCTS. Scores, distributions, learning curves and pairwise outcomes answer different questions. Browser maze/blitz modes and adaptive MCTS budgets are not equivalent to the fixed recorded evaluation.
-
-![Paired evaluation on 50 shared seeds](docs/results.png)
-
-The DQN underperforms the greedy and tabular baselines in the committed run. The MCTS mean is high but comes from a smaller sample. A convincing comparison requires the stated game conditions, seeds and sample counts rather than agent names or apparent sophistication.
-
-The flat DQN also has a convolutional challenger, trained and measured under matched conditions: same reward shaping, optimizer, exploration schedule, replay capacity, 300,000-step budget and hardware, with the network itself the only difference. The CNN reads the board as three spatial channels (head, body, food) plus the heading as conditioning, in plain and residual variants. On 500 held-out episodes from the keyed test split (a separate namespace from the recorded evaluation above, so its scores are not directly comparable to that table), the plain CNN averages 12.16 to 13.19 across three seeds against the frozen MLP at 5.28 on the same episodes, and the residual CNN averages 16.82 to 21.86: every CNN seed beats the MLP by a wide paired margin. Against the simple baselines the residual CNN is at parity rather than ahead: across its three seeds it trails, ties and edges Rookie (20.78) and Greedy (20.61) on the same episodes. Spatial structure closes most of the flat network's deficit; it does not by itself put the learned policy ahead of the simple baselines. The full paired comparison is recorded in `runs/da8_comparison.json` and the CNN weights are committed under `runs/` as browser-readable exports. The browser game still plays the frozen MLP; the CNN reaches the game through the separate deployment workflow.
 
 ## Code and data
 
