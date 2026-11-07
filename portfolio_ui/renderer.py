@@ -128,6 +128,9 @@ def page_parts(d):
  head=re.sub(r'<header class="masthead">.*?<main id="content"></main>',opening(d,nav)+'<main id="content"></main>',head,flags=re.S)
  return head,js
 def render_html(root,repo,raw):
+ if repo=='deeparcade':
+  from arcade_dashboard import render_dashboard
+  return render_dashboard(Path(root)), {}
  d,soup=extract(raw,repo);d=enrich(d,soup,Path(root));head,js=page_parts(d)
  # Full source Plotly distribution: original reduced bundles silently downgrade unsupported traces.
  lib=(HERE/'plotly.min.js').read_text(encoding='utf8')
