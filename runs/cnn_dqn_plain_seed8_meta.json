@@ -1,0 +1,20 @@
+{
+  "steps": 300000,
+  "episodes": 5620,
+  "seed": 8,
+  "seconds": 413.4,
+  "final_mean100": 10.29,
+  "config": {
+    "channels": [
+      16,
+      32
+    ],
+    "kernel": 3,
+    "residual": false,
+    "pool_size": 2,
+    "hidden": 64
+  },
+  "params": 13795,
+  "decisions_per_second": 725.6,
+  "hardware": "cpu"
+}
