@@ -17,7 +17,7 @@
   <a href="#run-locally"><img src="https://img.shields.io/badge/Run-Locally-13251b?style=for-the-badge&amp;labelColor=0b1410" alt="Run it locally"></a>
 </p>
 
-DeepArcade compares random, heuristic, tabular Q-learning, DQN and MCTS Snake agents. The dashboard pairs evaluation results with the actual browser game, so the behavior can be inspected as well as summarized.
+DeepArcade is a Snake arcade that pits five very different players against the same seeded games: a random mover, a greedy heuristic, tabular Q-learning trained over 30,000 episodes, deep Q-networks trained for 300,000 steps (a flat MLP, plus plain and residual CNNs that read the board as spatial channels), and MCTS searching from the current position. The learned agents are genuinely trained rather than scripted, and every score in this README comes from recorded evaluation episodes, not showcase runs.
 
 <p align="center"><a href="https://faiyazenayet.github.io/deeparcade/docs/dashboard.html"><img src="docs/demo.gif?v=showcase-20261017b" alt="DeepArcade demo"></a></p>
 
