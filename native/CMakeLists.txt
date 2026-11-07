@@ -329,3 +329,49 @@ add_test(NAME tournament_regression
                  ${CMAKE_CURRENT_SOURCE_DIR}/../runs/qtable.json
                  ${CMAKE_CURRENT_SOURCE_DIR}/../runs/dqn_weights.json
                  ${CMAKE_CURRENT_SOURCE_DIR}/../runs/eval.json)
+
+# --- Native CNN inference (DA8 follow-up) -----------------------------
+# Inference for the DA8 convolutional DQN over its committed JSON
+# exports (inference only; training stays in PyTorch). The strict
+# loader mirrors narcade.models.load_cnn_checkpoint, including the
+# weights SHA-256 over the canonical layers payload. Parity is gated
+# on tools/native_cnn_check.py against the PyTorch policy, and the
+# frozen fixture golden/cnn_parity.json guards parity in hosted CI
+# without a live reference; the fixture stands outside meta.json's
+# corpus accounting, like eval_regression.json.
+add_library(narcade_cnn src/cnn_infer.cpp)
+target_include_directories(narcade_cnn PUBLIC include)
+target_link_libraries(narcade_cnn PUBLIC narcade_snake)
+target_compile_options(narcade_cnn PRIVATE -Wall -Wextra)
+
+add_executable(cnn_diff_runner tests/cnn_diff_runner.cpp)
+target_link_libraries(cnn_diff_runner PRIVATE narcade_cnn)
+target_compile_options(cnn_diff_runner PRIVATE -Wall -Wextra)
+
+add_executable(cnn_infer_unit_test tests/cnn_infer_unit_test.cpp)
+target_link_libraries(cnn_infer_unit_test PRIVATE narcade_cnn)
+target_compile_options(cnn_infer_unit_test PRIVATE -Wall -Wextra)
+
+add_test(NAME cnn_infer_unit
+         COMMAND cnn_infer_unit_test
+                 ${CMAKE_CURRENT_SOURCE_DIR}/../runs)
+
+if(NARCADE_PYTHON3)
+  add_test(NAME cnn_parity_frozen
+           COMMAND ${NARCADE_PYTHON3}
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_cnn_check.py
+                   --frozen
+                   ${CMAKE_CURRENT_SOURCE_DIR}/golden/cnn_parity.json
+                   --runner $<TARGET_FILE:cnn_diff_runner>)
+endif()
+
+# The live check needs torch for the reference; it reuses the
+# interpreter detection from the CPP-06d DQN check above and is
+# registered only when that interpreter has torch (it is run manually
+# regardless as the packet gate).
+if(Python3_FOUND AND NARCADE_DQN_TORCH_RC EQUAL 0)
+  add_test(NAME cnn_check
+           COMMAND "${Python3_EXECUTABLE}"
+                   ${CMAKE_CURRENT_SOURCE_DIR}/../tools/native_cnn_check.py
+                   --runner $<TARGET_FILE:cnn_diff_runner> --states 1500)
+endif()
