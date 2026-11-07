@@ -32,7 +32,7 @@
 #overlay.tournament-results{padding:20px;overflow:auto;justify-content:center;background:rgba(7,18,12,.97)}#overlay.tournament-results h2{font-size:clamp(30px,6vw,50px);margin:0 0 14px}.round-results{border-collapse:collapse;width:100%;max-width:480px;margin:20px auto;text-align:left;font-size:12px}.round-results caption{text-align:left;color:var(--accent);padding:8px 0;text-transform:uppercase;letter-spacing:.1em}.round-results td,.round-results th{padding:10px 8px;border-bottom:1px solid #36513e}.round-results thead{color:#c9bc83}.completion-note{max-width:440px;line-height:1.6;margin:18px auto}#ovSub{max-width:100%;overflow-wrap:anywhere}#overlay .btn{min-height:44px}button:focus-visible{outline:3px solid #d8c77f;outline-offset:3px}
 </style></head>
 <body>
-<header class="game-masthead"><div class="game-topline"><span>DEEPARCADE / PLAYABLE RESEARCH</span><a href="dashboard.html" target="_top">Explore the agent evaluation ↗</a></div><div class="game-title"><h1>DeepArcade</h1><div class="game-edition">HUMAN × LEARNED POLICY × SEARCH<br/>ONE CLASSIC ARENA</div></div><p class="game-tagline">Two learned agents. One search agent. Watch their decisions, play against their scores, and play the same arena.</p><div class="game-facts"><span>Classic board · 12 × 12</span><span>Pro · tabular Q</span><span>Rookie · DQN</span><span>Grandmaster · MCTS</span></div></header>
+<header class="game-masthead"><div class="game-topline"><span>DEEPARCADE / PLAYABLE RESEARCH</span><a href="dashboard.html" target="_top">Explore the agent evaluation ↗</a></div><div class="game-title"><h1>DeepArcade</h1><div class="game-edition">HUMAN × LEARNED POLICY × SEARCH<br/>ONE CLASSIC ARENA</div></div><p class="game-tagline">A residual CNN. A tabular policy. A search agent. Watch their decisions, play against their scores, and play the same arena.</p><div class="game-facts"><span>Classic board · 12 × 12</span><span>Rookie · tabular Q</span><span>Pro · residual CNN seed 9</span><span>Grandmaster · MCTS</span></div></header>
 
 <div id="wrap">
 <div id="stage">
@@ -66,8 +66,9 @@
 <button aria-label="Play as human" class="btn green" id="btnHuman">Play as human</button>
 <h3 style="margin-top:12px">Watch AI</h3>
 <select aria-label="AI opponent" id="aiSel">
-<option value="rookie">Pro — tabular Q-learning</option>
-<option value="pro">Rookie — deep Q-network</option>
+<option value="rookie">Rookie — tabular Q-learning</option>
+<option value="pro" selected>Pro — residual CNN seed 9</option>
+<option value="mlp">Previous Pro — frozen MLP</option>
 <option value="grandmaster">Grandmaster — MCTS search</option>
 </select>
 <button aria-label="Watch AI play" class="btn" id="btnAI">Watch AI play</button>
@@ -84,7 +85,7 @@
 <div style="font-size:.85rem;color:var(--dim);line-height:1.7">
 <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or <kbd>WASD</kbd> to steer.<br/>
       Eat the glowing orbs. Don't hit walls or yourself.<br/>
-      Your ELO moves when your score beats the AI's.</div>
+      CNN rounds compare scores; the CNN has no evaluated ELO rating.</div>
 </div>
 </div>
 </div>
@@ -194,7 +195,7 @@ class Snake {
 
 /* ================= AI POLICIES ================= */
 const AI_ELO = /*__AI_ELO__*/{"rookie":1240,"pro":1500,"grandmaster":1750};
-const AI_NAMES = {rookie:'Pro', pro:'Rookie', grandmaster:'Grandmaster'};
+const AI_NAMES = {rookie:'Rookie', pro:'Pro · residual CNN seed 9', mlp:'Previous Pro · frozen MLP', grandmaster:'Grandmaster'};
 
 const QPOLICY = /*__QPOLICY__*/[];
 function qAct(game){ return QPOLICY[game.encodeState()] ?? 0; }
@@ -224,6 +225,85 @@ function dqnAct(game){
   const L=dqnLogits(game); let best=0;
   for(let a=1;a<3;a++) if(L[a]>L[best]) best=a;
   return best;
+}
+
+// The float64 accumulator and Float32 hidden activations mirror
+// src/narcade/models.py::cnn_logits_numpy over the exported weights.
+const CNNW = /*__CNNW__*/null;
+const cnnLayers = CNNW ? Object.fromEntries(CNNW.layers.map(layer => [layer.name, layer])) : {};
+function cnnConvolution(input, inputChannels, name, activate) {
+  const weights = cnnLayers[name + '.weight'];
+  const bias = cnnLayers[name + '.bias'].values;
+  const outputChannels = weights.shape[0];
+  const kernel = weights.shape[2];
+  const pad = Math.floor(kernel / 2);
+  const output = activate ? new Float32Array(outputChannels * 144) : new Float64Array(outputChannels * 144);
+  for (let oc = 0; oc < outputChannels; oc++) {
+    for (let row = 0; row < 12; row++) {
+      for (let col = 0; col < 12; col++) {
+        let value = bias[oc];
+        for (let ic = 0; ic < inputChannels; ic++) {
+          for (let kr = 0; kr < kernel; kr++) {
+            const r = row + kr - pad;
+            for (let kc = 0; kc < kernel; kc++) {
+              const c = col + kc - pad;
+              if (r >= 0 && r < 12 && c >= 0 && c < 12) {
+                value += weights.values[oc][ic][kr][kc] * input[ic * 144 + r * 12 + c];
+              }
+            }
+          }
+        }
+        output[oc * 144 + row * 12 + col] = activate ? Math.max(0, value) : value;
+      }
+    }
+  }
+  return output;
+}
+function cnnDense(input, name, activate) {
+  const weights = cnnLayers[name + '.weight'].values;
+  const bias = cnnLayers[name + '.bias'].values;
+  const output = activate ? new Float32Array(bias.length) : new Float64Array(bias.length);
+  for (let j = 0; j < bias.length; j++) {
+    let value = bias[j];
+    for (let i = 0; i < input.length; i++) value += weights[j][i] * input[i];
+    output[j] = activate ? Math.max(0, value) : value;
+  }
+  return output;
+}
+function cnnLogits(game) {
+  const encoding = game.encodeDQN();
+  let x = encoding.slice(0, 432);
+  let inputChannels = 3;
+  CNNW.config.channels.forEach((channels, i) => {
+    x = cnnConvolution(x, inputChannels, 'convs.' + i, true);
+    inputChannels = channels;
+  });
+  if (CNNW.config.residual) {
+    let residual = cnnConvolution(x, inputChannels, 'res1', true);
+    residual = cnnConvolution(residual, inputChannels, 'res2', false);
+    x = Float32Array.from(x, (value, i) => Math.max(0, value + residual[i]));
+  }
+  const poolSize = CNNW.config.pool_size;
+  const pooled = new Float64Array(inputChannels * poolSize * poolSize + 4);
+  for (let channel = 0; channel < inputChannels; channel++) {
+    for (let pr = 0; pr < poolSize; pr++) {
+      for (let pc = 0; pc < poolSize; pc++) {
+        const r0 = Math.floor(pr * 12 / poolSize), r1 = Math.ceil((pr + 1) * 12 / poolSize);
+        const c0 = Math.floor(pc * 12 / poolSize), c1 = Math.ceil((pc + 1) * 12 / poolSize);
+        let sum = 0;
+        for (let r = r0; r < r1; r++) for (let c = c0; c < c1; c++) sum += x[channel * 144 + r * 12 + c];
+        pooled[channel * poolSize * poolSize + pr * poolSize + pc] = sum / ((r1 - r0) * (c1 - c0));
+      }
+    }
+  }
+  pooled.set(encoding.slice(432), pooled.length - 4);
+  return cnnDense(cnnDense(pooled, 'head1', true), 'head2', false);
+}
+function cnnAct(game) {
+  const logits = cnnLogits(game);
+  let action = 0;
+  for (let i = 1; i < logits.length; i++) if (logits[i] > logits[action]) action = i;
+  return action;
 }
 
 // MCTS (ported from Python narcade/mcts.py) — real UCT search
@@ -440,7 +520,8 @@ function bestScore(m){
 }
 function aiAction(game, kind){
   if(kind==='rookie') return qAct(game);
-  if(kind==='pro') return dqnAct(game);
+  if(kind==='pro') return cnnAct(game);
+  if(kind==='mlp') return dqnAct(game);
   // grandmaster: adaptive budget
   const t0=performance.now();
   const a=mctsAct(game,mctsBudget);
@@ -500,14 +581,15 @@ async function onGameOver(){
     const eloBefore=store.elo, aiElo=AI_ELO[tourn.opp];
     const expected=1/(1+Math.pow(10,(aiElo-eloBefore)/400));
     const actual=huScore>aiScore?1:huScore===aiScore?0.5:0;
-    store.elo=eloBefore+32*(actual-expected);
+    if(opp!=='pro')store.elo=eloBefore+32*(actual-expected);
     const d=Math.round(store.elo-eloBefore);
     sub=`You ${huScore} vs ${AI_NAMES[tourn.opp]} ${aiScore} — ELO <span class="${d>=0?'elo-up':'elo-dn'}">${d>=0?'+':''}${d}</span> → ${store.elo}`;
+    if(opp==='pro')sub=`You ${huScore} vs ${AI_NAMES[opp]} ${aiScore} · CNN rating not evaluated; your ELO is unchanged.`;
     tourn.standings.push({opponent:AI_NAMES[tourn.opp],human:huScore,ai:aiScore,result:actual===1?'Win':actual===0.5?'Draw':'Loss'});
     tourn.pendingAdvance=actual===1;
     if(actual===1){ tourn.round++;
       if(tourn.round>=tourn.ladder.length){ sub+=`<br>🏆 Tournament complete! You beat all three AIs.`; tourn.complete=true; document.getElementById('ovTitle').textContent='The End'; }
-      else { tourn.opp=tourn.ladder[tourn.round]; sub+=`<br>Next: <b>${AI_NAMES[tourn.opp]}</b> (ELO ${AI_ELO[tourn.opp]})`; }
+      else { tourn.opp=tourn.ladder[tourn.round]; sub+=`<br>Next: <b>${AI_NAMES[tourn.opp]}</b>`; }
     } else { sub+=`<br>Rematch <b>${AI_NAMES[tourn.opp]}</b> to advance.`; }
     renderTourn();
   } else if(playKind==='ai'){
@@ -632,7 +714,7 @@ function addScore(m,name,score){
 }
 function renderLB(){
   const m=document.getElementById('modeSel').value;
-    document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Rookie ${AI_ELO.pro}</span> <span class="tag ai">Pro ${AI_ELO.rookie}</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
+    document.getElementById('lbMode').innerHTML=`<span class="tag">${m}</span> <span class="tag you">YOU ${store.elo}</span> <span class="tag ai">Rookie ${AI_ELO.rookie}</span> <span class="tag ai">Pro · CNN seed 9 · unrated</span> <span class="tag ai">GM ${AI_ELO.grandmaster}</span>`;
   const lb=JSON.parse(localStorage.getItem('dq_lb')||'{}')[m]||[];
   document.getElementById('lbTable').innerHTML='<tr><th>#</th><th>Score</th><th>Who</th></tr>'+
     (lb.map((e,i)=>`<tr><td>${i+1}</td><td>${e.score}</td><td>${e.name}</td></tr>`).join('')||'<tr><td colspan=3 style="color:var(--dim)">No scores yet — go play.</td></tr>');
@@ -657,7 +739,7 @@ document.getElementById('btnHuman').onclick=()=>{tourn=null;renderTourn();newGam
 document.getElementById('btnAI').onclick=()=>{tourn=null;renderTourn();newGame(document.getElementById('modeSel').value,'ai',document.getElementById('aiSel').value);};
 document.getElementById('btnTourn').onclick=()=>{
   // ladder in ELO order (measured): pro 928 -> rookie 1369 -> grandmaster 1810
-  tourn={ladder:['pro','rookie','grandmaster'],round:0,opp:'pro'};
+  tourn={ladder:['rookie','pro','grandmaster'],round:0,opp:'rookie'};
   tourn.standings=[];renderTourn(); newGame(document.getElementById('modeSel').value,'tourn');
 };
 let menuOpen=false;
