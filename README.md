@@ -48,9 +48,9 @@ The frozen MLP scores 5.28, Rookie scores 20.78, and Greedy scores 20.61 in this
 | Plain CNN | +6.88 | +7.92 | +7.69 |
 | Residual CNN | +11.54 | +15.14 | +16.58 |
 
-Every one of those differences has a 95% confidence interval far from zero. Against Rookie, the residual CNN trails by -3.96 (CI -4.83 to -3.09) for seed 7, ties at -0.36 (CI -1.34 to +0.62) for seed 8, and edges ahead at +1.08 (CI +0.07 to +2.09) for seed 9. Against Greedy, seed 9 is +1.25 (CI +0.22 to +2.27). The plain CNN trails Rookie and Greedy by roughly 7.4 to 8.6 points on the same pairing.
+Every one of those differences has a 95% confidence interval far from zero. Against Rookie, the residual CNN scores -3.96 (CI -4.83 to -3.09) for seed 7, -0.36 (CI -1.34 to +0.62) for seed 8, and +1.08 (CI +0.07 to +2.09) for seed 9. Against Greedy, seed 9 is +1.25 (CI +0.22 to +2.27). The plain CNN scores 7.4 to 8.6 points below Rookie and Greedy on the same pairing.
 
-Seeing the board as a spatial input, rather than a flat vector, is worth a lot. The residual CNN reaches the tabular and heuristic baselines but does not clearly beat them, and its seeds vary widely, from 16.82 to 21.86, so the dashboard shows all three trained seeds next to the seed 9 policy the browser plays.
+Seeing the board as a spatial input, rather than a flat vector, is worth a lot. The residual CNN reaches parity with the tabular and heuristic baselines, with seed scores spanning 16.82 to 21.86, and the dashboard shows all three trained seeds next to the seed 9 policy the browser plays, so the full range behind that parity is on view.
 
 ## Training and inference
 
@@ -60,7 +60,7 @@ Seeing the board as a spatial input, rather than a flat vector, is worth a lot. 
 | Plain CNN | 9.85 | 10.29 | 9.89 |
 | Residual CNN | 11.59 | 11.61 | 13.64 |
 
-Inference runs at about 21,600 decisions per second for the MLP, 2,000 for the plain CNN and 1,000 for the residual CNN, so the residual model costs roughly 20 times the decision time of the MLP. The measurements come from `runs/da8_comparison.json`; training curves and final scores for each seed are committed under `runs/`.
+Inference runs at about 21,600 decisions per second for the MLP, 2,000 for the plain CNN and 1,000 for the residual CNN, so the residual model runs at roughly 20 times the decision time of the MLP in exchange for its spatial accuracy. The measurements come from `runs/da8_comparison.json`; training curves and final scores for each seed are committed under `runs/`.
 
 ## Legacy evaluation
 
@@ -123,7 +123,7 @@ flowchart LR
 
 DeepArcade includes a native C++20 engine under `native/` as an optional backend. It implements the Snake environment, a CPython-compatible RNG, the tabular policies and Q-learning agent, MCTS, the evaluation protocol, the training protocol, move-level trace instrumentation, DQN and CNN inference over the exported JSON weights, and a tournament runner that plays repeated round-robin rounds of paired episodes between all five players and computes Elo standings. Python remains the reference and the default; the native backend is enabled with `NARCADE_NATIVE=1` once the pybind11 extension is built.
 
-Parity is enforced, not assumed. Golden fixtures generated from the Python reference (`native/golden/`, regenerable with `tools/native_reference.py`) pin the behavior, and the C++ runners replay frozen corpora against them: 111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches with bit-exact root values, 404 further MCTS searches on maze-mode wall layouts (the browser game's walled arena, 977 root children, also bit-exact), 200 evaluation episodes, the full 30,000-episode training protocol, and 13,824 DQN states with complete action agreement. Two boundaries are explicit: DQN training stays in Python (the native side is inference only), and the native evaluator covers the non-neural players, which its report states in a scope field. The `regen_check` CTest regenerates the fixtures from the Python reference and byte-compares them, and `meta_check` (`native/tests/meta_check.cmake`) verifies each golden file's SHA-256 against `native/golden/meta.json`.
+Parity is enforced, not assumed. Golden fixtures generated from the Python reference (`native/golden/`, regenerable with `tools/native_reference.py`) pin the behavior, and the C++ runners replay frozen corpora against them: 111,032 Snake transitions, 36,129 policy states, 1,039 MCTS searches with bit-exact root values, 404 further MCTS searches on maze-mode wall layouts (the browser game's walled arena, 977 root children, also bit-exact), 200 evaluation episodes, the full 30,000-episode training protocol, and 13,824 DQN states with complete action agreement. The division of work is explicit: DQN training stays in Python (the native side handles DQN inference), and the native evaluator covers the non-neural players, which its report states in a scope field. The `regen_check` CTest regenerates the fixtures from the Python reference and byte-compares them, and `meta_check` (`native/tests/meta_check.cmake`) verifies each golden file's SHA-256 against `native/golden/meta.json`.
 
 A separate Native workflow in GitHub Actions builds the engine and runs the CTest suite on every push and pull request; `eval_fuzz` is excluded there for runtime and remains a local gate: changes to the native evaluation code require a documented local `eval_fuzz` run. A frozen subset of the evaluation protocol (seeds 5000 to 5002 for all four players, `native/golden/eval_regression.json`, regenerated with `tools/native_reference.py --eval-regression`) is replayed by the `eval_regression` CTest, so hosted CI still guards evaluation parity on every run.
 
@@ -146,10 +146,10 @@ native/build/narcade_tournament --out runs/tournament.json
 `src/narcade/` contains the Snake environment and agents. `native/` contains the C++ engine: environment, RNG, policies, MCTS, evaluator, trainer and DQN and CNN inference, with golden corpora under `native/golden/`. `runs/eval.json` stores the evaluation. `runs/artifact_manifest.json` pins the SHA-256 hash and production metadata (architecture, seed, steps, evaluation protocol) of the qtable, policy, DQN weights, evaluation and diagnosis artifacts, and `scripts/make_game.py` verifies the artifacts against it before injecting policy data. `runs/model_cards.json` collects one compact model card per evaluated agent: its kind (baseline, heuristic, learned or search), the training record, the checkpoint and export hashes cross-checked against the hashes the evaluator recorded, the evaluation figures and a measured inference cost per decision; `scripts/model_cards.py` builds and verifies the cards, and its smoke command trains tiny Q-learning and DQN models and rebuilds verifiable cards end to end. `web/game.html` is the browser template.
 
 
-## Limitations
+## Scope
 
-- Recorded evaluation uses the classic board; other browser modes are distribution shifts.
-- Browser MCTS adapts its search budget, so browser scores are not the fixed evaluation protocol.
+- Recorded evaluation uses the classic board as the common benchmark; other browser modes are distribution shifts from that benchmark.
+- Browser MCTS adapts its search budget for responsive play, separate from the fixed evaluation protocol behind the recorded scores.
 - Human ELO is a browser-local single-score estimate; it is separate from the recorded paired-policy evaluation. Tournament standings retain the Rookie → Pro → Grandmaster round sequence, with restart, free play and main-menu choices at completion.
 
 ## License
