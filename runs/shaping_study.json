@@ -1,0 +1,441 @@
+{
+  "study": "R-03 reward shaping",
+  "budget_steps": 60000,
+  "seeds": [
+    7,
+    8,
+    9
+  ],
+  "arms": {
+    "dense": {
+      "shaping": "dense"
+    },
+    "potential": {
+      "shaping": "potential",
+      "shaping_gamma": 0.95,
+      "shaping_scale": 1.0
+    },
+    "none": {
+      "shaping": "none"
+    }
+  },
+  "greedy_eval_episodes": [
+    9000,
+    9001,
+    9002,
+    9003,
+    9004,
+    9005,
+    9006,
+    9007,
+    9008,
+    9009,
+    9010,
+    9011,
+    9012,
+    9013,
+    9014,
+    9015,
+    9016,
+    9017,
+    9018,
+    9019,
+    9020,
+    9021,
+    9022,
+    9023,
+    9024,
+    9025,
+    9026,
+    9027,
+    9028,
+    9029,
+    9030,
+    9031,
+    9032,
+    9033,
+    9034,
+    9035,
+    9036,
+    9037,
+    9038,
+    9039,
+    9040,
+    9041,
+    9042,
+    9043,
+    9044,
+    9045,
+    9046,
+    9047,
+    9048,
+    9049,
+    9050,
+    9051,
+    9052,
+    9053,
+    9054,
+    9055,
+    9056,
+    9057,
+    9058,
+    9059,
+    9060,
+    9061,
+    9062,
+    9063,
+    9064,
+    9065,
+    9066,
+    9067,
+    9068,
+    9069,
+    9070,
+    9071,
+    9072,
+    9073,
+    9074,
+    9075,
+    9076,
+    9077,
+    9078,
+    9079,
+    9080,
+    9081,
+    9082,
+    9083,
+    9084,
+    9085,
+    9086,
+    9087,
+    9088,
+    9089,
+    9090,
+    9091,
+    9092,
+    9093,
+    9094,
+    9095,
+    9096,
+    9097,
+    9098,
+    9099
+  ],
+  "results": {
+    "dense": {
+      "runs": [
+        {
+          "seed": 7,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 1916,
+            "seed": 7,
+            "seconds": 25.2,
+            "final_mean100": 1.06,
+            "final_mean100_reward": 4.39,
+            "final_mean100_base_reward": 0.6,
+            "final_mean100_shaping_reward": 3.79,
+            "mean_steps_per_episode": 31.31,
+            "outcomes": {
+              "death": 1916,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "dense",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 2.44,
+            "mean_steps": 871.22,
+            "max_score": 6,
+            "outcomes": {
+              "death": 71,
+              "win": 0,
+              "timeout": 29
+            }
+          }
+        },
+        {
+          "seed": 8,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 1894,
+            "seed": 8,
+            "seconds": 21.5,
+            "final_mean100": 0.79,
+            "final_mean100_reward": 1.18,
+            "final_mean100_base_reward": -2.1,
+            "final_mean100_shaping_reward": 3.28,
+            "mean_steps_per_episode": 31.68,
+            "outcomes": {
+              "death": 1894,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "dense",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 2.65,
+            "mean_steps": 787.71,
+            "max_score": 6,
+            "outcomes": {
+              "death": 74,
+              "win": 0,
+              "timeout": 26
+            }
+          }
+        },
+        {
+          "seed": 9,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 1923,
+            "seed": 9,
+            "seconds": 20.9,
+            "final_mean100": 1.2,
+            "final_mean100_reward": 6.13,
+            "final_mean100_base_reward": 2.0,
+            "final_mean100_shaping_reward": 4.13,
+            "mean_steps_per_episode": 31.18,
+            "outcomes": {
+              "death": 1923,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "dense",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 2.32,
+            "mean_steps": 925.62,
+            "max_score": 8,
+            "outcomes": {
+              "death": 69,
+              "win": 0,
+              "timeout": 31
+            }
+          }
+        }
+      ],
+      "mean_greedy_score": 2.47,
+      "mean_final_mean100": 1.0166666666666666
+    },
+    "potential": {
+      "runs": [
+        {
+          "seed": 7,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 2416,
+            "seed": 7,
+            "seconds": 21.0,
+            "final_mean100": 0.18,
+            "final_mean100_reward": -7.607295454545453,
+            "final_mean100_base_reward": -8.2,
+            "final_mean100_shaping_reward": 0.5927045454545459,
+            "mean_steps_per_episode": 24.83,
+            "outcomes": {
+              "death": 2416,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "potential",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 0.46,
+            "mean_steps": 2739.95,
+            "max_score": 3,
+            "outcomes": {
+              "death": 5,
+              "win": 0,
+              "timeout": 95
+            }
+          }
+        },
+        {
+          "seed": 8,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 2273,
+            "seed": 8,
+            "seconds": 21.4,
+            "final_mean100": 0.16,
+            "final_mean100_reward": -7.740363636363636,
+            "final_mean100_base_reward": -8.4,
+            "final_mean100_shaping_reward": 0.6596363636363641,
+            "mean_steps_per_episode": 26.39,
+            "outcomes": {
+              "death": 2273,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "potential",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 0.43,
+            "mean_steps": 2851.82,
+            "max_score": 3,
+            "outcomes": {
+              "death": 1,
+              "win": 0,
+              "timeout": 99
+            }
+          }
+        },
+        {
+          "seed": 9,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 2308,
+            "seed": 9,
+            "seconds": 21.7,
+            "final_mean100": 0.17,
+            "final_mean100_reward": -7.595886363636363,
+            "final_mean100_base_reward": -8.3,
+            "final_mean100_shaping_reward": 0.7041136363636369,
+            "mean_steps_per_episode": 25.99,
+            "outcomes": {
+              "death": 2308,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "potential",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 0.43,
+            "mean_steps": 2738.57,
+            "max_score": 3,
+            "outcomes": {
+              "death": 5,
+              "win": 0,
+              "timeout": 95
+            }
+          }
+        }
+      ],
+      "mean_greedy_score": 0.44,
+      "mean_final_mean100": 0.17
+    },
+    "none": {
+      "runs": [
+        {
+          "seed": 7,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 2195,
+            "seed": 7,
+            "seconds": 20.7,
+            "final_mean100": 0.13,
+            "final_mean100_reward": -8.7,
+            "final_mean100_base_reward": -8.7,
+            "final_mean100_shaping_reward": 0.0,
+            "mean_steps_per_episode": 27.32,
+            "outcomes": {
+              "death": 2195,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "none",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 0.34,
+            "mean_steps": 2768.89,
+            "max_score": 4,
+            "outcomes": {
+              "death": 4,
+              "win": 0,
+              "timeout": 96
+            }
+          }
+        },
+        {
+          "seed": 8,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 2236,
+            "seed": 8,
+            "seconds": 20.6,
+            "final_mean100": 0.1,
+            "final_mean100_reward": -9.0,
+            "final_mean100_base_reward": -9.0,
+            "final_mean100_shaping_reward": 0.0,
+            "mean_steps_per_episode": 26.83,
+            "outcomes": {
+              "death": 2236,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "none",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 0.36,
+            "mean_steps": 2683.42,
+            "max_score": 3,
+            "outcomes": {
+              "death": 7,
+              "win": 0,
+              "timeout": 93
+            }
+          }
+        },
+        {
+          "seed": 9,
+          "train_meta": {
+            "steps": 60000,
+            "episodes": 2325,
+            "seed": 9,
+            "seconds": 21.5,
+            "final_mean100": 0.17,
+            "final_mean100_reward": -8.3,
+            "final_mean100_base_reward": -8.3,
+            "final_mean100_shaping_reward": 0.0,
+            "mean_steps_per_episode": 25.8,
+            "outcomes": {
+              "death": 2325,
+              "win": 0,
+              "timeout": 0
+            },
+            "shaping": "none",
+            "shaping_gamma": 0.95,
+            "shaping_scale": 1.0
+          },
+          "greedy_eval": {
+            "episodes": 100,
+            "mean_score": 0.25,
+            "mean_steps": 2852.07,
+            "max_score": 2,
+            "outcomes": {
+              "death": 1,
+              "win": 0,
+              "timeout": 99
+            }
+          }
+        }
+      ],
+      "mean_greedy_score": 0.31666666666666665,
+      "mean_final_mean100": 0.13333333333333333
+    }
+  }
+}
