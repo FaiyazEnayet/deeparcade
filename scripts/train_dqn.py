@@ -105,7 +105,8 @@ class DQN(nn.Module):
         return self.net(x)
 
 
-def train_dqn(steps=200000, seed=7, verbose=True):
+def train_dqn(steps=200000, seed=7, verbose=True, shaping="dense",
+              shaping_gamma=0.95, shaping_scale=1.0):
     t0 = time.time()
     torch.manual_seed(seed)
     rng = random.Random(seed)
@@ -125,11 +126,17 @@ def train_dqn(steps=200000, seed=7, verbose=True):
     target_sync = 2000
     update_every = 8
 
-    env = SnakeEnv(seed=seed)
+    env = SnakeEnv(seed=seed, shaping=shaping,
+                   shaping_gamma=shaping_gamma, shaping_scale=shaping_scale)
     s = encode_dqn(env)
     ep_reward, ep_score = 0.0, 0
+    ep_base, ep_shaping = 0.0, 0.0
     scores100, rewards100 = [], []
+    base100, shaping100 = [], []
     b_scores, b_rewards = [], []
+    b_base, b_shaping = [], []
+    outcomes = {"death": 0, "win": 0, "timeout": 0}
+    total_steps = 0
     n_ep = 0
 
     for step in range(1, steps + 1):
@@ -139,25 +146,38 @@ def train_dqn(steps=200000, seed=7, verbose=True):
         else:
             with torch.no_grad():
                 a = int(policy_net(torch.from_numpy(s).unsqueeze(0)).argmax(1).item())
-        s2_list, r, done, _ = env_step(env, a)
+        s2_list, r, done, info = env_step(env, a)
         replay.append((s, a, r, s2_list, done))
         if len(replay) > replay_max:
             del replay[:replay_max // 10]
         s = s2_list
         ep_reward += r
+        ep_base += info["base_reward"]
+        ep_shaping += info["shaping_reward"]
         if done:
             n_ep += 1
+            total_steps += env.steps
+            outcomes[info.get("reason", "death")] = \
+                outcomes.get(info.get("reason", "death"), 0) + 1
             b_scores.append(env.score)
             b_rewards.append(ep_reward)
+            b_base.append(ep_base)
+            b_shaping.append(ep_shaping)
             if n_ep % 100 == 0:
                 scores100.append(sum(b_scores[-100:]) / 100)
                 rewards100.append(sum(b_rewards[-100:]) / 100)
+                base100.append(sum(b_base[-100:]) / 100)
+                shaping100.append(sum(b_shaping[-100:]) / 100)
                 if verbose and n_ep % 1000 == 0:
                     print(f"ep {n_ep:6d} step {step:7d} mean100={scores100[-1]:5.2f} "
-                          f"eps={eps:.3f}", flush=True)
-            env = SnakeEnv(seed=training_env_key(seed, n_ep))
+                          f"eps={eps:.3f} base100={base100[-1]:7.2f} "
+                          f"shaping100={shaping100[-1]:7.2f}", flush=True)
+            env = SnakeEnv(seed=training_env_key(seed, n_ep), shaping=shaping,
+                           shaping_gamma=shaping_gamma,
+                           shaping_scale=shaping_scale)
             s = encode_dqn(env)
             ep_reward, ep_score = 0.0, 0
+            ep_base, ep_shaping = 0.0, 0.0
 
         if len(replay) >= 2000 and step % update_every == 0:
             idx = rng.sample(range(len(replay)), batch)
@@ -180,13 +200,22 @@ def train_dqn(steps=200000, seed=7, verbose=True):
 
     meta = {"steps": steps, "episodes": n_ep, "seed": seed,
             "seconds": round(time.time() - t0, 1),
-            "final_mean100": scores100[-1] if scores100 else 0.0}
+            "final_mean100": scores100[-1] if scores100 else 0.0,
+            "final_mean100_reward": rewards100[-1] if rewards100 else 0.0,
+            "final_mean100_base_reward": base100[-1] if base100 else 0.0,
+            "final_mean100_shaping_reward":
+                shaping100[-1] if shaping100 else 0.0,
+            "mean_steps_per_episode":
+                round(total_steps / n_ep, 2) if n_ep else 0.0,
+            "outcomes": outcomes,
+            "shaping": shaping, "shaping_gamma": shaping_gamma,
+            "shaping_scale": shaping_scale}
     return policy_net, scores100, rewards100, meta
 
 
 def env_step(env, a):
-    s2, r, done, _ = env.step(a)
-    return encode_dqn(env), r, done, _
+    s2, r, done, info = env.step(a)
+    return encode_dqn(env), r, done, info
 
 
 def _layers_from_state_dict(sd):
@@ -464,15 +493,25 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--steps", type=int, default=200000)
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--shaping", choices=SnakeEnv.SHAPING_MODES,
+                    default="dense",
+                    help="reward shaping: dense (default), potential, none")
+    ap.add_argument("--shaping-gamma", type=float, default=0.95)
+    ap.add_argument("--shaping-scale", type=float, default=1.0)
     ap.add_argument("--out", default=RUNS)
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    net, scores, rewards, meta = train_dqn(steps=args.steps, seed=args.seed)
+    net, scores, rewards, meta = train_dqn(
+        steps=args.steps, seed=args.seed, shaping=args.shaping,
+        shaping_gamma=args.shaping_gamma, shaping_scale=args.shaping_scale)
     torch.save(net.state_dict(), os.path.join(args.out, "dqn.pt"))
     commit = _git_commit()
     doc = export_weights(
         net,
-        training_args={"steps": args.steps, "seed": args.seed},
+        training_args={"steps": args.steps, "seed": args.seed,
+                       "shaping": args.shaping,
+                       "shaping_gamma": args.shaping_gamma,
+                       "shaping_scale": args.shaping_scale},
         data_key_range={"episode_seeds": [args.seed,
                                           args.seed + meta["episodes"] - 1]},
         code_commit=commit,

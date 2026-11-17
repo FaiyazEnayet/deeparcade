@@ -17,19 +17,39 @@ STRAIGHT, LEFT, RIGHT = 0, 1, 2
 
 
 class SnakeEnv:
-    """Minimal Snake. step() returns (state, reward, done, info)."""
+    """Minimal Snake. step() returns (state, reward, done, info).
+
+    Reward shaping (Stage 3 R-03): the default shaping is "dense", the
+    long-standing baseline: +0.5 for moving closer to the food in
+    Manhattan distance, -0.5 for moving farther, 0 for no change, food
+    +10, death -10. Two further modes share the same base rewards:
+    "potential" adds F(s,a,s') = gamma*Phi(s') - Phi(s) with
+    Phi(s) = -scale * Manhattan(head, food) / (width + height - 2), and
+    "none" pays only the base rewards. Every step's info carries the
+    exact decomposition: reward == base_reward + shaping_reward.
+    """
 
     FOOD_REWARD = 10.0
     DEATH_REWARD = -10.0
     CLOSER_REWARD = 0.5
     FARTHER_REWARD = -0.5
 
-    def __init__(self, width=12, height=12, seed=None, max_steps=None):
+    SHAPING_MODES = ("dense", "potential", "none")
+
+    def __init__(self, width=12, height=12, seed=None, max_steps=None,
+                 shaping="dense", shaping_gamma=0.95, shaping_scale=1.0):
         self.width = width
         self.height = height
         self.rng = random.Random(seed)
         self.episode_seed = seed
         self.max_steps = max_steps if max_steps is not None else 20 * width * height
+        if shaping not in self.SHAPING_MODES:
+            raise ValueError(
+                f"unknown shaping {shaping!r}; expected one of "
+                f"{self.SHAPING_MODES}")
+        self.shaping = shaping
+        self.shaping_gamma = float(shaping_gamma)
+        self.shaping_scale = float(shaping_scale)
         # The constructor performs exactly one opening reset: the first
         # food placement consumes the first draw of the seeded stream.
         # That opening is the episode opening for keyed episodes (see
@@ -116,8 +136,34 @@ class SnakeEnv:
                 food_dir = 1 if ra > 0 else 2
         return ((ds * 2 + dl) * 2 + dr) * 4 + food_dir
 
+    def potential(self):
+        """Phi(s) for the current state.
+
+        Negative normalized Manhattan distance from the head to the
+        food, scaled: -scale * d / (width + height - 2), so Phi lives
+        in [-scale, 0]. Terminal states have no food (a filled board is
+        a win), and Phi is 0 there by definition: the shaping term on a
+        terminal step is gamma * 0 - Phi(s) = -Phi(s), bounded by the
+        scale, so a death step stays negative and a win step stays
+        positive. Timeout is a truncation, not a terminal state, so Phi
+        is evaluated normally on the timeout step.
+        """
+        if self.food is None:
+            return 0.0
+        hr, hc = self.body[-1]
+        d = abs(hr - self.food[0]) + abs(hc - self.food[1])
+        return -self.shaping_scale * d / (self.width + self.height - 2)
+
     def step(self, action):
-        """Take a relative action. Returns (state, reward, done, info)."""
+        """Take a relative action. Returns (state, reward, done, info).
+
+        info carries the exact reward decomposition: reward is always
+        base_reward + shaping_reward, with shaping_reward 0 in "none"
+        mode, the closer/farther term in "dense" mode, and the
+        potential term gamma*Phi(s') - Phi(s) in "potential" mode.
+        On an eating step Phi(s') is evaluated against the newly placed
+        food, so a respawn cannot leak reward from the old food.
+        """
         if self.done:
             raise RuntimeError("step() called on finished episode; call reset() first")
         if action == LEFT:
@@ -132,36 +178,60 @@ class SnakeEnv:
         nr, nc = hr + dr, hc + dc
         self.steps += 1
 
+        phi_before = self.potential() if self.shaping == "potential" else 0.0
+
         ate = (nr, nc) == self.food
         # The tail vacates unless we eat; check collision against the post-move body.
         if self._cell_blocked(nr, nc, ignore_tail=not ate):
             self.done = True
-            return self.encode_state(), self.DEATH_REWARD, True, {"reason": "death"}
+            base = self.DEATH_REWARD
+            shaping = -phi_before if self.shaping == "potential" else 0.0
+            return self.encode_state(), base + shaping, True, {
+                "reason": "death", "base_reward": base,
+                "shaping_reward": shaping, "shaping": self.shaping}
 
         dist_before = abs(hr - self.food[0]) + abs(hc - self.food[1])
         self.body.append((nr, nc))
         if ate:
             self.score += 1
             self._place_food()
-            reward = self.FOOD_REWARD
+            base = self.FOOD_REWARD
+            if self.shaping == "potential":
+                # Phi(s') against the newly placed food (0 on a win,
+                # where the board is full and the food is None).
+                shaping = self.shaping_gamma * self.potential() - phi_before
+            else:
+                shaping = 0.0
             if self.food is None:
                 # Board completely filled: win.
                 self.done = True
-                return self.encode_state(), reward, True, {"reason": "win"}
+                return self.encode_state(), base + shaping, True, {
+                    "reason": "win", "base_reward": base,
+                    "shaping_reward": shaping, "shaping": self.shaping}
         else:
             self.body.popleft()
             dist_after = abs(nr - self.food[0]) + abs(nc - self.food[1])
-            if dist_after < dist_before:
-                reward = self.CLOSER_REWARD
-            elif dist_after > dist_before:
-                reward = self.FARTHER_REWARD
+            base = 0.0
+            if self.shaping == "dense":
+                if dist_after < dist_before:
+                    shaping = self.CLOSER_REWARD
+                elif dist_after > dist_before:
+                    shaping = self.FARTHER_REWARD
+                else:
+                    shaping = 0.0
+            elif self.shaping == "potential":
+                shaping = self.shaping_gamma * self.potential() - phi_before
             else:
-                reward = 0.0
+                shaping = 0.0
 
         if self.steps >= self.max_steps:
             self.done = True
-            return self.encode_state(), reward, True, {"reason": "timeout"}
-        return self.encode_state(), reward, False, {}
+            return self.encode_state(), base + shaping, True, {
+                "reason": "timeout", "base_reward": base,
+                "shaping_reward": shaping, "shaping": self.shaping}
+        return self.encode_state(), base + shaping, False, {
+            "base_reward": base, "shaping_reward": shaping,
+            "shaping": self.shaping}
 
     @property
     def occupied(self):
