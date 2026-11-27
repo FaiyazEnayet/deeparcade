@@ -348,10 +348,14 @@ def test_stage3_deeparcade_1_05_keyed_policy_eval_reproducible():
     torch = pytest.importorskip("torch")
     del torch
     keys = episode_keys("test", 0, 3)
-    rows = evaluate_policy_keyed(DQN(), keys)
+    # One fixed net for both evaluations: the check is that episode
+    # order cannot change an episode's outcome, not that two
+    # differently initialized nets agree (they need not).
+    net = DQN()
+    rows = evaluate_policy_keyed(net, keys)
     assert [r["episode_key"] for r in rows] == ["test:0", "test:1", "test:2"]
     assert all(r["namespace"] == "test" for r in rows)
-    again = evaluate_policy_keyed(DQN(), list(reversed(keys)))
+    again = evaluate_policy_keyed(net, list(reversed(keys)))
     by_key = {r["episode_key"]: r["score"] for r in again}
     for r in rows:
         assert by_key[r["episode_key"]] == r["score"]
