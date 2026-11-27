@@ -56,6 +56,28 @@ def _eval_protocol(ev):
     )
 
 
+def _diagnosis_protocol(diag):
+    """One-line protocol for the diagnosis record.
+
+    New records (Stage 3 P1-05) evaluate on keyed test-namespace
+    episodes and carry eval_episode_keys; older records evaluated on
+    the legacy 5000+ seed range and carry eval_seeds. Both shapes
+    render here so a regenerated diagnosis never breaks the manifest."""
+    steps = diag["steps_per_run"]
+    keys = diag.get("eval_episode_keys")
+    if keys:
+        return (
+            f"each variant trained for {steps} steps per seed and "
+            f"evaluated on {len(keys)} keyed test-split episodes "
+            f"({keys[0]} to {keys[-1]})"
+        )
+    seeds = diag["eval_seeds"]
+    return (
+        f"each variant trained for {steps} steps per seed and "
+        f"evaluated on seeds {seeds[0]}-{seeds[-1]} ({len(seeds)} episodes)"
+    )
+
+
 def build_manifest(root=ROOT):
     """Build the manifest dict from the artifacts and their meta files.
 
@@ -128,12 +150,7 @@ def build_manifest(root=ROOT):
             "seed": diag["seeds"],
             "steps": diag["steps_per_run"],
             "steps_unit": "training steps per run",
-            "evaluation_protocol": (
-                f"each variant trained for {diag['steps_per_run']} steps "
-                f"per seed and evaluated on seeds "
-                f"{diag['eval_seeds'][0]}-{diag['eval_seeds'][-1]} "
-                f"({len(diag['eval_seeds'])} episodes)"
-            ),
+            "evaluation_protocol": _diagnosis_protocol(diag),
         },
     }
 
