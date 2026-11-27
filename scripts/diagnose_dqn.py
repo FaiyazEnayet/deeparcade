@@ -32,9 +32,13 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from narcade.experiment_seeds import training_env_key
+from narcade.experiment_seeds import episode_keys, training_env_key
 from narcade.snake import SnakeEnv
 from narcade.policies import GreedyPolicy
+from scripts.statistical_benchmark import (
+    assert_disjoint_episode_keys,
+    imitation_offline_accuracy,
+)
 from scripts.train_dqn import DQN, INPUT_DIM, encode_dqn
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -94,6 +98,7 @@ def train_rl(variant, steps, seed, log_every_eps=100, log_every_steps=2000):
     ep_scores, ep_deaths, ep_foods = [], [], []
     b_scores, b_deaths, b_foods = [], [], []
     curve_score, curve_loss, curve_target, curve_maxq, curve_eps = [], [], [], [], []
+    curve_step_points = []
     loss_acc, target_acc, maxq_acc, loss_n = 0.0, 0.0, 0.0, 0
     updates = 0
 
@@ -121,6 +126,7 @@ def train_rl(variant, steps, seed, log_every_eps=100, log_every_steps=2000):
             b_foods.append(env.score)
             if n_ep % log_every_eps == 0:
                 curve_score.append(sum(b_scores[-log_every_eps:]) / log_every_eps)
+                curve_step_points.append(step)
                 ep_deaths.append(sum(b_deaths[-log_every_eps:]) / log_every_eps)
                 ep_foods.append(sum(b_foods[-log_every_eps:]) / log_every_eps)
             env = make_env(training_env_key(seed, n_ep))
@@ -181,6 +187,7 @@ def train_rl(variant, steps, seed, log_every_eps=100, log_every_steps=2000):
         "final_mean_maxq": round(curve_maxq[-1], 3) if curve_maxq else 0.0,
         "death_frac": round(ep_deaths[-1], 3) if ep_deaths else 0.0,
         "curve_score": [round(x, 3) for x in curve_score],
+        "curve_step_points": curve_step_points,
         "curve_loss": [round(x, 4) for x in curve_loss],
         "curve_target": [round(x, 3) for x in curve_target],
         "curve_maxq": [round(x, 3) for x in curve_maxq],
@@ -188,17 +195,66 @@ def train_rl(variant, steps, seed, log_every_eps=100, log_every_steps=2000):
     }, policy_net
 
 
-def train_imitate(steps, seed, collect_n=20000, eval_eps=100):
+def collect_offline_states(policy, start_index, n_states, namespace="test"):
+    """Held-out (state, reference action) pairs from keyed episodes.
+
+    Plays the reference policy on ``namespace`` episodes starting at
+    ``start_index`` and records the encoded state and the reference
+    action at each step until ``n_states`` pairs are collected. The
+    episodes are never used for training and never overlap the
+    on-policy eval episodes (which use indices below ``start_index``),
+    so the offline accuracy is measured on states the clone never
+    trained on. Returns (states, actions, env_keys)."""
+    states, actions, env_keys = [], [], []
+    index = start_index
+    while len(states) < n_states:
+        key = episode_keys(namespace, index, 1)[0]
+        env = make_keyed_env(key)
+        env_keys.append(key.env_key)
+        done = False
+        while not done and len(states) < n_states:
+            s = encode_dqn(env)
+            a = policy.act(env)
+            states.append(s)
+            actions.append(a)
+            _, _, done, _ = env.step(a)
+        index += 1
+    return np.stack(states), np.array(actions), env_keys
+
+
+def train_imitate(steps, seed, collect_n=20000, eval_eps=100, offline_n=200):
     """Supervised clone of the greedy policy. Compute budget matched to the
-    RL variants: same number of gradient updates they perform in `steps`."""
+    RL variants: same number of gradient updates they perform in `steps`.
+
+    Two evaluations, both on the P0-06 test split, which is disjoint
+    from training by construction (training env keys are base seed +
+    episode index; test env keys are SHA-256-derived):
+
+    - on-policy rollouts: the cloned net plays test-namespace
+      episodes (indices 0..eval_eps-1) greedily; every score is
+      stored in imitate_eval_scores with its episode key.
+    - offline test-state action accuracy: the net's action agreement
+      with the greedy policy on held-out states visited by greedy on
+      test-namespace episodes (indices eval_eps onward). The accuracy
+      is conditional on that test-state distribution: it says how
+      well the clone matches greedy where greedy actually goes, not
+      on states greedy never visits.
+
+    The old code evaluated on legacy seeds 10000+; those lie inside
+    the training env-key range (seed + episode index, up to
+    seed + collect_n), so the old eval overlapped training. That
+    overlap is gone: the recorded train and offline env keys are
+    checked disjoint here, and the check raises instead of silently
+    reporting an overlapped score."""
     t0 = time.time()
     torch.manual_seed(seed)
     rng = random.Random(seed)
     greedy = GreedyPolicy()
 
     n_updates = max(1, steps // UPDATE_EVERY)
-    # Collect demonstrations with the greedy policy.
+    # Collect demonstrations with the greedy policy (training split only).
     states, actions = [], []
+    train_env_keys = [seed]
     env = make_env(seed)
     s = encode_dqn(env)
     while len(states) < collect_n:
@@ -207,7 +263,9 @@ def train_imitate(steps, seed, collect_n=20000, eval_eps=100):
         actions.append(a)
         _, _, done, _ = env.step(a)
         if done:
-            env = make_env(training_env_key(seed, len(states)))
+            next_key = training_env_key(seed, len(states))
+            train_env_keys.append(next_key)
+            env = make_env(next_key)
         s = encode_dqn(env)
     states = np.stack(states)
     actions = np.array(actions)
@@ -228,17 +286,29 @@ def train_imitate(steps, seed, collect_n=20000, eval_eps=100):
         if u % 20 == 0:
             losses.append(round(loss.item(), 4))
 
-    # Evaluate the cloned policy on fresh episodes.
+    # On-policy rollouts on fresh test-namespace episodes.
+    eval_keys = episode_keys("test", 0, eval_eps)
     scores = []
     with torch.no_grad():
-        for e in range(eval_eps):
-            env = make_env(10_000 + e)
-            env.reset()
+        for key in eval_keys:
+            env = make_keyed_env(key)
             done = False
             while not done:
                 q = net(torch.from_numpy(encode_dqn(env)).unsqueeze(0))
                 _, _, done, _ = env.step(int(q.argmax(1).item()))
             scores.append(env.score)
+
+    # Offline test-state action accuracy on later test episodes.
+    off_states, off_actions, offline_env_keys = collect_offline_states(
+        greedy, eval_eps, offline_n)
+    offline = imitation_offline_accuracy(net, off_states, off_actions)
+    offline["split"] = "test"
+    offline["scope"] = (
+        "conditional on the test-state distribution: states visited "
+        "by the greedy policy on test-namespace episodes"
+    )
+    assert_disjoint_episode_keys(
+        train_env_keys, offline_env_keys, "train", "test")
     return {
         "variant": "imitate",
         "seed": seed,
@@ -248,6 +318,11 @@ def train_imitate(steps, seed, collect_n=20000, eval_eps=100):
         "final_mean100": round(sum(scores) / len(scores), 3),
         "imitate_train_loss": losses,
         "imitate_eval_scores": scores,
+        "eval_split": "test",
+        "eval_episode_keys": [k.label for k in eval_keys],
+        "imitate_offline_accuracy": offline,
+        "train_env_keys": train_env_keys,
+        "offline_env_keys": offline_env_keys,
     }, net
 
 
@@ -268,7 +343,48 @@ def evaluate_policy(net, seeds):
     return scores
 
 
-def run_diagnosis(steps, seeds, variants, eval_seeds):
+def evaluate_policy_keyed(net, keys):
+    """Greedy-argmax episode rows of a trained net on keyed episodes
+    (Stage 3 P1-05).
+
+    Each row carries the episode key, namespace, index, environment
+    key, score and the failure cause (outcome), so every score stays
+    traceable to the episode that produced it, and the same key
+    reproduces the same score regardless of evaluation order."""
+    rows = []
+    net.eval()
+    with torch.no_grad():
+        for key in keys:
+            env = make_keyed_env(key)
+            done = False
+            info = {}
+            while not done:
+                q = net(torch.from_numpy(encode_dqn(env)).unsqueeze(0))
+                _, _, done, info = env.step(int(q.argmax(1).item()))
+            rows.append({
+                "episode_key": key.label,
+                "namespace": key.namespace,
+                "index": key.index,
+                "env_key": key.env_key,
+                "score": env.score,
+                "outcome": info.get("reason", "death"),
+            })
+    net.train()
+    return rows
+
+
+def run_diagnosis(steps, seeds, variants, eval_seeds=None, eval_keys=None):
+    """Run every variant on every seed and evaluate on the eval split.
+
+    Pass eval_keys (P0-06 test-namespace EpisodeKeys) to evaluate on
+    the test split with keyed rows; the legacy eval_seeds path is kept
+    for callers that still pass plain seeds, and the recorded
+    eval_split says which one was used. Each result records its search
+    cost (steps, updates, seconds, episodes) next to its scores, and
+    the training-step-vs-performance curve points travel in the
+    per-run curve_score / curve_step_points pair."""
+    if eval_keys is None and eval_seeds is None:
+        eval_seeds = list(range(5000, 5000 + 100))
     results = []
     for variant in variants:
         for sd in seeds:
@@ -276,9 +392,24 @@ def run_diagnosis(steps, seeds, variants, eval_seeds):
                 summary, net = train_imitate(steps, sd)
             else:
                 summary, net = train_rl(variant, steps, sd)
-            summary["eval_scores"] = evaluate_policy(net, eval_seeds)
+            if eval_keys is not None:
+                rows = evaluate_policy_keyed(net, eval_keys)
+                summary["eval_scores"] = [r["score"] for r in rows]
+                summary["eval_episode_keys"] = [r["episode_key"] for r in rows]
+                summary["eval_rows"] = rows
+                summary["eval_split"] = "test"
+            else:
+                summary["eval_scores"] = evaluate_policy(net, eval_seeds)
+                summary["eval_episode_keys"] = [f"legacy:{s}" for s in eval_seeds]
+                summary["eval_split"] = "legacy"
             summary["eval_mean"] = round(
                 sum(summary["eval_scores"]) / len(summary["eval_scores"]), 3)
+            summary["search_cost"] = {
+                "steps": steps,
+                "updates": summary["updates"],
+                "seconds": summary["seconds"],
+                "episodes": summary.get("episodes"),
+            }
             results.append(summary)
             print(f"done {variant} seed={sd} eval_mean={summary['eval_mean']} "
                   f"final100={summary['final_mean100']}", flush=True)
@@ -295,17 +426,52 @@ def main():
     ap.add_argument("--out", default=RUNS)
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    eval_seeds = list(range(5000, 5000 + args.eval_n))
-    results = run_diagnosis(args.steps, args.seeds, args.variants, eval_seeds)
+    # Final evaluation reads the test split only, on keyed episodes
+    # disjoint from training by construction (P0-06 registry). The
+    # legacy 5000+ seed range overlaps the training env-key range and
+    # must not be used for a final claim.
+    eval_keys = episode_keys("test", 0, args.eval_n)
+    results = run_diagnosis(args.steps, args.seeds, args.variants,
+                            eval_keys=eval_keys)
+    import statistics as _statistics
+    multiseed = {}
+    curves = {}
+    search_cost_total = {"steps": 0, "updates": 0, "seconds": 0.0,
+                         "episodes": 0}
+    for variant in args.variants:
+        variant_results = [r for r in results if r["variant"] == variant]
+        means = {str(r["seed"]): r["eval_mean"] for r in variant_results}
+        multiseed[variant] = {
+            "per_seed": means,
+            "across_seed_mean": round(_statistics.mean(means.values()), 3),
+            "across_seed_std": round(
+                _statistics.pstdev(means.values()), 3) if len(means) > 1 else 0.0,
+            "n_seeds": len(means),
+        }
+        for r in variant_results:
+            curves[f"{variant}/seed{r['seed']}"] = {
+                "training_steps": r.get("curve_step_points", []),
+                "mean_score": r.get("curve_score", []),
+            }
+        for r in variant_results:
+            cost = r["search_cost"]
+            search_cost_total["steps"] += cost["steps"]
+            search_cost_total["updates"] += cost["updates"]
+            search_cost_total["seconds"] += cost["seconds"]
+            search_cost_total["episodes"] += cost["episodes"] or 0
     payload = {
         "steps_per_run": args.steps,
         "seeds": args.seeds,
         "variants": args.variants,
-        "eval_seeds": eval_seeds,
+        "eval_split": "test",
+        "eval_episode_keys": [k.label for k in eval_keys],
         "gamma": GAMMA,
         "batch": BATCH,
         "lr": LR,
         "results": results,
+        "multiseed": multiseed,
+        "curves": curves,
+        "search_cost_total": search_cost_total,
     }
     path = os.path.join(args.out, "da4_diagnosis.json")
     with open(path, "w") as f:

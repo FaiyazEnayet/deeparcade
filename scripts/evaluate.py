@@ -41,6 +41,12 @@ if _ROOT not in sys.path:
 from narcade.mcts import MCTSPlayer
 from narcade.policies import GreedyPolicy, QTablePolicy, RandomPolicy
 from narcade.snake import SnakeEnv
+from scripts.statistical_benchmark import (
+    BOOTSTRAP_SEED,
+    mean_bootstrap_ci,
+    paired_bootstrap_ci,
+    win_draw_loss,
+)
 
 HERE = _HERE
 RUNS = os.path.join(HERE, "..", "runs")
@@ -251,6 +257,21 @@ def summarize_full(scores):
             "max": max(scores), "min": min(scores)}
 
 
+def summarize_with_uncertainty(scores, n_boot=10000, seed=BOOTSTRAP_SEED):
+    """The legacy summary fields plus a paired-bootstrap interval for
+    the mean, with N and the bootstrap settings next to it (Stage 3
+    P1-05). The interval is a deterministic function of the stored
+    score array, so any reader recomputes it exactly."""
+    summary = summarize_full(scores)
+    ci = mean_bootstrap_ci(scores, n_boot=n_boot, seed=seed)
+    summary["ci_low"] = ci["ci_low"]
+    summary["ci_high"] = ci["ci_high"]
+    summary["n_boot"] = ci["n_boot"]
+    summary["seed"] = ci["seed"]
+    summary["confidence"] = ci["confidence"]
+    return summary
+
+
 def _elo_from_aligned(scores_by_name, k=32):
     """ELO round-robin over aligned score lists. Arithmetic identical
     to the original elo_ratings; only the input alignment changed."""
@@ -308,6 +329,67 @@ def head_to_head_paired(rows_by_agent):
     """Head-to-head from per-episode rows, aligned by episode key."""
     scores, _ = aligned_paired_scores(rows_by_agent)
     return _h2h_from_aligned(scores)
+
+
+def head_to_head_with_counts(results):
+    """Head-to-head with win/draw/loss counts and N next to the rates
+    (Stage 3 P1-05). Same alignment contract as head_to_head: the
+    caller guarantees the lists are aligned by episode."""
+    names = list(results.keys())
+    n = len(next(iter(results.values())))
+    table = {}
+    for a in names:
+        table[a] = {}
+        for b in names:
+            if a == b:
+                table[a][b] = None
+                continue
+            counts = win_draw_loss(results[a], results[b])
+            table[a][b] = {
+                "win_rate": round(counts["wins"] / n, 3),
+                "draw_rate": round(counts["draws"] / n, 3),
+                "wins": counts["wins"],
+                "draws": counts["draws"],
+                "losses": counts["losses"],
+                "n": counts["n"],
+            }
+    return table
+
+
+def build_statistics_section(paired_rows, n_boot=10000, seed=BOOTSTRAP_SEED):
+    """Uncertainty section for a schema-v2 evaluation document
+    (Stage 3 P1-05): per-policy mean intervals on the paired scores
+    and, for every ordered pair, the paired bootstrap interval of
+    the mean difference with win/draw/loss counts and N. Every number
+    is recomputed from the stored paired scores by
+    validate_eval_document, so a tampered interval fails visibly."""
+    scores, _ = aligned_paired_scores(paired_rows)
+    per_policy = {
+        name: summarize_with_uncertainty(values, n_boot=n_boot, seed=seed)
+        for name, values in scores.items()
+    }
+    pairwise = {}
+    for a in scores:
+        pairwise[a] = {}
+        for b in scores:
+            if a == b:
+                continue
+            ci = paired_bootstrap_ci(scores[a], scores[b],
+                                     n_boot=n_boot, seed=seed)
+            counts = win_draw_loss(scores[a], scores[b])
+            pairwise[a][b] = {
+                "mean_diff": ci["mean_diff"],
+                "ci_low": ci["ci_low"],
+                "ci_high": ci["ci_high"],
+                "wins": counts["wins"],
+                "draws": counts["draws"],
+                "losses": counts["losses"],
+                "n": counts["n"],
+                "n_boot": ci["n_boot"],
+                "seed": ci["seed"],
+                "confidence": ci["confidence"],
+            }
+    return {"per_policy": per_policy, "pairwise": pairwise}
 
 
 def sha256_file(path):
@@ -374,6 +456,7 @@ def build_eval_document(paired_rows, independent_rows, params, policies_meta):
         },
         "elo": elo_ratings_paired(paired_rows),
         "head_to_head": head_to_head_paired(paired_rows),
+        "statistics": build_statistics_section(paired_rows),
         "n_eval": params["n"],
         "mcts_n": params["mcts_n"],
         "mcts_sims": params["mcts_sims"],
@@ -478,6 +561,20 @@ def validate_eval_document(doc):
         raise ValueError("stored elo does not recompute from paired scores")
     if head_to_head_paired(rows_by_agent) != doc["head_to_head"]:
         raise ValueError("stored head_to_head does not recompute from paired scores")
+    # The statistics section, when present, must recompute exactly
+    # from the stored paired scores. Documents built before the
+    # statistics section existed (no "statistics" key) still load:
+    # their paired summaries, ELO and head-to-head are checked above.
+    if "statistics" in doc:
+        rebuilt_stats = build_statistics_section(
+            {n: [{"seed": s, "score": paired["scores"][n][i]}
+                 for i, s in enumerate(seeds)] for n in paired["scores"]})
+        if rebuilt_stats != doc["statistics"]:
+            raise ValueError(
+                "stored statistics do not recompute from paired scores; "
+                "an interval, count or mean was changed after the "
+                "document was built"
+            )
     return doc
 
 
