@@ -155,7 +155,9 @@ def train_cnn_dqn(steps=300000, seed=7, config=None, verbose=True):
 
     seconds = time.time() - t0
     meta = {"steps": steps, "episodes": n_ep, "seed": seed,
-            "seconds": round(seconds, 1),
+            # Millisecond resolution: a tiny run finishes in under 0.05 s,
+            # which one-decimal rounding reported as exactly 0.0.
+            "seconds": round(seconds, 3),
             "final_mean100": scores100[-1] if scores100 else 0.0,
             "config": config.to_dict(),
             "params": policy_net.num_params(),
